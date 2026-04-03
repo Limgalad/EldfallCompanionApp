@@ -1,0 +1,27 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
+  <defs>
+    <linearGradient id="bg" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#1c1917" />
+      <stop offset="100%" stop-color="#0c0a09" />
+    </linearGradient>
+    <linearGradient id="primary" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#ef4444" />
+      <stop offset="100%" stop-color="#991b1b" />
+    </linearGradient>
+    <linearGradient id="accent" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#fcd34d" />
+      <stop offset="100%" stop-color="#b45309" />
+    </linearGradient>
+  </defs>
+  <rect width="512" height="512" rx="112" fill="url(#bg)"/>
+  
+  <!-- Outer Shield -->
+  <path d="M256 64 L416 128 V256 C416 384 256 464 256 464 C256 464 96 384 96 256 V128 L256 64 Z" fill="url(#primary)" stroke="url(#accent)" stroke-width="16" stroke-linejoin="round"/>
+  
+  <!-- Inner Shield Dark -->
+  <path d="M256 104 L376 152 V256 C376 352 256 424 256 424 C256 424 136 352 136 256 V152 L256 104 Z" fill="#0c0a09" stroke="url(#accent)" stroke-width="8" stroke-linejoin="round"/>
+  
+  <!-- Stylized E -->
+  <path d="M320 184 H208 V328 H320" fill="none" stroke="url(#accent)" stroke-width="32" stroke-linecap="square" stroke-linejoin="miter"/>
+  <path d="M208 256 H288" fill="none" stroke="url(#accent)" stroke-width="32" stroke-linecap="square" stroke-linejoin="miter"/>
+</svg>

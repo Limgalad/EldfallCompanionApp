@@ -1,0 +1,3 @@
+User-agent: *
+Allow: /
+Sitemap: https://ais-pre-yc5fyhtzj5owt6dw3qype2-734809637789.europe-west2.run.app/sitemap.xml
