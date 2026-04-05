@@ -32,7 +32,7 @@ export default function App() {
     return (
       <div className="min-h-screen flex flex-col">
         {/* Hero Section */}
-        <header className="relative h-[70vh] flex items-center justify-center overflow-hidden">
+        <header className="relative h-[40vh] flex items-center justify-center overflow-hidden">
           <div className="absolute inset-0 z-0">
             <motion.img
               initial={{ scale: 1.1 }}
@@ -52,10 +52,10 @@ export default function App() {
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.8 }}
             >
-              <h1 className="text-5xl md:text-7xl font-bold text-white mb-4 drop-shadow-2xl">
+              <h1 className="text-4xl md:text-5xl font-bold text-white mb-4 drop-shadow-2xl">
                 ELDFALL CHRONICLES
               </h1>
-              <p className="text-xl md:text-2xl text-stone-300 font-light tracking-widest uppercase mb-8">
+              <p className="text-lg md:text-xl text-stone-300 font-light tracking-widest uppercase mb-8">
                 Companion App
               </p>
             </motion.div>
@@ -63,8 +63,8 @@ export default function App() {
         </header>
 
         {/* Navigation Grid */}
-        <main className="flex-grow max-w-7xl mx-auto w-full px-4 py-12 -mt-24 relative z-20">
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+        <main className="flex-grow max-w-7xl mx-auto w-full px-4 py-8 -mt-16 relative z-20">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
             <NavCard
               title="Quest Overview"
               description="Explore competitive quests, season objectives, and tactical maps."
@@ -93,7 +93,7 @@ export default function App() {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ delay: 0.5 }}
-            className="mt-16 max-w-2xl mx-auto text-center p-8 rounded-2xl bg-stone-950/50 border border-stone-900 backdrop-blur-sm"
+            className="mt-12 max-w-2xl mx-auto text-center p-6 rounded-2xl bg-stone-950/50 border border-stone-900 backdrop-blur-sm"
           >
             <div className="inline-flex items-center justify-center w-12 h-12 rounded-full bg-red-500/10 border border-red-500/20 mb-4">
               <Heart className="w-6 h-6 text-red-500 fill-red-500/20" />
@@ -159,19 +159,19 @@ function NavCard({
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.5, delay }}
       onClick={onClick}
-      className="eldfall-card p-8 h-full flex flex-col items-center text-center group cursor-pointer"
+      className="eldfall-card p-5 h-full flex flex-col items-center text-center group cursor-pointer"
     >
-      <div className="mb-6 p-4 rounded-full bg-stone-950 border border-stone-800 group-hover:border-red-900/50 transition-colors">
+      <div className="mb-4 p-4 rounded-full bg-stone-950 border border-stone-800 group-hover:border-red-900/50 transition-colors">
         {icon}
       </div>
-      <h2 className="text-2xl font-bold mb-4 group-hover:text-red-500 transition-colors">
+      <h2 className="text-xl font-bold mb-3 group-hover:text-red-500 transition-colors">
         {title}
       </h2>
-      <p className="text-stone-400 leading-relaxed flex-grow">
+      <p className="text-stone-400 text-sm leading-relaxed flex-grow">
         {description}
       </p>
       {externalLink && (
-        <div className="mt-6 flex items-center text-red-500 font-medium group-hover:underline">
+        <div className="mt-4 flex items-center text-sm text-red-500 font-medium group-hover:underline">
           Visit Guildhall <ExternalLink className="ml-2 w-4 h-4" />
         </div>
       )}

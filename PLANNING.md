@@ -24,8 +24,8 @@ A companion app for Eldfall Chronicles, featuring mission overviews, rules docum
     - [x] **Full Makeover**: All rule tiles (Traits, Skills, States, Combat Arts, Classes) are now clickable and open a detailed modal with full text.
 - [ ] **Phase 4: Expanded Reference**
     - [ ] **Spell Book**: Implement a spell reference tile with all spells categorized by their relative school.
-    - [ ] **Creatures**: Add a creature database to view stats and behaviors.
-    - [ ] **Quest Schemes**: Implement a tile for all schemes used in Quests.
+    - [x] **Creatures**: Add a creature database to view stats and behaviors. (Demo data added, pending full rules).
+    - [x] **Quest Schemes**: Implement a tile/modal for all schemes used in Quests.
     - [ ] **Equipment & Upgrades (Nice to have)**: Add a reference for all equipment and upgrades.
 - [ ] **Phase 5: Admin & Content Management**
     - [ ] **Editing Mode**: Add a secure editing mode to add, modify, or hide tiles and rules.
@@ -38,9 +38,10 @@ A companion app for Eldfall Chronicles, featuring mission overviews, rules docum
 - [x] **Phase 6: Polish & Assets**
 
 ## Resources
-- [RULES_SUMMARY.md](/Rulles and FEQ's/RULES_SUMMARY.md): Quick access summary of Core Rules v1.6 and Season 1 Quests.
-- [RulesEldfall1.6.md](/Rulles and FEQ's/RulesEldfall1.6.md): Full rulebook text for internal reference.
-- [ERRATA_FEB_2026.md](/Rulles and FEQ's/ERRATA_FEB_2026.md): Latest errata and rule updates (Feb 2026).
+- [RULES_SUMMARY.md](/Rules and FAQ's/RULES_SUMMARY.md): Quick access summary of Core Rules v1.6 and Season 1 Quests.
+- [RulesEldfall1.6.md](/Rules and FAQ's/RulesEldfall1.6.md): Full rulebook text for internal reference.
+- [ERRATA_FEB_2026.md](/Rules and FAQ's/ERRATA_FEB_2026.md): Latest errata and rule updates (Feb 2026).
+- [IMPROVEMENTS.md](/IMPROVEMENTS.md): Code review results and future roadmap items.
 
 ## Maintenance & Support
 
@@ -104,3 +105,19 @@ To enable the server-side bug reporting feature, you need to provide the followi
 - Implemented SEO optimizations: added meta keywords, Open Graph, and Twitter tags to `index.html`.
 - Created `robots.txt` and `sitemap.xml` in the public directory to improve Google indexing.
 - Enhanced `manifest.json` description for better search discoverability.
+
+### 2026-04-03
+- Renamed rulebook directory from `Rulles and FEQ's` to `Rules and FAQ's` for better clarity and professional naming.
+- Updated all internal references to the rulebook directory in `PLANNING.md`.
+- Renamed the project in `package.json` to `eldfall-companion-app`.
+- Refined Combat Arts section in Rules Wiki: consolidated levels into category-based tiles (Archery, Assassination, Berserk, Fencing).
+- Implemented separate styling for rule text (normal) and flavor text (italic) in Combat Art descriptions.
+- Fixed a syntax error in the `Trait` interface in `src/data/rules.ts`.
+- Updated `PLANNING.md` with Admin Mode request and impact analysis for future Firebase integration.
+
+### 2026-04-04
+- Extracted all Quest Schemes from the rulebook into `src/data/schemes.ts`, categorized by faction.
+- Added a "View Quest Schemes" button to the `MissionOverview.tsx` page.
+- Implemented a responsive modal to view and filter Quest Schemes by faction (Neutral, Empire of Soga, Coalition of Thenion, Helian League, Sand Kingdoms).
+- Created a "Creatures Database" modal in the `RulesWiki.tsx` page, matching the design of the Quest Schemes modal.
+- Added `src/data/creatures.ts` with demo data for Elementals, Undead, and Beasts, including full stat blocks, weapons, traits, and behaviors.
