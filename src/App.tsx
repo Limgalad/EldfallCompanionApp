@@ -4,18 +4,20 @@
  */
 
 import { motion } from "motion/react";
-import { Book, Map, Sword, ExternalLink, Heart, Bug, X, Wand2 } from "lucide-react";
+import { Book, Map, Sword, ExternalLink, Heart, Bug, X, Wand2, History } from "lucide-react";
 import React, { useState, useEffect } from "react";
 import MissionOverview from "./components/MissionOverview";
 import RulesWiki from "./components/RulesWiki";
 import SpellBook from "./components/SpellBook";
 import ScrollToTop from "./components/ScrollToTop";
+import ChangelogModal from "./components/ChangelogModal";
 
 type Page = "home" | "missions" | "rules" | "spellbook";
 
 export default function App() {
   const [currentPage, setCurrentPage] = useState<Page>("home");
   const [isBugModalOpen, setIsBugModalOpen] = useState(false);
+  const [isChangelogOpen, setIsChangelogOpen] = useState(false);
 
   useEffect(() => {
     window.scrollTo(0, 0);
@@ -132,7 +134,12 @@ export default function App() {
         <footer className="py-8 border-t border-stone-900 text-center text-stone-500 text-sm">
           <p>© 2026 Eldfall Chronicles Companion. All rights reserved.</p>
           <p className="mt-2">Created for the Eldfall Community.</p>
-          <p className="mt-4 text-[10px] opacity-30 uppercase tracking-widest">Version 1.0.4 • Updated Apr 2</p>
+          <button 
+            onClick={() => setIsChangelogOpen(true)}
+            className="mt-4 text-[10px] opacity-50 hover:opacity-100 uppercase tracking-widest transition-opacity flex items-center justify-center w-full gap-2"
+          >
+            <History className="w-3 h-3" /> Version 1.0.4 • View Changelog
+          </button>
         </footer>
       </div>
     );
@@ -140,11 +147,27 @@ export default function App() {
 
   return (
     <>
+      {/* Global Header Actions */}
+      <div className="fixed top-4 right-4 z-50 flex items-center gap-2">
+        <button 
+          onClick={() => setIsChangelogOpen(true)}
+          className="p-2 bg-stone-900/80 hover:bg-stone-800 border border-stone-700 rounded-full text-stone-300 transition-all hover:scale-105 active:scale-95 flex items-center gap-2 backdrop-blur-md shadow-lg"
+          title="Changelog & Updates"
+        >
+          <History className="w-5 h-5" />
+          <span className="text-xs font-bold hidden sm:inline pr-2">v1.0.4</span>
+        </button>
+      </div>
+
       {renderPage()}
       <ScrollToTop />
       {/* Bug Report Modal */}
       {isBugModalOpen && (
         <BugReportModal onClose={() => setIsBugModalOpen(false)} />
+      )}
+      {/* Changelog Modal */}
+      {isChangelogOpen && (
+        <ChangelogModal onClose={() => setIsChangelogOpen(false)} />
       )}
     </>
   );

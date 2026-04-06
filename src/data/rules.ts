@@ -320,7 +320,7 @@ export const traits: Trait[] = [
   },
   {
     name: "Continuous",
-    description: "An effect with this trait remains in play until the end of the Quest or until removed with a certain other effect, regardless of other imposed time durations (Sorcery, Enchantment, etc.)."
+    description: "An effect with this Trait remains in play until the end of the Quest or until removed by a specific effect, regardless of other imposed time durations (Sorcery, Enchantment, etc.)."
   },
   {
     name: "Crippling",
@@ -336,7 +336,7 @@ export const traits: Trait[] = [
   },
   {
     name: "Elemental",
-    description: "This model is unaffected by the Stagger, Vampirism, and Mindgame Traits, the Charm Skill, and Toxic Environment. It cannot enter Bleeding, Poisoned, or Weakened States. If its HP reaches 0, it is removed from the field."
+    description: "This model is unaffected by the Stagger, Vampirism, and Mindgame Traits, the Charm Skill, and Toxic Environment. It cannot enter the Bleeding, Poisoned, or Weakened States. If its HP reaches 0, it is removed from the field."
   },
   {
     name: "Elemental Essence (Element)",
@@ -344,7 +344,7 @@ export const traits: Trait[] = [
   },
   {
     name: "Familiar",
-    description: "When a Creature with this Trait is summoned by a Conjuration Spell, the caster gains additional Abilities and Stat Modifiers listed on the creature's profile. If the caster would take damage and suffer Wounds, the familiar may be removed instead (if multiple, the player chooses which). Creatures with this Trait have no Summoning Limit, but the caster may control only one of each named creature. Note: Familiars are not considered full models, but their miniatures may be used as visual elements. Some familiars have individual miniatures, while others are attached to the caster's. The caster gains the familiar's Abilities and modifiers only if the familiar is summoned, regardless of attached miniatures."
+    description: "When a Creature with this Trait is summoned by a Conjuration Spell, the caster gains additional Abilities and Stat Modifiers listed on the creature's profile. If the caster would take damage and suffer Wounds, the familiar may be removed instead (if multiple, the player chooses which). Creatures with this Trait have no Summoning Limit, but the caster may control only one of each named creature. The caster gains the familiar's Abilities and modifiers only while the familiar is summoned, regardless of attached miniatures."
   },
   {
     name: "Fearless",
@@ -399,15 +399,15 @@ export const traits: Trait[] = [
     description: "A Dodge against an Attack with this Trait uses INT instead of AG. If a model suffers a Mindgame Hit with PW, it rolls INT instead of making a Damage Roll. On a failed roll, the model suffers damage."
   },
   {
-    name: "Poison I/II",
-    description: "I: WEAK POISON; If a model suffers a Wound with this Trait, it becomes Weakened until its next Strategic Phase. II: STRONG POISON; If a model suffers a Wound with this Trait, it becomes Weakened and Poisoned."
+    name: "Poison I / II",
+    description: "I — Weak Poison: If a model suffers a Wound with this Trait, it becomes Weakened until its next Strategic Phase. II — Strong Poison: If a model suffers a Wound with this Trait, it becomes Weakened and Poisoned."
   },
   {
-    name: "Resistance I/II (X)",
+    name: "Resistance I / II (X)",
     description: "I: The PW of a Hit with (X) Type or Trait against this model is halved. II: Hits and Effects from an Attack with (X) Type or Trait are negated."
   },
   {
-    name: "Resourceful I/II",
+    name: "Resourceful I / II",
     description: "I: This model may receive 1 additional Upgrade. II: This model may receive another additional Upgrade."
   },
   {
@@ -439,8 +439,8 @@ export const traits: Trait[] = [
     description: "This model is unaffected by the X Environment."
   },
   {
-    name: "Sweep I/II",
-    description: "I: On a successful Attack roll, all models within this model's LoS and Melee RCH suffer a Hit. II: On a successful Attack roll, this model's Front arc becomes 360° for the remainder of the Activation Sequence. All models within this model's Melee RCH and LoS suffer a Hit."
+    name: "Sweep I / II",
+    description: "I: On a successful Attack roll, all models within this model's LoS and Melee RCH suffer a Hit. II: On a successful Attack roll, this model's Front arc becomes 360° for the remainder of the Activation Sequence. All models within Melee RCH and LoS suffer a Hit."
   },
   {
     name: "Tactician",
@@ -463,8 +463,8 @@ export const traits: Trait[] = [
     description: "A Weapon with this Trait cannot be used with an equipped Shield or another Weapon."
   },
   {
-    name: "Undead",
-    description: "I: This model cannot be affected by Poisoned, Weakened, Bleeding, or Panicked States. Spells with the Mindgame Trait cannot target or affect it. Healing-type Spells of the Divine Element do not restore any HP but instead, deal 15 PW damage to it. If this model's HP reaches 0, it becomes Dead."
+    name: "Undead I",
+    description: "This model cannot be affected by the Poisoned, Weakened, Bleeding, or Panicked States. Spells with the Mindgame Trait cannot target or affect it. Healing-Type Spells of the Divine Element do not restore HP — instead, they deal 15 PW damage to it. If this model's HP reaches 0, it becomes Dead."
   },
   {
     name: "Unkeen",
