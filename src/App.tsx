@@ -4,13 +4,14 @@
  */
 
 import { motion } from "motion/react";
-import { Book, Map, Sword, ExternalLink, Heart, Bug, X } from "lucide-react";
+import { Book, Map, Sword, ExternalLink, Heart, Bug, X, Wand2 } from "lucide-react";
 import React, { useState, useEffect } from "react";
 import MissionOverview from "./components/MissionOverview";
 import RulesWiki from "./components/RulesWiki";
+import SpellBook from "./components/SpellBook";
 import ScrollToTop from "./components/ScrollToTop";
 
-type Page = "home" | "missions" | "rules";
+type Page = "home" | "missions" | "rules" | "spellbook";
 
 export default function App() {
   const [currentPage, setCurrentPage] = useState<Page>("home");
@@ -27,6 +28,10 @@ export default function App() {
 
     if (currentPage === "rules") {
       return <RulesWiki onBack={() => setCurrentPage("home")} />;
+    }
+
+    if (currentPage === "spellbook") {
+      return <SpellBook onBack={() => setCurrentPage("home")} />;
     }
 
     return (
@@ -64,7 +69,7 @@ export default function App() {
 
         {/* Navigation Grid */}
         <main className="flex-grow max-w-7xl mx-auto w-full px-4 py-8 -mt-16 relative z-20">
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
             <NavCard
               title="Quest Overview"
               description="Explore competitive quests, season objectives, and tactical maps."
@@ -80,11 +85,18 @@ export default function App() {
               delay={0.2}
             />
             <NavCard
+              title="Spell Book"
+              description="Browse spells by school, element, and level for your casters."
+              icon={<Wand2 className="w-8 h-8 text-red-500" />}
+              onClick={() => setCurrentPage("spellbook")}
+              delay={0.3}
+            />
+            <NavCard
               title="Guildhall"
               description="Build your warband and manage your roster in the official army builder."
               icon={<Sword className="w-8 h-8 text-red-500" />}
               externalLink="https://guildhall.eldfall-chronicles.com/"
-              delay={0.3}
+              delay={0.4}
             />
           </div>
 

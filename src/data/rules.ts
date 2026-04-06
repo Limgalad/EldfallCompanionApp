@@ -174,6 +174,33 @@ export const rules: RuleSection[] = [
       { title: "HP Interaction", content: "If the Mount provides bonus HP, that HP is lost first when taking Wounds. When bonus HP is reduced to 0, further damage is applied to the Rider's HP. Bonus HP does not reset upon dismounting and remounting." },
       { title: "Restrictions", content: "Mounted Riders cannot perform Attacks with Items with RCH 0, unless the Weapon Type is Natural. STK of Weapons cannot be increased by Abilities while mounted. If hit by an Attack with Knockdown, or if the Rider becomes Incapacitated or Dead, they are automatically dismounted." }
     ]
+  },
+  {
+    id: "bonus-schemes",
+    title: "Bonus Schemes",
+    category: "Reference",
+    content: "Schemes are Classified objectives, known only to the player who receives them. At the end of the game, all the Schemes are revealed and the player receives a number of Victory Points as a reward for completing the objective listed on the Scheme card.",
+    subsections: [
+      { title: "Neutral Schemes", content: "Assassination Contract, Martial Valor, No Quarter, Opportunistic Manipulation, Stand Your Ground, Virtuous Commander." },
+      { title: "Empire of Soga", content: "Head Hunt, Open Aggression, Pursuit of Glory, Engetsu Formation, Fierce as Fire, Immovable as a Mountain, Stalwart Defender." },
+      { title: "Coalition of Thenion", content: "Unmatched Flanking, Leave Unnoticed, Cunning Tenacity, Breach Their Defenses, Assassination Contract, Blood for Blood." },
+      { title: "Helian League", content: "Decisive Victory, Virtuous Commander, Relentless Advance, Fierce as Fire, Immovable as a Mountain, Peacekeeping Paragon, Last Warning." },
+      { title: "Sand Kingdoms", content: "Stalwart Defender, Appear Weak When You Are Strong, Unhindered Expedition, Strength in Numbers, Steadfast Expansion, Stand Your Ground." }
+    ]
+  },
+  {
+    id: "competitive-quests",
+    title: "Competitive Quests",
+    category: "Reference",
+    content: "Competitive Quests — Season 1",
+    subsections: [
+      { title: "Quest 1: Open Hostilities", content: "Gain VP for rendering enemies Incapacitated or Dead based on their Recruitment Cost." },
+      { title: "Quest 2: Awaiting Reinforcements", content: "Gain VP for controlling the Obelisk at the center of the field." },
+      { title: "Quest 3: Treasure Hunt", content: "Gain VP for unlocking Caches and securing Treasures." },
+      { title: "Quest 4: Supply Run", content: "Gain VP for depositing Resources in your Cache." },
+      { title: "Quest 5: Secure the Artefact", content: "Gain VP for unlocking the Cache and securing the Arcane Artefact." },
+      { title: "Quest 6: Magic Stones", content: "Gain VP for controlling Objective Markers." }
+    ]
   }
 ];
 
