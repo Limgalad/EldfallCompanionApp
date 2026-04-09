@@ -1,4 +1,4 @@
-# Competitive Quests — Season 1
+# Competitive Quests: Season 1
 *Eldfall Chronicles: A Skirmish Miniatures Wargame | v1.1 | by Freecompany d.o.o.*
 
 ---

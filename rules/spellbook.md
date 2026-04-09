@@ -36,7 +36,7 @@
 | Water | I | **Ice Spikes** | Target becomes Slowed on Hit, until the caster's next Strategic Phase. | 11 | Spell, Sorcery, Ranged | 16 | 3 |
 | Water | II | **Frost** | The target becomes Immobilized on Hit until the caster's next Strategic Phase. | 11 | Spell, Sorcery, Ranged | Spray S | 1 |
 | Water | II | **Water Lash** | Knockback (2) (applied to all sizes except Colossal and Epic). | 8 | Spell, Sorcery, Ranged/Melee | 16 | STA |
-| Water | III | **Deep Freeze** | [Mana Cost: 1] While enchanted, the model suffers -3 ARM mod, and cannot declare Movements or Actions other than Idle and Nothing. Attacks against the model have Advantage. At the beginning of the next Strategic Phase (any), the enchanted model may perform a T roll — on success, the Enchantment is removed. During its Active Role, the enchanted model may declare Assist targeting itself and perform a T roll — on success, the Enchantment is removed. | — | Spell, Enchantment, Ranged/Melee | 10 | 1 |
+| Water | III | **Deep Freeze** | [Mana Cost: 1] While enchanted, the model suffers -3 ARM mod, and cannot declare Movements or Actions other than Idle and Nothing. Attacks against the model have Advantage. At the beginning of the next Strategic Phase (any), the enchanted model may perform a T roll. on success, the Enchantment is removed. During its Active Role, the enchanted model may declare Assist targeting itself and perform a T roll on success, the Enchantment is removed. | — | Spell, Enchantment, Ranged/Melee | 10 | 1 |
 | Water | III | **Glacier Circle** | Frostbite, Targetless. By spending 1 Mana, the caster may increase the STK of this Spell by 1. Enemy models within the AoE become Slowed on Hit. Areas within the AoE become Difficult and Dangerous Environments until the caster's next Strategic Phase. | 13 | Spell, Sorcery, Ranged | Casting Aura, Circular L | 1 |
 
 ---
@@ -68,7 +68,7 @@
 
 ---
 
-## Everlasting Rain — Invocations
+## Everlasting Rain Invocations
 
 | Element | LVL | Name | Effect | PW | Type | RCH | STK |
 |---------|-----|------|--------|----|------|-----|-----|

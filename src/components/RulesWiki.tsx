@@ -1,15 +1,20 @@
 import React, { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "motion/react";
-import { rules, traits, skills, classes, combatArts, combatArtCategories, states, RuleSection, CombatArt, CombatArtCategory, Trait, Skill, State, ClassInfo } from "../data/rules";
+import { rules, traits, skills, classes, combatArtCategories, states, RuleSection, CombatArtCategory, Trait, Skill, State, ClassInfo, CombatArt } from "../data/rules";
 import { ArrowLeft, Search, BookOpen, Shield, Zap, Sparkles, Users, Sword, Activity, Info, X } from "lucide-react";
 
 export default function RulesWiki({ onBack }: { onBack: () => void }) {
   const [searchQuery, setSearchQuery] = useState("");
   const [activeTab, setActiveTab] = useState<"mechanics" | "states" | "traits" | "skills" | "classes" | "combatArts">("mechanics");
-  const [selectedItem, setSelectedItem] = useState<{
-    type: "mechanics" | "states" | "traits" | "skills" | "combatArts" | "classes";
-    data: any;
-  } | null>(null);
+  const [selectedItem, setSelectedItem] = useState<
+    | { type: "mechanics"; data: RuleSection }
+    | { type: "states"; data: State }
+    | { type: "traits"; data: Trait }
+    | { type: "skills"; data: Skill }
+    | { type: "combatArts"; data: CombatArtCategory }
+    | { type: "classes"; data: ClassInfo }
+    | null
+  >(null);
 
   useEffect(() => {
     window.scrollTo(0, 0);
@@ -324,7 +329,7 @@ export default function RulesWiki({ onBack }: { onBack: () => void }) {
                   
                   {selectedItem.type === "mechanics" && selectedItem.data.subsections && (
                     <div className="space-y-4">
-                      {selectedItem.data.subsections.map((sub: any, i: number) => (
+                      {selectedItem.data.subsections.map((sub: { title: string; content: string }, i: number) => (
                         <div key={i} className="border-l-2 border-red-900/30 pl-4">
                           <h4 className="text-white font-bold mb-1 uppercase text-xs tracking-widest">{sub.title}</h4>
                           <p className="text-stone-400 text-xs leading-relaxed">{sub.content}</p>
@@ -356,7 +361,7 @@ export default function RulesWiki({ onBack }: { onBack: () => void }) {
                       <div className="space-y-3">
                         <h4 className="text-white font-bold uppercase text-xs tracking-widest border-b border-stone-800 pb-2">Levels</h4>
                         <div className="space-y-3">
-                          {selectedItem.data.levels.map((level: any, i: number) => (
+                          {selectedItem.data.levels.map((level: CombatArt, i: number) => (
                             <div key={i} className="bg-stone-950/30 border border-stone-800/50 rounded-lg p-3">
                               <div className="flex items-center justify-between mb-2">
                                 <h5 className="text-red-500 text-sm font-bold">{level.name}</h5>

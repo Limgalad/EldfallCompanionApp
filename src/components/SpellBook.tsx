@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { motion } from 'motion/react';
 import { ArrowLeft, Wand2, Search, Filter, Sparkles } from 'lucide-react';
-import { spellSchools, SpellSchool, Spell } from '../data/spells';
+import { spellSchools, Spell, SpellSchool } from '../data/spells';
 
 interface SpellBookProps {
   onBack: () => void;
@@ -9,7 +9,7 @@ interface SpellBookProps {
 
 export default function SpellBook({ onBack }: SpellBookProps) {
   const [searchQuery, setSearchQuery] = useState('');
-  const [selectedSchool, setSelectedSchool] = useState<string | null>(null);
+  const [selectedSchool, setSelectedSchool] = useState<SpellSchool['name'] | null>(null);
 
   const filteredSchools = spellSchools.map(school => {
     const filteredSpells = school.spells.filter(spell => 

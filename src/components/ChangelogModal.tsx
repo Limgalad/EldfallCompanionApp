@@ -33,7 +33,7 @@ export default function ChangelogModal({ onClose }: ChangelogModalProps) {
             <div className="flex items-center justify-between mb-4">
               <h4 className="text-lg font-bold text-white flex items-center">
                 <Star className="w-5 h-5 text-yellow-500 mr-2" />
-                Version 1.0.4
+                Version 1.0.5
               </h4>
               <span className="text-xs font-mono text-amber-500 bg-amber-950/30 px-2 py-1 rounded border border-amber-900/50">
                 In Development
@@ -47,6 +47,14 @@ export default function ChangelogModal({ onClose }: ChangelogModalProps) {
             <ul className="space-y-3 text-sm text-stone-300">
               <li className="flex items-start">
                 <span className="text-green-500 mr-2 mt-0.5">•</span>
+                Added comprehensive unit and integration tests for Mission Overview, Spell Book, and Rules Wiki using Vitest.
+              </li>
+              <li className="flex items-start">
+                <span className="text-green-500 mr-2 mt-0.5">•</span>
+                Enhanced type safety with strict union types for Missions, Creatures, Spells, and Factions.
+              </li>
+              <li className="flex items-start">
+                <span className="text-green-500 mr-2 mt-0.5">•</span>
                 Added Hostile AI behaviors to the Creatures Database (Gargoyle, Golem, Earth Elemental, Colossus, Amazon Gladiatrix).
               </li>
               <li className="flex items-start">
@@ -55,7 +63,7 @@ export default function ChangelogModal({ onClose }: ChangelogModalProps) {
               </li>
               <li className="flex items-start">
                 <span className="text-blue-500 mr-2 mt-0.5">•</span>
-                Removed outdated demo data from the Creatures Database.
+                Resolved linting errors and improved code consistency across data files.
               </li>
             </ul>
           </div>
@@ -93,15 +101,7 @@ export default function ChangelogModal({ onClose }: ChangelogModalProps) {
             <ul className="space-y-3 text-sm text-stone-400">
               <li className="flex items-start">
                 <span className="text-purple-500 mr-2 mt-0.5">→</span>
-                Complete creature stats and weapons for all Hostile AI.
-              </li>
-              <li className="flex items-start">
-                <span className="text-purple-500 mr-2 mt-0.5">→</span>
-                Interactive map tools for competitive quests.
-              </li>
-              <li className="flex items-start">
-                <span className="text-purple-500 mr-2 mt-0.5">→</span>
-                Campaign mode integration and progression tracking.
+                Expanding core rules and game mechanics.
               </li>
             </ul>
           </div>

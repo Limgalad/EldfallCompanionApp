@@ -1,16 +1,30 @@
 import express from "express";
 import { createServer as createViteServer } from "vite";
 import path from "path";
-import { fileURLToPath } from "url";
 import nodemailer from "nodemailer";
 import dotenv from "dotenv";
 
 dotenv.config();
 
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
+// Validate required environment variables on startup
+const validateEnv = () => {
+  const missingVars: string[] = [];
+  // If SMTP_HOST is not provided, we check if SMTP_USER is a gmail account. If not, we warn.
+  if (!process.env.SMTP_HOST && !process.env.SMTP_USER?.endsWith("@gmail.com")) {
+    console.warn("⚠️ SMTP_HOST is not set and SMTP_USER is not a Gmail address. Email sending may fail.");
+  }
+  if (!process.env.SMTP_USER) missingVars.push("SMTP_USER");
+  if (!process.env.SMTP_PASS) missingVars.push("SMTP_PASS");
+
+  if (missingVars.length > 0) {
+    console.warn(`⚠️ Missing SMTP environment variables: ${missingVars.join(", ")}. Bug reports will be logged to the console instead of emailed.`);
+  } else {
+    console.log("✅ SMTP configuration found. Bug reports will be emailed.");
+  }
+};
 
 async function startServer() {
+  validateEnv();
   const app = express();
   const PORT = 3000;
 
@@ -19,6 +33,11 @@ async function startServer() {
   // API Route for Bug Reports
   app.post("/api/report-bug", async (req, res) => {
     const { report, captcha } = req.body;
+    
+    // Validate bug report content
+    if (!report || typeof report !== 'string' || report.trim().length < 10) {
+      return res.status(400).json({ success: false, message: "Bug report must be at least 10 characters long." });
+    }
 
     // Verify CAPTCHA
     if (!captcha || typeof captcha.a !== 'number' || typeof captcha.b !== 'number' || typeof captcha.answer !== 'number') {

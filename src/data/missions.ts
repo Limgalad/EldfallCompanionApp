@@ -1,7 +1,9 @@
+export type Season = "Season 1";
+
 export interface Mission {
   id: string;
   title: string;
-  season: string;
+  season: Season;
   description: string;
   setup: string[];
   results: string[];
@@ -29,7 +31,12 @@ export const missions: Mission[] = [
       "Gain 4 VP for rendering an enemy with a Recruitment Cost of 30 or more Incapacitated or Dead.",
       "Gain 1 VP for rendering an enemy Leader Incapacitated or Dead."
     ],
-    questRules: [],
+    questRules: [
+      {
+        title: "Schemes",
+        content: "Before the Initiative Check, each player receives 1 Scheme Card. When drawing Schemes:\n- If Leader has INT 13 or less  draw 1 card.\n- If Leader has INT 14 or 15  draw 2 cards and choose 1 to keep.\n- If Leader has INT 16 or more  draw 3 cards and choose 1 to keep."
+      }
+    ],
     mapImage: ""
   },
   {
@@ -47,6 +54,10 @@ export const missions: Mission[] = [
       "Gain 1 VP if you have a model within 6\" of the Obelisk and your opponent has none within that range at the end of the round."
     ],
     questRules: [
+      {
+        title: "Schemes",
+        content: "Before the Initiative Check, each player receives 1 Scheme Card. When drawing Schemes:\n- If Leader has INT 13 or less  draw 1 card.\n- If Leader has INT 14 or 15  draw 2 cards and choose 1 to keep.\n- If Leader has INT 16 or more  draw 3 cards and choose 1 to keep."
+      },
       {
         title: "No Morale Loss",
         content: "Models ignore the Broken Morale rule during this Quest."
@@ -82,6 +93,10 @@ export const missions: Mission[] = [
     ],
     questRules: [
       {
+        title: "Schemes",
+        content: "Before the Initiative Check, each player receives 1 Scheme Card. When drawing Schemes:\n- If Leader has INT 13 or less  draw 1 card.\n- If Leader has INT 14 or 15  draw 2 cards and choose 1 to keep.\n- If Leader has INT 16 or more  draw 3 cards and choose 1 to keep."
+      },
+      {
         title: "Treasure (Cache)",
         content: "Models may not Interact with Cache during Round 1. To access the Treasure, a model must first reveal the Intrigue Token by successfully performing the Perceive Action (also automatically revealed on Base Contact). When revealed, the Intrigue Token is replaced with a Sigil Token.\n\nA model in Base Contact with a Cache token may declare an Interact Action and, by performing a successful AG roll, unlock the Cache and take the Treasure into its Inventory. Once unlocked, it cannot be unlocked again. Summoned models may not interact with Cache Tokens.\n\nA model with a Treasure in its Inventory may voluntarily leave the field via its own Deployment Zone. A model carrying a Treasure cannot be Shrouded or Flying. Treasure is an Item with Qty 1 and Wgt 1.\n\n(If the model becomes Incapacitated or Dead, the Treasure is removed from its Inventory and placed in Base Contact with the model. Models that leave the field voluntarily are still considered present and alive for the purposes of Loss of Morale.)"
       },
@@ -113,6 +128,10 @@ export const missions: Mission[] = [
       "If a player's party is in a state of Broken Morale at the start of their Strategic Phase, the Quest ends at the end of that Turn."
     ],
     questRules: [
+      {
+        title: "Schemes",
+        content: "Before the Initiative Check, each player receives 1 Scheme Card. When drawing Schemes:\n- If Leader has INT 13 or less  draw 1 card.\n- If Leader has INT 14 or 15  draw 2 cards and choose 1 to keep.\n- If Leader has INT 16 or more  draw 3 cards and choose 1 to keep."
+      },
       {
         title: "Resources (Intrigue)",
         content: "A model may loot the Resources and place them in its Inventory by declaring an Interact Action at the Intrigue Token. Models may not Interact with Intrigue Tokens during Round 1. Summoned models may not Interact with Intrigue Tokens at any time. Resources are an Item with Qty 1 and Wgt 1. (Resources can be represented in the Inventory by Toolkit cards.)"
@@ -147,6 +166,10 @@ export const missions: Mission[] = [
     ],
     questRules: [
       {
+        title: "Schemes",
+        content: "Before the Initiative Check, each player receives 1 Scheme Card. When drawing Schemes:\n- If Leader has INT 13 or less  draw 1 card.\n- If Leader has INT 14 or 15  draw 2 cards and choose 1 to keep.\n- If Leader has INT 16 or more  draw 3 cards and choose 1 to keep."
+      },
+      {
         title: "Arcane Artefact (Cache)",
         content: "Models may not Interact with Cache during Round 1. Summoned models may not Interact with Cache at any time. A model in Base Contact with the Cache may declare an Interact Action and, by performing a successful AG or INT roll, unlock the Cache and take the Arcane Artefact. Once unlocked, it cannot be unlocked again.\n\nWhile carrying the Arcane Artefact, a model may voluntarily leave the field via its own Deployment Zone. The carrier suffers halved SPD and cannot be Shrouded. The Arcane Artefact is an Item with Qty 1 and Wgt 1.\n\n(If the model becomes Incapacitated or Dead, the Arcane Artefact is removed from its Inventory and placed in Base Contact with the model. The owner chooses the exact placement. Models that leave the field voluntarily are still considered present and alive for the purposes of Loss of Morale.)"
       },
@@ -176,6 +199,10 @@ export const missions: Mission[] = [
       "IMPORTANT: Reset control over all Objective Markers to Neutral at the end of Round 2 and Round 4."
     ],
     questRules: [
+      {
+        title: "Schemes",
+        content: "Before the Initiative Check, each player receives 1 Scheme Card. When drawing Schemes:\n- If Leader has INT 13 or less  draw 1 card.\n- If Leader has INT 14 or 15  draw 2 cards and choose 1 to keep.\n- If Leader has INT 16 or more  draw 3 cards and choose 1 to keep."
+      },
       {
         title: "Magic Stones (Objective Markers)",
         content: "Objective Markers can be either Neutral or Controlled. At the start of the game, all Objective Markers are Neutral. A party may take control of a Neutral Objective Marker by having a model in Base Contact with it and performing an Interact Action — the marker then becomes Controlled by that model's party. If the Objective Marker is already Controlled, performing an Interact Action resets it to Neutral. Summoned models may not Interact with Objective Markers."

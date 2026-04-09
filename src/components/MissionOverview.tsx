@@ -1,34 +1,65 @@
 import { motion, AnimatePresence } from "motion/react";
 import { missions, Mission } from "../data/missions";
-import { questSchemes, SchemeCategory } from "../data/schemes";
+import { questSchemes, Faction } from "../data/schemes";
 import { creatureCategories, Creature } from "../data/creatures";
-import { ArrowLeft, Map as MapIcon, Target, ScrollText, Trophy, BookOpen, X, Ghost, ChevronDown, Info } from "lucide-react";
+import { skills as allSkills, traits as allTraits } from "../data/rules";
+import { spellSchools } from "../data/spells";
+import { ArrowLeft, Map as MapIcon, Target, ScrollText, Trophy, BookOpen, X, Ghost, ChevronDown, Info, AlertCircle } from "lucide-react";
 import { useState, useEffect, ReactNode } from "react";
 
 export default function MissionOverview({ onBack }: { onBack: () => void }) {
   const [selectedMission, setSelectedMission] = useState<Mission | null>(null);
   const [showSchemes, setShowSchemes] = useState(false);
-  const [selectedFaction, setSelectedFaction] = useState<string>("Neutral");
+  const [selectedFaction, setSelectedFaction] = useState<Faction>("Neutral");
   const [showCreatures, setShowCreatures] = useState(false);
+  const [activeTooltip, setActiveTooltip] = useState<{ title: string, content: string } | null>(null);
+
+  const getInfo = (name: string, type: 'skill' | 'trait' | 'spell') => {
+    const baseName = name.split(' ')[0];
+    
+    if (type === 'skill') {
+      const skill = allSkills.find(s => s.name.split(' ')[0] === baseName);
+      return skill ? { title: skill.name, content: skill.description } : null;
+    }
+    if (type === 'trait') {
+      const trait = allTraits.find(t => t.name.split(' ')[0] === baseName);
+      return trait ? { title: trait.name, content: trait.description } : null;
+    }
+    if (type === 'spell') {
+      for (const school of spellSchools) {
+        const spell = school.spells.find(s => s.name.split(' ')[0] === baseName);
+        if (spell) return { title: spell.name, content: spell.effect };
+      }
+    }
+    return null;
+  };
+
+  const handleShowTooltip = (name: string, type: 'skill' | 'trait' | 'spell') => {
+    setActiveTooltip(getInfo(name, type));
+  };
 
   useEffect(() => {
     window.scrollTo(0, 0);
   }, [selectedMission]);
 
-  if (selectedMission) {
-    return <MissionDetail mission={selectedMission} onBack={() => setSelectedMission(null)} />;
-  }
-
   return (
-    <div className="min-h-screen bg-stone-950 py-8 px-4">
-      <div className="max-w-7xl mx-auto">
-        <button 
-          onClick={onBack}
-          className="flex items-center text-stone-400 hover:text-red-500 transition-colors mb-6 group"
-        >
-          <ArrowLeft className="w-5 h-5 mr-2 group-hover:-translate-x-1 transition-transform" />
-          Back to Home
-        </button>
+    <div className="min-h-screen bg-stone-950">
+      {selectedMission ? (
+        <MissionDetail 
+          mission={selectedMission} 
+          onBack={() => setSelectedMission(null)} 
+          onShowTooltip={handleShowTooltip}
+        />
+      ) : (
+        <div className="py-8 px-4">
+          <div className="max-w-7xl mx-auto">
+            <button 
+              onClick={onBack}
+              className="flex items-center text-stone-400 hover:text-red-500 transition-colors mb-6 group"
+            >
+              <ArrowLeft className="w-5 h-5 mr-2 group-hover:-translate-x-1 transition-transform" />
+              Back to Home
+            </button>
 
         <header className="mb-8 flex flex-col md:flex-row md:items-end justify-between gap-4">
           <div>
@@ -96,9 +127,11 @@ export default function MissionOverview({ onBack }: { onBack: () => void }) {
           <h3 className="text-stone-500 font-display uppercase tracking-widest text-sm mb-2">Quest Archive</h3>
           <p className="text-stone-600 italic text-sm">Previous seasons will be archived here.</p>
         </div>
+        </div>
       </div>
+    )}
 
-      {/* Quest Schemes Modal */}
+    {/* Quest Schemes Modal */}
       <AnimatePresence>
         {showSchemes && (
           <motion.div 
@@ -263,9 +296,13 @@ export default function MissionOverview({ onBack }: { onBack: () => void }) {
                             <h4 className="text-stone-300 font-bold uppercase text-[10px] tracking-widest mb-2 border-b border-stone-800 pb-1">Skills</h4>
                             <div className="flex flex-wrap gap-1.5">
                               {creature.skills.map((skill, sIdx) => (
-                                <span key={sIdx} className="px-1.5 py-0.5 bg-stone-900 border border-stone-800 text-red-400 text-[10px] rounded">
+                                <button 
+                                  key={sIdx} 
+                                  onClick={() => setActiveTooltip(getInfo(skill, 'skill'))}
+                                  className="px-1.5 py-0.5 bg-stone-900 border border-stone-800 text-red-400 text-[10px] rounded hover:bg-stone-800 transition-colors"
+                                >
                                   {skill}
-                                </span>
+                                </button>
                               ))}
                             </div>
                           </div>
@@ -273,9 +310,13 @@ export default function MissionOverview({ onBack }: { onBack: () => void }) {
                             <h4 className="text-stone-300 font-bold uppercase text-[10px] tracking-widest mb-2 border-b border-stone-800 pb-1">Traits</h4>
                             <div className="flex flex-wrap gap-1.5">
                               {creature.traits.map((trait, tIdx) => (
-                                <span key={tIdx} className="px-1.5 py-0.5 bg-stone-900 border border-stone-800 text-stone-300 text-[10px] rounded">
+                                <button 
+                                  key={tIdx} 
+                                  onClick={() => setActiveTooltip(getInfo(trait, 'trait'))}
+                                  className="px-1.5 py-0.5 bg-stone-900 border border-stone-800 text-stone-300 text-[10px] rounded hover:bg-stone-800 transition-colors"
+                                >
                                   {trait}
-                                </span>
+                                </button>
                               ))}
                             </div>
                           </div>
@@ -286,9 +327,13 @@ export default function MissionOverview({ onBack }: { onBack: () => void }) {
                                   <h4 className="text-stone-300 font-bold uppercase text-[10px] tracking-widest mb-2 border-b border-stone-800 pb-1">Spellcrafts</h4>
                                   <div className="flex flex-wrap gap-1.5">
                                     {creature.spellcrafts.map((spell, sIdx) => (
-                                      <span key={sIdx} className="px-1.5 py-0.5 bg-stone-900 border border-stone-800 text-blue-400 text-[10px] rounded">
+                                      <button 
+                                        key={sIdx} 
+                                        onClick={() => setActiveTooltip(getInfo(spell, 'spell'))}
+                                        className="px-1.5 py-0.5 bg-stone-900 border border-stone-800 text-blue-400 text-[10px] rounded hover:bg-stone-800 transition-colors"
+                                      >
                                         {spell}
-                                      </span>
+                                      </button>
                                     ))}
                                   </div>
                                 </div>
@@ -298,9 +343,13 @@ export default function MissionOverview({ onBack }: { onBack: () => void }) {
                                   <h4 className="text-stone-300 font-bold uppercase text-[10px] tracking-widest mb-2 border-b border-stone-800 pb-1">Combat Arts</h4>
                                   <div className="flex flex-wrap gap-1.5">
                                     {creature.combatArts.map((art, aIdx) => (
-                                      <span key={aIdx} className="px-1.5 py-0.5 bg-stone-900 border border-stone-800 text-amber-400 text-[10px] rounded">
+                                      <button 
+                                        key={aIdx} 
+                                        onClick={() => setActiveTooltip(getInfo(art, 'trait'))} // Combat arts are similar to traits in rules
+                                        className="px-1.5 py-0.5 bg-stone-900 border border-stone-800 text-amber-400 text-[10px] rounded hover:bg-stone-800 transition-colors"
+                                      >
                                         {art}
-                                      </span>
+                                      </button>
                                     ))}
                                   </div>
                                 </div>
@@ -316,6 +365,50 @@ export default function MissionOverview({ onBack }: { onBack: () => void }) {
                     ))}
                   </div>
                 </div>
+              </div>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
+      {/* Tooltip Modal */}
+      <AnimatePresence>
+        {activeTooltip && (
+          <motion.div 
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm"
+            onClick={() => setActiveTooltip(null)}
+          >
+            <motion.div 
+              initial={{ scale: 0.9, opacity: 0, y: 20 }}
+              animate={{ scale: 1, opacity: 1, y: 0 }}
+              exit={{ scale: 0.9, opacity: 0, y: 20 }}
+              onClick={(e) => e.stopPropagation()}
+              className="bg-stone-900 border border-stone-800 rounded-xl shadow-2xl w-full max-w-md overflow-hidden"
+            >
+              <div className="p-4 border-b border-stone-800 flex justify-between items-center bg-stone-950/50">
+                <h3 className="text-lg font-bold text-red-500 uppercase tracking-widest">{activeTooltip.title}</h3>
+                <button 
+                  onClick={() => setActiveTooltip(null)}
+                  className="text-stone-400 hover:text-white transition-colors"
+                >
+                  <X className="w-5 h-5" />
+                </button>
+              </div>
+              <div className="p-6">
+                <p className="text-stone-300 text-sm leading-relaxed whitespace-pre-wrap">
+                  {activeTooltip.content}
+                </p>
+              </div>
+              <div className="p-4 bg-stone-950/50 border-t border-stone-800 text-center">
+                <button 
+                  onClick={() => setActiveTooltip(null)}
+                  className="text-xs text-stone-500 hover:text-stone-300 uppercase tracking-widest transition-colors"
+                >
+                  Tap anywhere to close
+                </button>
               </div>
             </motion.div>
           </motion.div>
@@ -356,7 +449,15 @@ function CollapsibleSection({ title, children, defaultOpen = false }: { title: s
   );
 }
 
-function MissionDetail({ mission, onBack }: { mission: Mission; onBack: () => void }) {
+function MissionDetail({ 
+  mission, 
+  onBack, 
+  onShowTooltip 
+}: { 
+  mission: Mission; 
+  onBack: () => void;
+  onShowTooltip: (name: string, type: 'skill' | 'trait' | 'spell') => void;
+}) {
   const [quickCreature, setQuickCreature] = useState<Creature | null>(null);
 
   const handleQuickView = (tier: string) => {
@@ -412,12 +513,19 @@ function MissionDetail({ mission, onBack }: { mission: Mission; onBack: () => vo
                   <h2 className="text-xl font-bold uppercase tracking-wider">Results (VP)</h2>
                 </div>
                 <ul className="space-y-4 text-stone-300">
-                  {mission.results.map((item, i) => (
-                    <li key={i} className="flex items-start">
-                      <span className="text-red-900 mr-3 mt-1.5">•</span>
-                      {item}
-                    </li>
-                  ))}
+                  {mission.results.map((item, i) => {
+                    const isImportant = item.startsWith("IMPORTANT:");
+                    return (
+                      <li key={i} className={`flex items-start ${isImportant ? 'text-orange-500 font-bold' : ''}`}>
+                        {isImportant ? (
+                          <AlertCircle className="w-4 h-4 mr-3 mt-1 flex-shrink-0" />
+                        ) : (
+                          <span className="text-red-900 mr-3 mt-1.5">•</span>
+                        )}
+                        <span className="text-sm leading-relaxed">{item}</span>
+                      </li>
+                    );
+                  })}
                 </ul>
               </section>
 
@@ -581,9 +689,13 @@ function MissionDetail({ mission, onBack }: { mission: Mission; onBack: () => vo
                     <h4 className="text-stone-300 font-bold uppercase text-xs tracking-widest mb-3 border-b border-stone-800 pb-2">Skills</h4>
                     <div className="flex flex-wrap gap-2">
                       {quickCreature.skills.map((skill, sIdx) => (
-                        <span key={sIdx} className="px-2 py-1 bg-stone-900 border border-stone-800 text-red-400 text-xs rounded">
+                        <button 
+                          key={sIdx} 
+                          onClick={() => onShowTooltip(skill, 'skill')}
+                          className="px-2 py-1 bg-stone-900 border border-stone-800 text-red-400 text-xs rounded hover:bg-stone-800 transition-colors"
+                        >
                           {skill}
-                        </span>
+                        </button>
                       ))}
                     </div>
                   </div>
@@ -591,9 +703,13 @@ function MissionDetail({ mission, onBack }: { mission: Mission; onBack: () => vo
                     <h4 className="text-stone-300 font-bold uppercase text-xs tracking-widest mb-3 border-b border-stone-800 pb-2">Traits</h4>
                     <div className="flex flex-wrap gap-2">
                       {quickCreature.traits.map((trait, tIdx) => (
-                        <span key={tIdx} className="px-2 py-1 bg-stone-900 border border-stone-800 text-stone-300 text-xs rounded">
+                        <button 
+                          key={tIdx} 
+                          onClick={() => onShowTooltip(trait, 'trait')}
+                          className="px-2 py-1 bg-stone-900 border border-stone-800 text-stone-300 text-xs rounded hover:bg-stone-800 transition-colors"
+                        >
                           {trait}
-                        </span>
+                        </button>
                       ))}
                     </div>
                   </div>
@@ -604,9 +720,13 @@ function MissionDetail({ mission, onBack }: { mission: Mission; onBack: () => vo
                           <h4 className="text-stone-300 font-bold uppercase text-xs tracking-widest mb-3 border-b border-stone-800 pb-2">Spellcrafts</h4>
                           <div className="flex flex-wrap gap-2">
                             {quickCreature.spellcrafts.map((spell, sIdx) => (
-                              <span key={sIdx} className="px-2 py-1 bg-stone-900 border border-stone-800 text-blue-400 text-xs rounded">
+                              <button 
+                                key={sIdx} 
+                                onClick={() => onShowTooltip(spell, 'spell')}
+                                className="px-2 py-1 bg-stone-900 border border-stone-800 text-blue-400 text-xs rounded hover:bg-stone-800 transition-colors"
+                              >
                                 {spell}
-                              </span>
+                              </button>
                             ))}
                           </div>
                         </div>
@@ -616,9 +736,13 @@ function MissionDetail({ mission, onBack }: { mission: Mission; onBack: () => vo
                           <h4 className="text-stone-300 font-bold uppercase text-xs tracking-widest mb-3 border-b border-stone-800 pb-2">Combat Arts</h4>
                           <div className="flex flex-wrap gap-2">
                             {quickCreature.combatArts.map((art, aIdx) => (
-                              <span key={aIdx} className="px-2 py-1 bg-stone-900 border border-stone-800 text-amber-400 text-xs rounded">
+                              <button 
+                                key={aIdx} 
+                                onClick={() => onShowTooltip(art, 'trait')}
+                                className="px-2 py-1 bg-stone-900 border border-stone-800 text-amber-400 text-xs rounded hover:bg-stone-800 transition-colors"
+                              >
                                 {art}
-                              </span>
+                              </button>
                             ))}
                           </div>
                         </div>

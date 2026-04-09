@@ -1,8 +1,12 @@
+export type CreatureTier = "Tier I" | "Tier II" | "Tier III" | "Tier IV" | "Tier V";
+export type CreatureSize = "Small" | "Medium" | "Large" | "Huge" | "Gigantic" | "Colossal";
+export type CreatureType = "CREATURE" | "Humanoid" | "Undead" | "Construct" | "Elemental";
+
 export interface CreatureWeapon {
   name: string;
-  pw: number;
+  pw: number | string;
   rch: string;
-  stk: number;
+  stk: number | string;
   type: string;
   effects: string;
   qty?: number;
@@ -11,16 +15,15 @@ export interface CreatureWeapon {
 
 export interface Creature {
   name: string;
-  tier: string;
-  size: string;
-  type: string;
+  tier: CreatureTier;
+  size: CreatureSize;
+  type: CreatureType;
   class?: string;
   alignment?: string;
   cost?: number;
   weight?: number;
   description: string;
   stats: {
-    hp: number;
     sta: number;
     spd: number;
     off: number;
@@ -29,8 +32,9 @@ export interface Creature {
     int: number;
     ag: number;
     t: number;
-    m: number;
     arm: number;
+    hp: number;
+    m: number;
   };
   weapons: CreatureWeapon[];
   skills: string[];
@@ -55,7 +59,7 @@ export const creatureCategories: CreatureCategory[] = [
         size: "Small",
         type: "CREATURE",
         description: "Hostile AI",
-        stats: { hp: 1, sta: 2, spd: 5, off: 12, def: 8, acc: 8, int: 8, ag: 8, t: 12, m: 20, arm: 5 },
+        stats: { sta: 2, spd: 5, off: 12, def: 8, acc: 8, int: 8, ag: 8, t: 12, arm: 5, hp: 1, m: 20 },
         weapons: [{ 
           name: "Gargoyle's Claws", 
           pw: 12, 
@@ -95,7 +99,7 @@ Special: When moving, use Leap and Climbing to take the shortest route to the ta
         size: "Huge",
         type: "CREATURE",
         description: "Hostile AI",
-        stats: { hp: 3, sta: 2, spd: 3, off: 10, def: 13, acc: 8, int: 8, ag: 6, t: 15, m: 20, arm: 8 },
+        stats: { sta: 2, spd: 3, off: 10, def: 13, acc: 8, int: 8, ag: 6, t: 15, arm: 8, hp: 3, m: 20 },
         weapons: [{ 
           name: "Fists of Stone", 
           pw: 15, 
@@ -134,7 +138,7 @@ REACTIVE
         size: "Gigantic",
         type: "CREATURE",
         description: "Hostile AI",
-        stats: { hp: 4, sta: 2, spd: 4, off: 12, def: 14, acc: 10, int: 8, ag: 6, t: 16, m: 20, arm: 10 },
+        stats: { sta: 2, spd: 4, off: 12, def: 14, acc: 10, int: 8, ag: 6, t: 16, arm: 10, hp: 4, m: 20 },
         weapons: [
           { 
             name: "Earthen Fists", 
@@ -146,9 +150,9 @@ REACTIVE
           },
           { 
             name: "Hurl", 
-            pw: 0, 
-            rch: "16", 
-            stk: 0, 
+            pw: "T", 
+            rch: "T", 
+            stk: 1, 
             type: "Ranged", 
             effects: "Ranged Attack via Hurl skill." 
           }
@@ -186,7 +190,7 @@ REACTIVE
         size: "Colossal",
         type: "CREATURE",
         description: "Hostile AI",
-        stats: { hp: 6, sta: 3, spd: 4, off: 14, def: 14, acc: 8, int: 8, ag: 6, t: 17, m: 20, arm: 10 },
+        stats: { sta: 3, spd: 4, off: 14, def: 14, acc: 8, int: 8, ag: 6, t: 17, arm: 10, hp: 6, m: 20 },
         weapons: [{ 
           name: "Hack & Thrash", 
           pw: 17, 
@@ -226,7 +230,7 @@ REACTIVE
         cost: 32,
         weight: 2,
         description: "Hostile AI",
-        stats: { hp: 3, sta: 3, spd: 5, off: 16, def: 12, acc: 8, int: 8, ag: 12, t: 14, m: 16, arm: 2 },
+        stats: { sta: 3, spd: 5, off: 16, def: 12, acc: 8, int: 8, ag: 12, t: 14, arm: 2, hp: 3, m: 16 },
         weapons: [{ 
           name: "Heavy Polearm", 
           pw: 17, 

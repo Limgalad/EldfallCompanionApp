@@ -1,3 +1,5 @@
+export type Faction = "Neutral" | "Empire of Soga" | "Sand Kingdoms" | "HelHalla" | "Coalition of Free Cities" | "Coalition of Thenion" | "Helian League";
+
 export interface Scheme {
   name: string;
   description: string;
@@ -5,7 +7,7 @@ export interface Scheme {
 }
 
 export interface SchemeCategory {
-  faction: string;
+  faction: Faction;
   schemes: Scheme[];
 }
 

@@ -5,12 +5,14 @@
 
 import { motion } from "motion/react";
 import { Book, Map, Sword, ExternalLink, Heart, Bug, X, Wand2, History } from "lucide-react";
-import React, { useState, useEffect } from "react";
-import MissionOverview from "./components/MissionOverview";
-import RulesWiki from "./components/RulesWiki";
-import SpellBook from "./components/SpellBook";
+import React, { useState, useEffect, Suspense, lazy } from "react";
 import ScrollToTop from "./components/ScrollToTop";
-import ChangelogModal from "./components/ChangelogModal";
+
+// Lazy load heavy components
+const MissionOverview = lazy(() => import("./components/MissionOverview"));
+const RulesWiki = lazy(() => import("./components/RulesWiki"));
+const SpellBook = lazy(() => import("./components/SpellBook"));
+const ChangelogModal = lazy(() => import("./components/ChangelogModal"));
 
 type Page = "home" | "missions" | "rules" | "spellbook";
 
@@ -25,15 +27,27 @@ export default function App() {
 
   const renderPage = () => {
     if (currentPage === "missions") {
-      return <MissionOverview onBack={() => setCurrentPage("home")} />;
+      return (
+        <Suspense fallback={<LoadingFallback />}>
+          <MissionOverview onBack={() => setCurrentPage("home")} />
+        </Suspense>
+      );
     }
 
     if (currentPage === "rules") {
-      return <RulesWiki onBack={() => setCurrentPage("home")} />;
+      return (
+        <Suspense fallback={<LoadingFallback />}>
+          <RulesWiki onBack={() => setCurrentPage("home")} />
+        </Suspense>
+      );
     }
 
     if (currentPage === "spellbook") {
-      return <SpellBook onBack={() => setCurrentPage("home")} />;
+      return (
+        <Suspense fallback={<LoadingFallback />}>
+          <SpellBook onBack={() => setCurrentPage("home")} />
+        </Suspense>
+      );
     }
 
     return (
@@ -138,7 +152,7 @@ export default function App() {
             onClick={() => setIsChangelogOpen(true)}
             className="mt-4 text-[10px] opacity-50 hover:opacity-100 uppercase tracking-widest transition-opacity flex items-center justify-center w-full gap-2"
           >
-            <History className="w-3 h-3" /> Version 1.0.4 • View Changelog
+            <History className="w-3 h-3" /> Version 1.0.5 • View Changelog
           </button>
         </footer>
       </div>
@@ -155,7 +169,7 @@ export default function App() {
           title="Changelog & Updates"
         >
           <History className="w-5 h-5" />
-          <span className="text-xs font-bold hidden sm:inline pr-2">v1.0.4</span>
+          <span className="text-xs font-bold hidden sm:inline pr-2">v1.0.5</span>
         </button>
       </div>
 
@@ -167,9 +181,22 @@ export default function App() {
       )}
       {/* Changelog Modal */}
       {isChangelogOpen && (
-        <ChangelogModal onClose={() => setIsChangelogOpen(false)} />
+        <Suspense fallback={null}>
+          <ChangelogModal onClose={() => setIsChangelogOpen(false)} />
+        </Suspense>
       )}
     </>
+  );
+}
+
+function LoadingFallback() {
+  return (
+    <div className="min-h-screen flex items-center justify-center">
+      <div className="flex flex-col items-center text-red-500">
+        <div className="w-12 h-12 border-4 border-red-500/30 border-t-red-500 rounded-full animate-spin mb-4" />
+        <p className="text-stone-400 font-bold uppercase tracking-widest">Loading...</p>
+      </div>
+    </div>
   );
 }
 
@@ -245,6 +272,11 @@ function BugReportModal({ onClose }: { onClose: () => void }) {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     
+    if (report.trim().length < 10) {
+      setStatus({ type: 'error', message: "Bug report must be at least 10 characters long." });
+      return;
+    }
+
     if (parseInt(captchaAnswer) !== captchaChallenge.a + captchaChallenge.b) {
       setStatus({ type: 'error', message: "Incorrect CAPTCHA answer. Please try again." });
       generateCaptcha();
@@ -289,7 +321,12 @@ function BugReportModal({ onClose }: { onClose: () => void }) {
   };
 
   return (
-    <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm">
+    <div 
+      className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm"
+      role="dialog"
+      aria-modal="true"
+      aria-labelledby="bug-report-title"
+    >
       <motion.div 
         initial={{ opacity: 0, scale: 0.95 }}
         animate={{ opacity: 1, scale: 1 }}
@@ -298,11 +335,12 @@ function BugReportModal({ onClose }: { onClose: () => void }) {
         <div className="p-6 border-b border-stone-800 flex items-center justify-between">
           <div className="flex items-center text-red-500">
             <Bug className="w-5 h-5 mr-2" />
-            <h3 className="text-xl font-bold text-white">Report a Bug</h3>
+            <h3 id="bug-report-title" className="text-xl font-bold text-white">Report a Bug</h3>
           </div>
           <button 
             onClick={onClose}
             className="p-2 hover:bg-stone-800 rounded-full text-stone-400 transition-colors"
+            aria-label="Close modal"
           >
             <X className="w-5 h-5" />
           </button>

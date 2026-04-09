@@ -192,7 +192,7 @@ export const rules: RuleSection[] = [
     id: "competitive-quests",
     title: "Competitive Quests",
     category: "Reference",
-    content: "Competitive Quests — Season 1",
+    content: "Competitive Quests: Season 1",
     subsections: [
       { title: "Quest 1: Open Hostilities", content: "Gain VP for rendering enemies Incapacitated or Dead based on their Recruitment Cost." },
       { title: "Quest 2: Awaiting Reinforcements", content: "Gain VP for controlling the Obelisk at the center of the field." },
