@@ -1,5 +1,4 @@
 import express from "express";
-import { createServer as createViteServer } from "vite";
 import path from "path";
 import nodemailer from "nodemailer";
 import dotenv from "dotenv";
@@ -11,15 +10,15 @@ const validateEnv = () => {
   const missingVars: string[] = [];
   // If SMTP_HOST is not provided, we check if SMTP_USER is a gmail account. If not, we warn.
   if (!process.env.SMTP_HOST && !process.env.SMTP_USER?.endsWith("@gmail.com")) {
-    console.warn("⚠️ SMTP_HOST is not set and SMTP_USER is not a Gmail address. Email sending may fail.");
+    console.warn("WARNING: SMTP_HOST is not set and SMTP_USER is not a Gmail address. Email sending may fail.");
   }
   if (!process.env.SMTP_USER) missingVars.push("SMTP_USER");
   if (!process.env.SMTP_PASS) missingVars.push("SMTP_PASS");
 
   if (missingVars.length > 0) {
-    console.warn(`⚠️ Missing SMTP environment variables: ${missingVars.join(", ")}. Bug reports will be logged to the console instead of emailed.`);
+    console.warn(`WARNING: Missing SMTP environment variables: ${missingVars.join(", ")}. Bug reports will be logged to the console instead of emailed.`);
   } else {
-    console.log("✅ SMTP configuration found. Bug reports will be emailed.");
+    console.log("SUCCESS: SMTP configuration found. Bug reports will be emailed.");
   }
 };
 
@@ -94,6 +93,7 @@ async function startServer() {
 
   // Vite middleware for development
   if (process.env.NODE_ENV !== "production") {
+    const { createServer: createViteServer } = await import("vite");
     const vite = await createViteServer({
       server: { middlewareMode: true },
       appType: "spa",

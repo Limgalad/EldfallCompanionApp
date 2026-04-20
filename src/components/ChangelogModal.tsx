@@ -33,41 +33,37 @@ export default function ChangelogModal({ onClose }: ChangelogModalProps) {
             <div className="flex items-center justify-between mb-4">
               <h4 className="text-lg font-bold text-white flex items-center">
                 <Star className="w-5 h-5 text-yellow-500 mr-2" />
-                Version 1.0.5
+                Version 1.1.0
               </h4>
-              <span className="text-xs font-mono text-amber-500 bg-amber-950/30 px-2 py-1 rounded border border-amber-900/50">
-                In Development
+              <span className="text-xs font-mono text-green-500 bg-green-950/30 px-2 py-1 rounded border border-green-900/50">
+                Latest Release
               </span>
             </div>
             
-            <div className="mb-4 p-3 bg-stone-950/50 border border-stone-800 rounded-lg text-xs text-stone-400 italic">
-              Note: This version is currently in active development and is not an official release yet. Features and data are subject to change.
-            </div>
-
             <ul className="space-y-3 text-sm text-stone-300">
               <li className="flex items-start">
-                <span className="text-green-500 mr-2 mt-0.5">•</span>
-                Implemented 9 APR errata updates: changes to Throwing, Impede, and Cleave rules.
-              </li>
-              <li className="flex items-start">
-                <span className="text-green-500 mr-2 mt-0.5">•</span>
-                Added comprehensive unit and integration tests for Mission Overview, Spell Book, and Rules Wiki using Vitest.
-              </li>
-              <li className="flex items-start">
-                <span className="text-green-500 mr-2 mt-0.5">•</span>
-                Enhanced type safety with strict union types for Missions, Creatures, Spells, and Factions.
-              </li>
-              <li className="flex items-start">
-                <span className="text-green-500 mr-2 mt-0.5">•</span>
-                Added Hostile AI behaviors to the Creatures Database (Gargoyle, Golem, Earth Elemental, Colossus, Amazon Gladiatrix).
-              </li>
-              <li className="flex items-start">
-                <span className="text-green-500 mr-2 mt-0.5">•</span>
-                Improved Mission Overview UI to better display structured behavior text.
+                <span className="text-blue-500 mr-2 mt-0.5">•</span>
+                <div>
+                  <span className="font-bold text-white">Interactive Rules Wiki:</span> Keywords in skill and creature descriptions (like Blinded, Surprise Attack) are now clickable, opening a definition popup without navigating away.
+                </div>
               </li>
               <li className="flex items-start">
                 <span className="text-blue-500 mr-2 mt-0.5">•</span>
-                Resolved linting errors and improved code consistency across data files.
+                <div>
+                  <span className="font-bold text-white">PWA Stabilization:</span> Resolved conflicting service worker logic to enable reliable offline support and installation.
+                </div>
+              </li>
+              <li className="flex items-start">
+                <span className="text-blue-500 mr-2 mt-0.5">•</span>
+                <div>
+                  <span className="font-bold text-white">Encoding Normalization:</span> Fixed character encoding artifacts (mojibake) in the footer, changelog, and server logs.
+                </div>
+              </li>
+              <li className="flex items-start">
+                <span className="text-green-500 mr-2 mt-0.5">•</span>
+                <div>
+                  <span className="font-bold text-white">Production Build Fixes:</span> Corrected build and start scripts to ensure proper execution in production environments.
+                </div>
               </li>
             </ul>
           </div>
@@ -79,6 +75,17 @@ export default function ChangelogModal({ onClose }: ChangelogModalProps) {
               Previous Updates
             </h4>
             <div className="space-y-4">
+              <div>
+                <div className="text-xs font-mono text-stone-500 mb-1 flex items-center justify-between">
+                  <span>v1.0.5</span>
+                  <span className="text-[10px] uppercase opacity-50 italic">Errata Update</span>
+                </div>
+                <ul className="space-y-1 text-sm text-stone-400">
+                  <li>• Implemented 9 APR errata updates: changes to Throwing, Impede, and Cleave rules.</li>
+                  <li>• Added Hostile AI behaviors to the Creatures Database.</li>
+                  <li>• Enhanced type safety across Missions and Factions.</li>
+                </ul>
+              </div>
               <div>
                 <div className="text-xs font-mono text-stone-500 mb-1">v1.0.3</div>
                 <ul className="space-y-1 text-sm text-stone-400">

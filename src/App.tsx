@@ -146,13 +146,13 @@ export default function App() {
 
         {/* Footer */}
         <footer className="py-8 border-t border-stone-900 text-center text-stone-500 text-sm">
-          <p>© 2026 Eldfall Chronicles Companion. All rights reserved.</p>
+          <p>&copy; 2026 Eldfall Chronicles Companion. All rights reserved.</p>
           <p className="mt-2">Created for the Eldfall Community.</p>
           <button 
             onClick={() => setIsChangelogOpen(true)}
             className="mt-4 text-[10px] opacity-50 hover:opacity-100 uppercase tracking-widest transition-opacity flex items-center justify-center w-full gap-2"
           >
-            <History className="w-3 h-3" /> Version 1.0.5 • View Changelog
+            <History className="w-3 h-3" /> Version 1.0.5 &bull; View Changelog
           </button>
         </footer>
       </div>
@@ -169,7 +169,7 @@ export default function App() {
           title="Changelog & Updates"
         >
           <History className="w-5 h-5" />
-          <span className="text-xs font-bold hidden sm:inline pr-2">v1.0.5</span>
+          <span className="text-xs font-bold hidden sm:inline pr-2">v1.1.0</span>
         </button>
       </div>
 

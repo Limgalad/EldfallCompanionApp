@@ -3,7 +3,7 @@ import { motion, AnimatePresence } from "motion/react";
 import { rules, traits, skills, classes, combatArtCategories, states, RuleSection, CombatArtCategory, Trait, Skill, State, ClassInfo, CombatArt } from "../data/rules";
 import { ArrowLeft, Search, BookOpen, Shield, Zap, Sparkles, Users, Sword, Activity, Info, X } from "lucide-react";
 
-const LINKABLE_KEYWORDS = [
+const LINKABLE_KEYWORDS: { name: string; type: "states" | "traits" | "skills" }[] = [
   { name: "Blinded", type: "states" },
   { name: "Engaged", type: "states" },
   { name: "Flying", type: "states" },
@@ -25,7 +25,12 @@ const LINKABLE_KEYWORDS = [
   { name: "Knockdown", type: "traits" },
 ];
 
-const RichText = ({ text, onKeywordClick }: { text: string; onKeywordClick: (item: any) => void }) => {
+type KeywordItem = 
+  | { type: "states"; data: State }
+  | { type: "traits"; data: Trait }
+  | { type: "skills"; data: Skill };
+
+const RichText = ({ text, onKeywordClick }: { text: string; onKeywordClick: (item: KeywordItem) => void }) => {
   if (!text) return null;
 
   const sortedKeywords = [...LINKABLE_KEYWORDS].sort((a, b) => b.name.length - a.name.length);
