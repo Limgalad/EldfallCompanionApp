@@ -3,6 +3,69 @@ import { motion, AnimatePresence } from "motion/react";
 import { rules, traits, skills, classes, combatArtCategories, states, RuleSection, CombatArtCategory, Trait, Skill, State, ClassInfo, CombatArt } from "../data/rules";
 import { ArrowLeft, Search, BookOpen, Shield, Zap, Sparkles, Users, Sword, Activity, Info, X } from "lucide-react";
 
+const LINKABLE_KEYWORDS = [
+  { name: "Blinded", type: "states" },
+  { name: "Engaged", type: "states" },
+  { name: "Flying", type: "states" },
+  { name: "Bleeding", type: "states" },
+  { name: "Crippled", type: "states" },
+  { name: "Weakened", type: "states" },
+  { name: "Shrouded", type: "states" },
+  { name: "Confused", type: "states" },
+  { name: "Panicked", type: "states" },
+  { name: "Poisoned", type: "states" },
+  { name: "Dead", type: "states" },
+  { name: "Crouched", type: "states" },
+  { name: "Immobilized", type: "states" },
+  { name: "Incapacitated", type: "states" },
+  { name: "Surprise Attack", type: "traits" },
+  { name: "Two-Handed", type: "traits" },
+  { name: "Stagger", type: "traits" },
+  { name: "Mindgame", type: "traits" },
+  { name: "Knockdown", type: "traits" },
+];
+
+const RichText = ({ text, onKeywordClick }: { text: string; onKeywordClick: (item: any) => void }) => {
+  if (!text) return null;
+
+  const sortedKeywords = [...LINKABLE_KEYWORDS].sort((a, b) => b.name.length - a.name.length);
+  const pattern = sortedKeywords.map(k => `\\b${k.name}\\b`).join('|');
+  
+  if (!pattern) return <>{text}</>;
+
+  const regex = new RegExp(`(${pattern})`, 'gi');
+  const parts = text.split(regex);
+
+  return (
+    <>
+      {parts.map((part, i) => {
+        const keyword = sortedKeywords.find(k => k.name.toLowerCase() === part.toLowerCase());
+        if (keyword) {
+          let data;
+          if (keyword.type === 'states') data = states.find(s => s.name === keyword.name);
+          if (keyword.type === 'traits') data = traits.find(t => t.name === keyword.name);
+          
+          if (data) {
+            return (
+              <button
+                key={i}
+                onClick={(e) => {
+                  e.stopPropagation();
+                  onKeywordClick({ type: keyword.type, data });
+                }}
+                className="text-red-500 hover:text-red-400 font-bold underline decoration-red-900/50 underline-offset-2 transition-colors inline"
+              >
+                {part}
+              </button>
+            );
+          }
+        }
+        return part;
+      })}
+    </>
+  );
+};
+
 export default function RulesWiki({ onBack }: { onBack: () => void }) {
   const [searchQuery, setSearchQuery] = useState("");
   const [activeTab, setActiveTab] = useState<"mechanics" | "states" | "traits" | "skills" | "classes" | "combatArts">("mechanics");
@@ -13,6 +76,13 @@ export default function RulesWiki({ onBack }: { onBack: () => void }) {
     | { type: "skills"; data: Skill }
     | { type: "combatArts"; data: CombatArtCategory }
     | { type: "classes"; data: ClassInfo }
+    | null
+  >(null);
+
+  const [nestedItem, setNestedItem] = useState<
+    | { type: "states"; data: State }
+    | { type: "traits"; data: Trait }
+    | { type: "skills"; data: Skill }
     | null
   >(null);
 
@@ -325,7 +395,12 @@ export default function RulesWiki({ onBack }: { onBack: () => void }) {
                 </div>
 
                 <div className="space-y-6">
-                  <p className="text-stone-300 text-sm leading-relaxed whitespace-pre-wrap">{selectedItem.data.description || selectedItem.data.content}</p>
+                  <div className="text-stone-300 text-sm leading-relaxed whitespace-pre-wrap font-sans">
+                    <RichText 
+                      text={selectedItem.data.description || selectedItem.data.content} 
+                      onKeywordClick={setNestedItem} 
+                    />
+                  </div>
                   
                   {selectedItem.type === "mechanics" && selectedItem.data.subsections && (
                     <div className="space-y-4">
@@ -376,6 +451,50 @@ export default function RulesWiki({ onBack }: { onBack: () => void }) {
                       </div>
                     </div>
                   )}
+                </div>
+              </motion.div>
+            </div>
+          )}
+        </AnimatePresence>
+
+        {/* Nested Modal for Keywords */}
+        <AnimatePresence>
+          {nestedItem && (
+            <div className="fixed inset-0 z-[60] flex items-center justify-center p-4">
+              <motion.div 
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                exit={{ opacity: 0 }}
+                onClick={() => setNestedItem(null)}
+                className="absolute inset-0 bg-stone-950/40 backdrop-blur-[2px]"
+              />
+              <motion.div
+                initial={{ opacity: 0, scale: 0.9, y: 10 }}
+                animate={{ opacity: 1, scale: 1, y: 0 }}
+                exit={{ opacity: 0, scale: 0.9, y: 10 }}
+                className="relative bg-stone-900 border border-stone-700 rounded-xl max-w-lg w-full overflow-hidden shadow-2xl"
+              >
+                <div className="p-4 border-b border-stone-800 flex justify-between items-center bg-stone-950/50">
+                  <div className="flex items-center space-x-2">
+                    <Info className="w-4 h-4 text-red-500" />
+                    <h3 className="text-sm font-bold text-white uppercase tracking-widest">{nestedItem.data.name}</h3>
+                  </div>
+                  <button onClick={() => setNestedItem(null)} className="text-stone-500 hover:text-white transition-colors">
+                    <X className="w-4 h-4" />
+                  </button>
+                </div>
+                <div className="p-5">
+                  <p className="text-stone-300 text-xs leading-relaxed whitespace-pre-wrap font-sans">
+                    {nestedItem.data.description}
+                  </p>
+                </div>
+                <div className="p-3 bg-stone-950/30 border-t border-stone-800 text-center">
+                   <button 
+                     onClick={() => setNestedItem(null)}
+                     className="text-[10px] text-stone-500 hover:text-stone-300 uppercase tracking-widest transition-colors"
+                   >
+                     Close Reference
+                   </button>
                 </div>
               </motion.div>
             </div>

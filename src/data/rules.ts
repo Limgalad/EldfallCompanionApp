@@ -312,7 +312,7 @@ export const traits: Trait[] = [
   },
   {
     name: "Cleave",
-    description: "If a model suffers at least one Wound with this Trait, it suffers an additional Wound. (Berserkers can perform a T roll for each Wound to negate it.)"
+    description: "If a model suffers at least one Wound with this Trait, it suffers an additional Wound."
   },
   {
     name: "Construct",
@@ -452,7 +452,7 @@ export const traits: Trait[] = [
   },
   {
     name: "Throwing",
-    description: "An Item with this Trait enables a Ranged Attack with RCH equal to the user's T. STK can be up to the Item's QTY. Upon use, the Item is removed, even if the Attack is unsuccessful. If the Attack incapacitates or kills the target, the Item can be recovered by moving into Base Contact with the target."
+    description: "An Item with this Trait enables a Ranged Attack with RCH equal to the user's T. STK can be up to the Item's QTY. Upon use, remove QTY of the Item equal to the STK, even if the Attack is unsuccessful. If the Attack incapacitates or kills the target, the Item can be recovered by moving into Base Contact with the target."
   },
   {
     name: "Trample",
@@ -512,7 +512,7 @@ export const skills: Skill[] = [
   },
   {
     name: "Clairvoyance",
-    description: "- Reactive Role: May declare a Reaction using Casting Aura Spells to target enemy models within Awareness without requiring LoS. Ignores LoS restrictions from Environments, the Blinded State, and the Surprise Attack Trait of enemies within Awareness.\n- Active Role: Does not suffer halving modifiers when casting Spells without LoS."
+    description: "When in the Reactive Role, this model may declare Reaction and target enemy models within its Awareness even without LoS. If it has access to Spells with the Casting Aura reach, it may cast them without LoS even in the Reactive Role. It may ignore the Blinded state if the enemy model is within its Awareness, as well as the Surprise Attack trait of enemy models within its Awareness. In the Active Role, the caster with this skill does not suffer halving modifiers when spellcasting without LoS."
   },
   {
     name: "Climbing",
@@ -556,7 +556,7 @@ export const skills: Skill[] = [
   },
   {
     name: "Impede",
-    description: "When this model declares an Attack of Opportunity against a non-Engaged model, that model's Movement ends at the point of the Attack. If the Attack was Melee, the target also becomes Engaged immediately."
+    description: "When this model declares an Attack of Opportunity with a Melee Attack against a non-Engaged model, that model's Movement ends at the point of the Attack. If the Attack was Melee, the target also becomes Engaged immediately."
   },
   {
     name: "Infiltration",

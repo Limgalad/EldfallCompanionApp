@@ -201,7 +201,7 @@ An Incapacitated model that has a Friendly model in **Base Contact**, and neithe
 #### First Aid
 - **Limit:** increased to **2**
 - **Price:** reduced to **2 rpts**
-- **Effect Change:** When a model would perform a Recovery Check while within Awareness of the First Aid owner, you may **discard this Upgrade** — if you do, that model **automatically succeeds the T roll**. Alternatively, you may discard this Upgrade during the Strategic Phase to **remove all States** from an alive model within Awareness.
+- **Effect Change:** When a model (including this model) would perform a Recovery Check while within Awareness of the First Aid owner, you may **discard this Upgrade** — if you do, that model **automatically succeeds the T roll**. Alternatively, you may discard this Upgrade during the Strategic Phase to **remove all States** from an alive model within Awareness.
 
 ---
 

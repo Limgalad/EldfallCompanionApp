@@ -38,7 +38,7 @@ If a model suffers at least one Wound with this Trait, the attacker may perform 
 ---
 
 ## Cleave
-If a model suffers at least one Wound with this Trait, it suffers an **additional Wound**. *(Berserkers can perform a T roll for each Wound to negate it.)*
+If a model suffers at least one Wound with this Trait, it suffers an **additional Wound**.
 
 ---
 
@@ -224,7 +224,7 @@ In the Active Role, an Attack with this Trait **does not require a model as a ta
 ---
 
 ## Throwing
-An Item with this Trait enables a **Ranged Attack with RCH equal to the user's T**. STK can be up to the Item's QTY. Upon use, the Item is **removed**, even if the Attack is unsuccessful. If the Attack incapacitates or kills the target, the Item can be **recovered** by moving into Base Contact with the target.
+An Item with this Trait enables a **Ranged Attack with RCH equal to the user's T**. STK can be up to the Item's QTY. Upon use, **remove** QTY of the Item equal to the STK, even if the Attack is unsuccessful. If the Attack incapacitates or kills the target, the Item can be **recovered** by moving into Base Contact with the target.
 
 ---
 

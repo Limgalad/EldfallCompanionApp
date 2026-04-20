@@ -23,8 +23,7 @@ Once per Activation Sequence, if another allied model scores a Hit against an en
 ---
 
 ## Clairvoyance
-- **Reactive Role:** May declare a Reaction using Casting Aura Spells to target enemy models within Awareness **without requiring LoS**. Ignores LoS restrictions from Environments, the Blinded State, and the Surprise Attack Trait of enemies within Awareness.
-- **Active Role:** Does not suffer halving modifiers when casting Spells without LoS.
+-  When in the **Reactive Role**, this model may declare Reaction and target enemy models within its Awareness even without LoS. If it has access to Spells with the Casting Aura reach, it may cast them without LoS even in the Reactive Role. It may ignore the **Blinded state** if the enemy model is within its Awareness, as well as the **Surprise Attack trait** of enemy models within its Awareness. In the Active Role, the caster with this skill does not suffer halving modifiers when spellcasting without LoS.
 
 ---
 
@@ -90,7 +89,7 @@ This model may declare a **STK 1 Ranged Attack** with RCH and PW equal to its **
 ---
 
 ## Impede
-When this model declares an **Attack of Opportunity** against a non-Engaged model, that model's **Movement ends** at the point of the Attack. If the Attack was Melee, the target also becomes **Engaged** immediately.
+When this model declares an **Attack of Opportunity** with a Melee Attack against a non-Engaged model, that model's **Movement ends** at the point of the Attack. If the Attack was Melee, the target also becomes **Engaged** immediately.
 
 ---
 

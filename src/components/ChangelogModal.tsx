@@ -47,6 +47,10 @@ export default function ChangelogModal({ onClose }: ChangelogModalProps) {
             <ul className="space-y-3 text-sm text-stone-300">
               <li className="flex items-start">
                 <span className="text-green-500 mr-2 mt-0.5">•</span>
+                Implemented 9 APR errata updates: changes to Throwing, Impede, and Cleave rules.
+              </li>
+              <li className="flex items-start">
+                <span className="text-green-500 mr-2 mt-0.5">•</span>
                 Added comprehensive unit and integration tests for Mission Overview, Spell Book, and Rules Wiki using Vitest.
               </li>
               <li className="flex items-start">
