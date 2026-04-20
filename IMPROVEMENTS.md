@@ -23,9 +23,9 @@ This document outlines the results of a comprehensive code review and lists pote
     - [ ] **Quest Schemes**: Add a tile for all schemes used in quests.
     - [ ] **Equipment & Upgrades**: Implement a reference for equipment and upgrades.
 - **Search Improvements**: The current search is basic. Enhance with:
-    - [ ] Fuzzy search or autocomplete.
-    - [ ] Filters by category (e.g., search only traits or combat arts).
-    - [ ] Highlighting of search terms in results.
+    - [x] Fuzzy search or autocomplete.
+    - [x] Filters by category (e.g., search only traits or combat arts).
+    - [x] Highlighting of search terms in results.
 - **User Experience**:
     - [x] Add a loading state for mission/rule details.
     - [ ] Implement breadcrumbs or better navigation (e.g., back button history).

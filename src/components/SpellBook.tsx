@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useMemo, useState } from 'react';
 import { motion } from 'motion/react';
 import { ArrowLeft, Wand2, Search, Filter, Sparkles } from 'lucide-react';
 import { spellSchools, Spell, SpellSchool } from '../data/spells';
@@ -7,20 +7,75 @@ interface SpellBookProps {
   onBack: () => void;
 }
 
+const normalizeText = (value: string) =>
+  value
+    .toLowerCase()
+    .replace(/[^a-z0-9\s]/g, ' ')
+    .replace(/\s+/g, ' ')
+    .trim();
+
+const getFuzzyScore = (query: string, text: string) => {
+  const normalizedQuery = normalizeText(query);
+  const normalizedText = normalizeText(text);
+
+  if (!normalizedQuery) {
+    return 1;
+  }
+
+  const directIndex = normalizedText.indexOf(normalizedQuery);
+  if (directIndex >= 0) {
+    return 1000 - directIndex;
+  }
+
+  let queryIndex = 0;
+  let gapPenalty = 0;
+  let lastMatchIndex = -1;
+
+  for (let i = 0; i < normalizedText.length && queryIndex < normalizedQuery.length; i += 1) {
+    if (normalizedText[i] === normalizedQuery[queryIndex]) {
+      if (lastMatchIndex >= 0) {
+        gapPenalty += i - lastMatchIndex - 1;
+      }
+      lastMatchIndex = i;
+      queryIndex += 1;
+    }
+  }
+
+  if (queryIndex !== normalizedQuery.length) {
+    return 0;
+  }
+
+  return Math.max(100 - gapPenalty, 1);
+};
+
 export default function SpellBook({ onBack }: SpellBookProps) {
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedSchool, setSelectedSchool] = useState<SpellSchool['name'] | null>(null);
 
-  const filteredSchools = spellSchools.map(school => {
-    const filteredSpells = school.spells.filter(spell => 
-      spell.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      spell.effect.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      spell.element.toLowerCase().includes(searchQuery.toLowerCase())
-    );
-    return { ...school, spells: filteredSpells };
-  }).filter(school => 
-    (selectedSchool === null || school.name === selectedSchool) && 
-    school.spells.length > 0
+  const filteredSchools = useMemo(
+    () =>
+      spellSchools
+        .map((school) => {
+          const filteredSpells = school.spells
+            .map((spell) => ({
+              spell,
+              score: getFuzzyScore(
+                searchQuery,
+                `${spell.name} ${spell.effect} ${spell.element} ${spell.type} ${school.name}`,
+              ),
+            }))
+            .filter(({ score }) => score > 0)
+            .sort((left, right) => right.score - left.score || left.spell.name.localeCompare(right.spell.name))
+            .map(({ spell }) => spell);
+
+          return { ...school, spells: filteredSpells };
+        })
+        .filter(
+          (school) =>
+            (selectedSchool === null || school.name === selectedSchool) &&
+            school.spells.length > 0,
+        ),
+    [searchQuery, selectedSchool],
   );
 
   return (

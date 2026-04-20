@@ -17,6 +17,13 @@ describe('SpellBook', () => {
     expect(screen.queryByText(/Summon Gargoyle/i)).not.toBeInTheDocument();
   });
 
+  it('supports fuzzy spell search queries', () => {
+    render(<SpellBook onBack={() => {}} />);
+    const searchInput = screen.getByPlaceholderText(/Search spells by name, effect, or element.../i);
+    fireEvent.change(searchInput, { target: { value: 'ethrl blds' } });
+    expect(screen.getByText(/Ethereal Blades/i)).toBeInTheDocument();
+  });
+
   it('filters spells by school', () => {
     render(<SpellBook onBack={() => {}} />);
     const schoolSelect = screen.getByRole('combobox');

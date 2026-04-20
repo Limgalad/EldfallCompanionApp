@@ -1,7 +1,7 @@
-import React, { useState, useEffect } from "react";
+import React, { useMemo, useState, useEffect } from "react";
 import { motion, AnimatePresence } from "motion/react";
 import { rules, traits, skills, classes, combatArtCategories, states, RuleSection, CombatArtCategory, Trait, Skill, State, ClassInfo, CombatArt } from "../data/rules";
-import { ArrowLeft, Search, BookOpen, Shield, Zap, Sparkles, Users, Sword, Activity, Info, X } from "lucide-react";
+import { ArrowLeft, Search, BookOpen, Shield, Zap, Sparkles, Users, Sword, Activity, Info, X, Menu } from "lucide-react";
 
 const LINKABLE_KEYWORDS: { name: string; type: "states" | "traits" | "skills" }[] = [
   { name: "Blinded", type: "states" },
@@ -30,7 +30,106 @@ type KeywordItem =
   | { type: "traits"; data: Trait }
   | { type: "skills"; data: Skill };
 
-const RichText = ({ text, onKeywordClick }: { text: string; onKeywordClick: (item: KeywordItem) => void }) => {
+type SearchCategory = "all" | "mechanics" | "states" | "traits" | "skills" | "classes" | "combatArts";
+
+type SelectedItem =
+  | { type: "mechanics"; data: RuleSection }
+  | { type: "states"; data: State }
+  | { type: "traits"; data: Trait }
+  | { type: "skills"; data: Skill }
+  | { type: "combatArts"; data: CombatArtCategory }
+  | { type: "classes"; data: ClassInfo };
+
+type SearchResultEntry = {
+  id: string;
+  category: Exclude<SearchCategory, "all">;
+  title: string;
+  preview: string;
+  searchText: string;
+  selectedItem: SelectedItem;
+};
+
+const SEARCH_CATEGORY_LABELS: Record<SearchCategory, string> = {
+  all: "All",
+  mechanics: "Mechanics",
+  states: "States",
+  traits: "Traits",
+  skills: "Skills",
+  classes: "Classes",
+  combatArts: "Combat Arts",
+};
+
+const escapeRegExp = (value: string) => value.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+
+const normalizeText = (value: string) =>
+  value
+    .toLowerCase()
+    .replace(/[^a-z0-9\s]/g, " ")
+    .replace(/\s+/g, " ")
+    .trim();
+
+const getFuzzyScore = (query: string, text: string) => {
+  const normalizedQuery = normalizeText(query);
+  const normalizedText = normalizeText(text);
+
+  if (!normalizedQuery) {
+    return 1;
+  }
+
+  const directIndex = normalizedText.indexOf(normalizedQuery);
+  if (directIndex >= 0) {
+    return 1000 - directIndex;
+  }
+
+  let queryIndex = 0;
+  let gapPenalty = 0;
+  let lastMatchIndex = -1;
+
+  for (let i = 0; i < normalizedText.length && queryIndex < normalizedQuery.length; i += 1) {
+    if (normalizedText[i] === normalizedQuery[queryIndex]) {
+      if (lastMatchIndex >= 0) {
+        gapPenalty += i - lastMatchIndex - 1;
+      }
+      lastMatchIndex = i;
+      queryIndex += 1;
+    }
+  }
+
+  if (queryIndex !== normalizedQuery.length) {
+    return 0;
+  }
+
+  return Math.max(100 - gapPenalty, 1);
+};
+
+function HighlightedText({ text, query }: { text: string; query: string }) {
+  const trimmedQuery = query.trim();
+
+  if (!trimmedQuery) {
+    return <>{text}</>;
+  }
+
+  const parts = text.split(new RegExp(`(${escapeRegExp(trimmedQuery)})`, "gi"));
+
+  return (
+    <>
+      {parts.map((part, index) => (
+        part.toLowerCase() === trimmedQuery.toLowerCase() ? (
+          <mark
+            key={`${part}-${index}`}
+            className="bg-red-500/15 text-red-200 rounded px-0.5"
+          >
+            {part}
+          </mark>
+        ) : (
+          <React.Fragment key={`${part}-${index}`}>{part}</React.Fragment>
+        )
+      ))}
+    </>
+  );
+}
+
+const RichText = ({ text, onKeywordClick, highlightQuery = "" }: { text: string; onKeywordClick: (item: KeywordItem) => void; highlightQuery?: string }) => {
   if (!text) return null;
 
   const sortedKeywords = [...LINKABLE_KEYWORDS].sort((a, b) => b.name.length - a.name.length);
@@ -65,7 +164,11 @@ const RichText = ({ text, onKeywordClick }: { text: string; onKeywordClick: (ite
             );
           }
         }
-        return part;
+        return (
+          <React.Fragment key={`${part}-${i}`}>
+            <HighlightedText text={part} query={highlightQuery} />
+          </React.Fragment>
+        );
       })}
     </>
   );
@@ -73,16 +176,10 @@ const RichText = ({ text, onKeywordClick }: { text: string; onKeywordClick: (ite
 
 export default function RulesWiki({ onBack }: { onBack: () => void }) {
   const [searchQuery, setSearchQuery] = useState("");
+  const [searchCategory, setSearchCategory] = useState<SearchCategory>("all");
+  const [isFilterMenuOpen, setIsFilterMenuOpen] = useState(false);
   const [activeTab, setActiveTab] = useState<"mechanics" | "states" | "traits" | "skills" | "classes" | "combatArts">("mechanics");
-  const [selectedItem, setSelectedItem] = useState<
-    | { type: "mechanics"; data: RuleSection }
-    | { type: "states"; data: State }
-    | { type: "traits"; data: Trait }
-    | { type: "skills"; data: Skill }
-    | { type: "combatArts"; data: CombatArtCategory }
-    | { type: "classes"; data: ClassInfo }
-    | null
-  >(null);
+  const [selectedItem, setSelectedItem] = useState<SelectedItem | null>(null);
 
   const [nestedItem, setNestedItem] = useState<
     | { type: "states"; data: State }
@@ -95,38 +192,132 @@ export default function RulesWiki({ onBack }: { onBack: () => void }) {
     window.scrollTo(0, 0);
   }, [activeTab]);
 
-  const filteredRules = rules.filter(r => 
-    r.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
-    r.content.toLowerCase().includes(searchQuery.toLowerCase()) ||
-    r.subsections?.some(s => s.title.toLowerCase().includes(searchQuery.toLowerCase()) || s.content.toLowerCase().includes(searchQuery.toLowerCase()))
+  const searchEntries = useMemo<SearchResultEntry[]>(
+    () => [
+      ...rules.map((section) => ({
+        id: `mechanics-${section.id}`,
+        category: "mechanics" as const,
+        title: section.title,
+        preview: section.content,
+        searchText: [section.title, section.content, ...(section.subsections?.flatMap((sub) => [sub.title, sub.content]) ?? [])].join(" "),
+        selectedItem: { type: "mechanics", data: section } as SelectedItem,
+      })),
+      ...states.map((state) => ({
+        id: `states-${state.name}`,
+        category: "states" as const,
+        title: state.name,
+        preview: state.description,
+        searchText: `${state.name} ${state.description}`,
+        selectedItem: { type: "states", data: state } as SelectedItem,
+      })),
+      ...traits.map((trait) => ({
+        id: `traits-${trait.name}`,
+        category: "traits" as const,
+        title: trait.name,
+        preview: trait.description,
+        searchText: `${trait.name} ${trait.description}`,
+        selectedItem: { type: "traits", data: trait } as SelectedItem,
+      })),
+      ...skills.map((skill) => ({
+        id: `skills-${skill.name}`,
+        category: "skills" as const,
+        title: skill.name,
+        preview: skill.description,
+        searchText: `${skill.name} ${skill.description}`,
+        selectedItem: { type: "skills", data: skill } as SelectedItem,
+      })),
+      ...classes.map((cls) => ({
+        id: `classes-${cls.name}`,
+        category: "classes" as const,
+        title: cls.name,
+        preview: cls.description,
+        searchText: `${cls.name} ${cls.description} ${cls.abilities.join(" ")}`,
+        selectedItem: { type: "classes", data: cls } as SelectedItem,
+      })),
+      ...combatArtCategories.map((combatArtCategory) => ({
+        id: `combatArts-${combatArtCategory.name}`,
+        category: "combatArts" as const,
+        title: combatArtCategory.name,
+        preview: combatArtCategory.ruleText,
+        searchText: [
+          combatArtCategory.name,
+          combatArtCategory.ruleText,
+          combatArtCategory.flavorText,
+          ...combatArtCategory.levels.flatMap((level) => [level.name, level.description]),
+        ].join(" "),
+        selectedItem: { type: "combatArts", data: combatArtCategory } as SelectedItem,
+      })),
+    ],
+    [],
   );
 
-  const filteredStates = states.filter(s => 
-    s.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-    s.description.toLowerCase().includes(searchQuery.toLowerCase())
+  const rankedSearchEntries = useMemo(
+    () => searchEntries
+      .map((entry) => ({
+        ...entry,
+        score: getFuzzyScore(searchQuery, `${entry.title} ${entry.searchText}`),
+      }))
+      .filter((entry) => entry.score > 0)
+      .sort((left, right) => right.score - left.score || left.title.localeCompare(right.title)),
+    [searchEntries, searchQuery],
   );
 
-  const filteredTraits = traits.filter(t => 
-    t.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-    t.description.toLowerCase().includes(searchQuery.toLowerCase())
+  const filteredSearchEntries = useMemo(
+    () =>
+      rankedSearchEntries.filter((entry) =>
+        searchCategory === "all" ? true : entry.category === searchCategory,
+      ),
+    [rankedSearchEntries, searchCategory],
   );
 
-  const filteredSkills = skills.filter(s => 
-    s.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-    s.description.toLowerCase().includes(searchQuery.toLowerCase())
+  const autocompleteResults = useMemo(
+    () => (searchQuery.trim() ? filteredSearchEntries.slice(0, 6) : []),
+    [filteredSearchEntries, searchQuery],
   );
 
-  const filteredClasses = classes.filter(c => 
-    c.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-    c.description.toLowerCase().includes(searchQuery.toLowerCase()) ||
-    c.abilities.some(a => a.toLowerCase().includes(searchQuery.toLowerCase()))
+  const searchResultsByCategory = useMemo(
+    () => ({
+      mechanics: filteredSearchEntries.filter((entry) => entry.category === "mechanics"),
+      states: filteredSearchEntries.filter((entry) => entry.category === "states"),
+      traits: filteredSearchEntries.filter((entry) => entry.category === "traits"),
+      skills: filteredSearchEntries.filter((entry) => entry.category === "skills"),
+      classes: filteredSearchEntries.filter((entry) => entry.category === "classes"),
+      combatArts: filteredSearchEntries.filter((entry) => entry.category === "combatArts"),
+    }),
+    [filteredSearchEntries],
   );
 
-  const filteredCombatArts = combatArtCategories.filter(cac => 
-    cac.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-    cac.flavorText.toLowerCase().includes(searchQuery.toLowerCase()) ||
-    cac.ruleText.toLowerCase().includes(searchQuery.toLowerCase()) ||
-    cac.levels.some(l => l.name.toLowerCase().includes(searchQuery.toLowerCase()) || l.description.toLowerCase().includes(searchQuery.toLowerCase()))
+  const hasSearchQuery = searchQuery.trim().length > 0;
+  const visibleSearchCategories =
+    searchCategory === "all"
+      ? (Object.keys(searchResultsByCategory) as Exclude<SearchCategory, "all">[]).filter(
+          (category) => searchResultsByCategory[category].length > 0,
+        )
+      : [searchCategory];
+
+  const renderSearchResultCard = (entry: SearchResultEntry) => (
+    <button
+      key={entry.id}
+      type="button"
+      className="eldfall-card eldfall-card-interactive card-p group text-left"
+      onClick={() => {
+        setActiveTab(entry.category);
+        setSelectedItem(entry.selectedItem);
+      }}
+    >
+      <div className="flex justify-between items-start mb-3">
+        <span className="text-xs font-display uppercase tracking-eyebrow text-red-500/70">
+          {SEARCH_CATEGORY_LABELS[entry.category]}
+        </span>
+        <Info className="w-4 h-4 text-stone-700 group-hover:text-red-500 transition-colors" />
+      </div>
+      <h3 className="text-lg font-bold text-white mb-2 group-hover:text-red-500 transition-colors">
+        <HighlightedText text={entry.title} query={searchQuery} />
+      </h3>
+      <p className="body-sm line-clamp-3">
+        <HighlightedText text={entry.preview} query={searchQuery} />
+      </p>
+    </button>
   );
 
   return (
@@ -157,8 +348,19 @@ export default function RulesWiki({ onBack }: { onBack: () => void }) {
               placeholder="Search rules, traits, skills, or combat arts..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className="eldfall-input eldfall-input-with-icon pr-12"
+              className="eldfall-input eldfall-input-with-icon pr-24"
             />
+            <button
+              type="button"
+              aria-label="Open search filters"
+              aria-expanded={isFilterMenuOpen}
+              onClick={() => setIsFilterMenuOpen((current) => !current)}
+              className={`btn-icon-circle absolute right-10 top-1/2 -translate-y-1/2 border-transparent bg-transparent shadow-none hover:bg-stone-800 ${
+                searchCategory !== "all" ? "text-red-400" : ""
+              }`}
+            >
+              <Menu className="w-5 h-5" />
+            </button>
             {searchQuery && (
               <button
                 onClick={() => setSearchQuery("")}
@@ -167,7 +369,69 @@ export default function RulesWiki({ onBack }: { onBack: () => void }) {
                 <X className="w-5 h-5" />
               </button>
             )}
+
+            {isFilterMenuOpen && (
+              <div className="absolute right-0 top-[calc(100%+0.75rem)] z-20 w-56 rounded-xl border border-stone-800 bg-stone-900/95 p-2 shadow-2xl backdrop-blur-sm">
+                <div className="px-3 py-2 text-[10px] uppercase tracking-eyebrow text-stone-500">
+                  Search Scope
+                </div>
+                <div className="space-y-1">
+                  {(Object.keys(SEARCH_CATEGORY_LABELS) as SearchCategory[]).map((category) => (
+                    <button
+                      key={category}
+                      type="button"
+                      onClick={() => {
+                        setSearchCategory(category);
+                        setIsFilterMenuOpen(false);
+                      }}
+                      className={`flex w-full items-center justify-between rounded-lg px-3 py-2 text-left text-xs font-bold uppercase tracking-eyebrow transition-colors ${
+                        searchCategory === category
+                          ? "bg-red-900/20 text-red-400"
+                          : "text-stone-400 hover:bg-stone-800 hover:text-stone-200"
+                      }`}
+                    >
+                      <span>{SEARCH_CATEGORY_LABELS[category]}</span>
+                      {searchCategory === category && <span className="text-[10px]">Active</span>}
+                    </button>
+                  ))}
+                </div>
+              </div>
+            )}
           </div>
+
+          {autocompleteResults.length > 0 && (
+            <div className="mt-3 max-w-2xl bg-stone-900/95 border border-stone-800 rounded-xl overflow-hidden shadow-2xl">
+              <div className="px-4 py-2 border-b border-stone-800 text-[10px] uppercase tracking-eyebrow text-stone-500">
+                Suggestions
+              </div>
+              <div className="divide-y divide-stone-800">
+                {autocompleteResults.map((entry) => (
+                  <button
+                    key={`suggestion-${entry.id}`}
+                    type="button"
+                    onClick={() => {
+                      setSearchQuery(entry.title);
+                      setSearchCategory(entry.category);
+                      setActiveTab(entry.category);
+                    }}
+                    className="w-full px-4 py-3 text-left hover:bg-stone-800 transition-colors"
+                  >
+                    <div className="flex items-center justify-between gap-3">
+                      <span className="text-sm font-bold text-white">
+                        <HighlightedText text={entry.title} query={searchQuery} />
+                      </span>
+                      <span className="text-[10px] uppercase tracking-eyebrow text-red-400">
+                        {SEARCH_CATEGORY_LABELS[entry.category]}
+                      </span>
+                    </div>
+                    <p className="body-xs mt-1 line-clamp-2">
+                      <HighlightedText text={entry.preview} query={searchQuery} />
+                    </p>
+                  </button>
+                ))}
+              </div>
+            </div>
+          )}
         </div>
 
         {/* Tabs */}
@@ -211,6 +475,35 @@ export default function RulesWiki({ onBack }: { onBack: () => void }) {
         </div>
 
         <main>
+          {hasSearchQuery ? (
+            visibleSearchCategories.length > 0 ? (
+              <div className="space-y-8">
+                {visibleSearchCategories.map((category) => (
+                  <section key={category} className="space-y-4">
+                    {searchCategory === "all" && (
+                      <div className="flex items-center justify-between border-b border-stone-900 pb-3">
+                        <h2 className="text-xl font-bold text-white">{SEARCH_CATEGORY_LABELS[category]}</h2>
+                        <span className="text-xs uppercase tracking-eyebrow text-stone-500">
+                          {searchResultsByCategory[category].length} match{searchResultsByCategory[category].length === 1 ? "" : "es"}
+                        </span>
+                      </div>
+                    )}
+
+                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                      {searchResultsByCategory[category].map(renderSearchResultCard)}
+                    </div>
+                  </section>
+                ))}
+              </div>
+            ) : (
+              <div className="eldfall-card card-p-lg text-center">
+                <h2 className="text-xl font-bold text-white mb-2">No Results Found</h2>
+                <p className="body-sm">
+                  Try a different search term, use a broader category, or pick one of the autocomplete suggestions above.
+                </p>
+              </div>
+            )
+          ) : (
           <AnimatePresence mode="wait">
             {activeTab === "mechanics" && (
               <motion.div
@@ -220,7 +513,7 @@ export default function RulesWiki({ onBack }: { onBack: () => void }) {
                 exit={{ opacity: 0, y: -10 }}
                 className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4"
               >
-                {filteredRules.map((section) => (
+                {rules.map((section) => (
                   <div 
                     key={section.id}
                     className="eldfall-card eldfall-card-interactive card-p group"
@@ -245,7 +538,7 @@ export default function RulesWiki({ onBack }: { onBack: () => void }) {
                 exit={{ opacity: 0, y: -10 }}
                 className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-4"
               >
-                {filteredStates.map((state) => (
+                {states.map((state) => (
                   <div 
                     key={state.name} 
                     className="eldfall-card eldfall-card-interactive card-p group"
@@ -269,7 +562,7 @@ export default function RulesWiki({ onBack }: { onBack: () => void }) {
                 exit={{ opacity: 0, y: -10 }}
                 className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-4"
               >
-                {filteredTraits.map((trait) => (
+                {traits.map((trait) => (
                   <div 
                     key={trait.name} 
                     className="eldfall-card eldfall-card-interactive card-p group"
@@ -293,7 +586,7 @@ export default function RulesWiki({ onBack }: { onBack: () => void }) {
                 exit={{ opacity: 0, y: -10 }}
                 className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-4"
               >
-                {filteredSkills.map((skill) => (
+                {skills.map((skill) => (
                   <div 
                     key={skill.name} 
                     className="eldfall-card eldfall-card-interactive card-p group"
@@ -317,7 +610,7 @@ export default function RulesWiki({ onBack }: { onBack: () => void }) {
                 exit={{ opacity: 0, y: -10 }}
                 className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4"
               >
-                {filteredCombatArts.map((cac) => (
+                {combatArtCategories.map((cac) => (
                   <div 
                     key={cac.name} 
                     className="eldfall-card eldfall-card-interactive card-p group"
@@ -348,7 +641,7 @@ export default function RulesWiki({ onBack }: { onBack: () => void }) {
                 exit={{ opacity: 0, y: -10 }}
                 className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4"
               >
-                {filteredClasses.map((cls) => (
+                {classes.map((cls) => (
                   <div 
                     key={cls.name} 
                     className="eldfall-card eldfall-card-interactive card-p group"
@@ -372,6 +665,7 @@ export default function RulesWiki({ onBack }: { onBack: () => void }) {
               </motion.div>
             )}
           </AnimatePresence>
+          )}
         </main>
 
         {/* Modal for Details */}
@@ -410,7 +704,8 @@ export default function RulesWiki({ onBack }: { onBack: () => void }) {
                   <div className="text-stone-300 body-sm whitespace-pre-wrap font-sans">
                     <RichText 
                       text={selectedItem.data.description || selectedItem.data.content} 
-                      onKeywordClick={setNestedItem} 
+                      onKeywordClick={setNestedItem}
+                      highlightQuery={searchQuery}
                     />
                   </div>
                   
