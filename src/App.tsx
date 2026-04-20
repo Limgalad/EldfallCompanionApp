@@ -73,10 +73,10 @@ export default function App() {
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.8 }}
             >
-              <h1 className="text-4xl md:text-5xl font-bold text-white mb-4 drop-shadow-2xl">
+              <h1 className="h1-standard mb-4 drop-shadow-2xl">
                 ELDFALL CHRONICLES
               </h1>
-              <p className="text-lg md:text-xl text-stone-300 font-light tracking-widest uppercase mb-8">
+              <p className="text-lg md:text-xl text-stone-300 font-light tracking-eyebrow uppercase mb-8">
                 Companion App
               </p>
             </motion.div>
@@ -121,7 +121,7 @@ export default function App() {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ delay: 0.5 }}
-            className="mt-12 max-w-2xl mx-auto text-center p-6 rounded-2xl bg-stone-950/50 border border-stone-900 backdrop-blur-sm"
+            className="mt-12 max-w-2xl mx-auto text-center p-6 rounded-xl bg-stone-950/50 border border-stone-900 backdrop-blur-sm"
           >
             <div className="inline-flex items-center justify-center w-12 h-12 rounded-full bg-red-500/10 border border-red-500/20 mb-4">
               <Heart className="w-6 h-6 text-red-500 fill-red-500/20" />
@@ -131,12 +131,12 @@ export default function App() {
               If you like what this app offers and want to see it grow with new seasons and rule updates, your support like buying me a coffee helps me keep improving it.
             </p>
             <div className="flex flex-wrap justify-center gap-4">
-              <button className="px-6 py-2 bg-red-600 hover:bg-red-700 text-white text-sm font-bold rounded-lg transition-all hover:scale-105 active:scale-95 shadow-lg shadow-red-900/20">
+              <button className="btn-primary">
                 Sponsor App
               </button>
               <button 
                 onClick={() => setIsBugModalOpen(true)}
-                className="px-6 py-2 bg-stone-800 hover:bg-stone-700 text-white text-sm font-bold rounded-lg transition-all hover:scale-105 active:scale-95 border border-stone-700 flex items-center"
+                className="btn-secondary"
               >
                 <Bug className="w-4 h-4 mr-2" /> Report Bug
               </button>
@@ -150,7 +150,7 @@ export default function App() {
           <p className="mt-2">Created for the Eldfall Community.</p>
           <button 
             onClick={() => setIsChangelogOpen(true)}
-            className="mt-4 text-[10px] opacity-50 hover:opacity-100 uppercase tracking-widest transition-opacity flex items-center justify-center w-full gap-2"
+            className="mt-4 text-[10px] opacity-50 hover:opacity-100 uppercase tracking-eyebrow transition-opacity flex items-center justify-center w-full gap-2"
           >
             <History className="w-3 h-3" /> Version 1.0.5 &bull; View Changelog
           </button>
@@ -165,11 +165,11 @@ export default function App() {
       <div className="fixed top-4 right-4 z-50 flex items-center gap-2">
         <button 
           onClick={() => setIsChangelogOpen(true)}
-          className="p-2 bg-stone-900/80 hover:bg-stone-800 border border-stone-700 rounded-full text-stone-300 transition-all hover:scale-105 active:scale-95 flex items-center gap-2 backdrop-blur-md shadow-lg"
+          className="btn-secondary h-10 px-4"
           title="Changelog & Updates"
         >
-          <History className="w-5 h-5" />
-          <span className="text-xs font-bold hidden sm:inline pr-2">v1.1.0</span>
+          <History className="w-5 h-5 mr-2" />
+          <span className="text-xs font-bold hidden sm:inline">v1.1.0</span>
         </button>
       </div>
 
@@ -194,7 +194,7 @@ function LoadingFallback() {
     <div className="min-h-screen flex items-center justify-center">
       <div className="flex flex-col items-center text-red-500">
         <div className="w-12 h-12 border-4 border-red-500/30 border-t-red-500 rounded-full animate-spin mb-4" />
-        <p className="text-stone-400 font-bold uppercase tracking-widest">Loading...</p>
+        <p className="text-stone-400 font-bold uppercase tracking-eyebrow">Loading...</p>
       </div>
     </div>
   );
@@ -221,7 +221,7 @@ function NavCard({
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.5, delay }}
       onClick={onClick}
-      className="eldfall-card p-5 h-full flex flex-col items-center text-center group cursor-pointer"
+      className="eldfall-card eldfall-card-interactive card-p h-full flex flex-col items-center text-center group"
     >
       <div className="mb-4 p-4 rounded-full bg-stone-950 border border-stone-800 group-hover:border-red-900/50 transition-colors">
         {icon}
@@ -229,7 +229,7 @@ function NavCard({
       <h2 className="text-xl font-bold mb-3 group-hover:text-red-500 transition-colors">
         {title}
       </h2>
-      <p className="text-stone-400 text-sm leading-relaxed flex-grow">
+      <p className="body-sm flex-grow">
         {description}
       </p>
       {externalLink && (
@@ -330,9 +330,9 @@ function BugReportModal({ onClose }: { onClose: () => void }) {
       <motion.div 
         initial={{ opacity: 0, scale: 0.95 }}
         animate={{ opacity: 1, scale: 1 }}
-        className="bg-stone-900 border border-stone-800 rounded-2xl w-full max-w-lg overflow-hidden shadow-2xl"
+        className="surface-overlay w-full max-w-lg"
       >
-        <div className="p-6 border-b border-stone-800 flex items-center justify-between">
+        <div className="card-p-lg border-b border-stone-800 flex items-center justify-between">
           <div className="flex items-center text-red-500">
             <Bug className="w-5 h-5 mr-2" />
             <h3 id="bug-report-title" className="text-xl font-bold text-white">Report a Bug</h3>
@@ -355,7 +355,7 @@ function BugReportModal({ onClose }: { onClose: () => void }) {
             value={report}
             onChange={(e) => setReport(e.target.value)}
             placeholder="Describe the bug here..."
-            className="w-full h-40 bg-stone-950 border border-stone-800 rounded-xl p-4 text-white placeholder-stone-600 focus:outline-none focus:border-red-900/50 transition-colors resize-none mb-4 disabled:opacity-50"
+            className="eldfall-input h-40 bg-stone-950 p-4 resize-none mb-4 disabled:opacity-50"
           />
 
           <div className="mb-6">
@@ -369,12 +369,12 @@ function BugReportModal({ onClose }: { onClose: () => void }) {
               value={captchaAnswer}
               onChange={(e) => setCaptchaAnswer(e.target.value)}
               placeholder="Enter result"
-              className="w-full bg-stone-950 border border-stone-800 rounded-xl p-3 text-white placeholder-stone-600 focus:outline-none focus:border-red-900/50 transition-colors disabled:opacity-50"
+              className="eldfall-input bg-stone-950 disabled:opacity-50"
             />
           </div>
           
           {status && (
-            <div className={`p-4 rounded-lg mb-6 text-sm ${
+            <div className={`p-4 rounded-xl mb-6 text-sm ${
               status.type === 'success' ? 'bg-green-900/20 text-green-400 border border-green-900/50' : 'bg-red-900/20 text-red-400 border border-red-900/50'
             }`}>
               {status.message}
@@ -386,14 +386,14 @@ function BugReportModal({ onClose }: { onClose: () => void }) {
               type="button"
               disabled={isSubmitting}
               onClick={onClose}
-              className="px-6 py-2 text-stone-400 hover:text-white transition-colors disabled:opacity-50"
+              className="px-6 py-2 text-stone-400 hover:text-white transition-all hover:scale-[1.02] active:scale-[0.98] disabled:opacity-50"
             >
               Cancel
             </button>
             <button
               type="submit"
               disabled={isSubmitting}
-              className="px-8 py-2 bg-red-600 hover:bg-red-700 text-white font-bold rounded-lg transition-all shadow-lg shadow-red-900/20 disabled:opacity-50 flex items-center"
+              className="btn-primary"
             >
               {isSubmitting ? (
                 <>

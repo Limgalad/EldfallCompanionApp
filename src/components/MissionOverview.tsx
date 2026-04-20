@@ -51,38 +51,62 @@ export default function MissionOverview({ onBack }: { onBack: () => void }) {
           onShowTooltip={handleShowTooltip}
         />
       ) : (
-        <div className="py-8 px-4">
-          <div className="max-w-7xl mx-auto">
-            <button 
-              onClick={onBack}
-              className="flex items-center text-stone-400 hover:text-red-500 transition-colors mb-6 group"
-            >
-              <ArrowLeft className="w-5 h-5 mr-2 group-hover:-translate-x-1 transition-transform" />
-              Back to Home
-            </button>
+        <>
+          <header className="page-header">
+            <div className="header-content">
+              <div className="flex items-center gap-4">
+                <button
+                  onClick={onBack}
+                  className="btn-icon-circle"
+                >
+                  <ArrowLeft className="w-5 h-5" />
+                </button>
+                <div className="flex items-center gap-2">
+                  <MapIcon className="w-6 h-6 text-red-500" />
+                  <h1 className="h1-standard">Quest Overview</h1>
+                </div>
+              </div>
+              <div className="hidden sm:flex items-center gap-3">
+                <button 
+                  onClick={() => setShowSchemes(true)}
+                  className="btn-action"
+                >
+                  <BookOpen className="w-4 h-4 mr-2" />
+                  Schemes
+                </button>
+                <button 
+                  onClick={() => setShowCreatures(true)}
+                  className="btn-action"
+                >
+                  <Ghost className="w-4 h-4 mr-2" />
+                  Creatures
+                </button>
+              </div>
+            </div>
+          </header>
 
-        <header className="mb-8 flex flex-col md:flex-row md:items-end justify-between gap-4">
-          <div>
-            <h1 className="text-3xl md:text-4xl font-bold text-white mb-2">Competitive Quests</h1>
-            <p className="text-lg text-stone-400 font-light tracking-widest uppercase">Season 1</p>
-          </div>
-          <div className="flex flex-col sm:flex-row gap-3">
-            <button 
-              onClick={() => setShowSchemes(true)}
-              className="flex items-center px-4 py-2 text-sm bg-stone-900/50 text-stone-300 border border-stone-800 rounded hover:bg-stone-800 hover:text-white transition-colors whitespace-nowrap"
-            >
-              <BookOpen className="w-4 h-4 mr-2" />
-              Quest Schemes
-            </button>
-            <button 
-              onClick={() => setShowCreatures(true)}
-              className="flex items-center px-4 py-2 text-sm bg-stone-900/50 text-stone-300 border border-stone-800 rounded hover:bg-stone-800 hover:text-white transition-colors whitespace-nowrap"
-            >
-              <Ghost className="w-4 h-4 mr-2" />
-              Creatures Database
-            </button>
-          </div>
-        </header>
+          <main className="max-w-7xl mx-auto px-4 py-8">
+            <div className="mb-8 flex flex-col md:flex-row md:items-end justify-between gap-4">
+              <div>
+                <p className="text-lg text-stone-400 font-light tracking-eyebrow uppercase">Season 1</p>
+              </div>
+              <div className="flex sm:hidden flex-col gap-3">
+                <button 
+                  onClick={() => setShowSchemes(true)}
+                  className="btn-action w-full"
+                >
+                  <BookOpen className="w-4 h-4 mr-2" />
+                  Quest Schemes
+                </button>
+                <button 
+                  onClick={() => setShowCreatures(true)}
+                  className="btn-action w-full"
+                >
+                  <Ghost className="w-4 h-4 mr-2" />
+                  Creatures Database
+                </button>
+              </div>
+            </div>
 
         <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-4">
           {missions.map((mission, index) => (
@@ -92,9 +116,9 @@ export default function MissionOverview({ onBack }: { onBack: () => void }) {
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.4, delay: index * 0.1 }}
               onClick={() => setSelectedMission(mission)}
-              className="eldfall-card p-4 cursor-pointer group"
+              className="eldfall-card eldfall-card-interactive p-4 group"
             >
-              <div className="aspect-video mb-4 overflow-hidden rounded border border-stone-800 bg-stone-900/50 flex items-center justify-center">
+              <div className="aspect-video mb-4 overflow-hidden rounded-xl border border-stone-800 bg-stone-900/50 flex items-center justify-center">
                 {mission.mapImage ? (
                   <img 
                     src={mission.mapImage} 
@@ -105,14 +129,14 @@ export default function MissionOverview({ onBack }: { onBack: () => void }) {
                 ) : (
                   <div className="text-stone-600 flex flex-col items-center">
                     <MapIcon className="w-6 h-6 mb-2 opacity-20" />
-                    <span className="text-[10px] uppercase tracking-widest opacity-40">No Tactical Map</span>
+                    <span className="text-[10px] uppercase tracking-eyebrow opacity-40">No Tactical Map</span>
                   </div>
                 )}
               </div>
               <h2 className="text-lg font-bold mb-2 group-hover:text-red-500 transition-colors">
                 {mission.title}
               </h2>
-              <p className="text-stone-400 text-xs line-clamp-3 leading-relaxed">
+              <p className="body-xs line-clamp-3">
                 {mission.description}
               </p>
               <div className="mt-4 flex items-center text-red-500 text-xs font-medium">
@@ -123,13 +147,13 @@ export default function MissionOverview({ onBack }: { onBack: () => void }) {
         </div>
 
         {/* Archive Placeholder */}
-        <div className="mt-20 p-8 rounded-lg border border-stone-900 bg-stone-900/20 text-center">
-          <h3 className="text-stone-500 font-display uppercase tracking-widest text-sm mb-2">Quest Archive</h3>
+        <div className="mt-20 p-8 rounded-xl border border-stone-900 bg-surface-2/20 text-center">
+          <h3 className="text-stone-500 font-display uppercase tracking-eyebrow text-sm mb-2">Quest Archive</h3>
           <p className="text-stone-600 italic text-sm">Previous seasons will be archived here.</p>
         </div>
-        </div>
-      </div>
-    )}
+          </main>
+        </>
+      )}
 
     {/* Quest Schemes Modal */}
       <AnimatePresence>
@@ -146,16 +170,16 @@ export default function MissionOverview({ onBack }: { onBack: () => void }) {
               animate={{ scale: 1, opacity: 1 }}
               exit={{ scale: 0.95, opacity: 0 }}
               onClick={(e) => e.stopPropagation()}
-              className="bg-stone-950 border border-stone-800 rounded-lg shadow-2xl w-full max-w-4xl max-h-[90vh] flex flex-col overflow-hidden"
+              className="surface-overlay rounded-xl w-full max-w-4xl max-h-[90vh] flex flex-col"
             >
-              <div className="p-4 border-b border-stone-800 flex justify-between items-center bg-stone-900/50">
+              <div className="p-4 border-b border-stone-800 flex justify-between items-center bg-surface-2/50">
                 <div className="flex items-center text-red-500">
                   <BookOpen className="w-5 h-5 mr-3" />
-                  <h2 className="text-xl font-bold uppercase tracking-widest">Quest Schemes</h2>
+                  <h2 className="text-xl font-bold uppercase tracking-eyebrow">Quest Schemes</h2>
                 </div>
                 <button 
                   onClick={() => setShowSchemes(false)}
-                  className="text-stone-400 hover:text-white transition-colors"
+                  className="btn-icon-circle border-transparent bg-transparent shadow-none hover:bg-stone-800"
                 >
                   <X className="w-5 h-5" />
                 </button>
@@ -163,12 +187,12 @@ export default function MissionOverview({ onBack }: { onBack: () => void }) {
               
               <div className="flex flex-col md:flex-row flex-1 overflow-hidden">
                 {/* Faction Selector */}
-                <div className="w-full md:w-64 border-b md:border-b-0 md:border-r border-stone-800 bg-stone-900/30 overflow-y-auto p-3 space-y-1 custom-scrollbar">
+                <div className="w-full md:w-64 border-b md:border-b-0 md:border-r border-stone-800 bg-surface-2/30 overflow-y-auto p-3 space-y-1 custom-scrollbar">
                   {questSchemes.map((category) => (
                     <button
                       key={category.faction}
                       onClick={() => setSelectedFaction(category.faction)}
-                      className={`w-full text-left px-3 py-2 text-sm rounded transition-colors ${
+                      className={`w-full text-left px-3 py-2 text-sm rounded-lg transition-colors ${
                         selectedFaction === category.faction 
                           ? 'bg-red-900/20 text-red-500 border border-red-900/50' 
                           : 'text-stone-400 hover:bg-stone-800 hover:text-stone-200'
@@ -180,13 +204,13 @@ export default function MissionOverview({ onBack }: { onBack: () => void }) {
                 </div>
 
                 {/* Schemes List */}
-                <div className="flex-1 overflow-y-auto p-4 bg-stone-950 custom-scrollbar">
+                <div className="flex-1 overflow-y-auto p-4 surface-1 custom-scrollbar">
                   <div className="space-y-3">
                     {questSchemes.find(c => c.faction === selectedFaction)?.schemes.map((scheme, idx) => (
-                      <div key={idx} className="p-3 rounded border border-stone-800 bg-stone-900/20">
+                      <div key={idx} className="p-3 rounded-lg border border-stone-800 bg-surface-2/20">
                         <div className="flex justify-between items-start mb-2">
                           <h3 className="text-base font-bold text-white">{scheme.name}</h3>
-                          <span className="px-2 py-0.5 bg-stone-800 text-stone-300 text-[10px] font-mono rounded">
+                          <span className="eldfall-chip">
                             Roll: {scheme.rollResult}
                           </span>
                         </div>
@@ -218,16 +242,16 @@ export default function MissionOverview({ onBack }: { onBack: () => void }) {
               animate={{ scale: 1, opacity: 1 }}
               exit={{ scale: 0.95, opacity: 0 }}
               onClick={(e) => e.stopPropagation()}
-              className="bg-stone-950 border border-stone-800 rounded-lg shadow-2xl w-full max-w-5xl max-h-[90vh] flex flex-col overflow-hidden"
+              className="surface-overlay rounded-xl w-full max-w-5xl max-h-[90vh] flex flex-col"
             >
-              <div className="p-4 border-b border-stone-800 flex justify-between items-center bg-stone-900/50">
+              <div className="card-p-lg border-b border-stone-800 flex justify-between items-center bg-surface-2/50 shrink-0">
                 <div className="flex items-center text-red-500">
                   <Ghost className="w-5 h-5 mr-3" />
-                  <h2 className="text-xl font-bold uppercase tracking-widest">Creatures Database</h2>
+                  <h2 className="text-lg font-bold uppercase tracking-eyebrow">Creatures</h2>
                 </div>
                 <button 
                   onClick={() => setShowCreatures(false)}
-                  className="text-stone-400 hover:text-white transition-colors"
+                  className="btn-icon-circle border-transparent bg-transparent shadow-none hover:bg-stone-800"
                 >
                   <X className="w-5 h-5" />
                 </button>
@@ -235,24 +259,21 @@ export default function MissionOverview({ onBack }: { onBack: () => void }) {
               
               <div className="flex flex-col md:flex-row flex-1 overflow-hidden">
                 {/* Creatures List */}
-                <div className="flex-1 overflow-y-auto p-4 bg-stone-950 custom-scrollbar">
+                <div className="flex-1 overflow-y-auto p-4 surface-1 custom-scrollbar">
                   <div className="space-y-6">
                     {creatureCategories[0]?.creatures.map((creature, idx) => (
-                      <div key={idx} className="p-4 rounded border border-stone-800 bg-stone-900/20">
+                      <div key={idx} className="p-4 rounded-lg border border-stone-800 bg-surface-2/20">
                         <div className="flex justify-between items-start mb-3">
                           <div>
-                            <h3 className="text-xl font-bold text-white mb-1">{creature.name}</h3>
-                            <div className="flex flex-wrap gap-2 mb-1">
-                              <span className="text-stone-500 text-[10px] uppercase font-bold tracking-tighter">Size: {creature.size}</span>
-                              <span className="text-stone-500 text-[10px] uppercase font-bold tracking-tighter">Type: {creature.type}</span>
-                              {creature.class && <span className="text-stone-500 text-[10px] uppercase font-bold tracking-tighter">Class: {creature.class}</span>}
-                              {creature.alignment && <span className="text-stone-500 text-[10px] uppercase font-bold tracking-tighter">Alignment: {creature.alignment}</span>}
-                              {creature.cost && <span className="text-stone-500 text-[10px] uppercase font-bold tracking-tighter">Cost: {creature.cost}</span>}
-                              {creature.weight && <span className="text-stone-500 text-[10px] uppercase font-bold tracking-tighter">Weight: {creature.weight}</span>}
+                            <h3 className="text-lg font-bold text-white mb-1 leading-tight">{creature.name}</h3>
+                            <div className="flex flex-wrap gap-2 mb-2">
+                              <span className="text-stone-500 text-[10px] uppercase font-bold tracking-meta">Size: {creature.size}</span>
+                              <span className="text-stone-500 text-[10px] uppercase font-bold tracking-meta">Type: {creature.type}</span>
+                              {creature.class && <span className="text-stone-500 text-[10px] uppercase font-bold tracking-meta">Class: {creature.class}</span>}
                             </div>
-                            <p className="text-stone-400 text-xs italic">{creature.description}</p>
+                            <p className="body-xs italic">{creature.description}</p>
                           </div>
-                          <span className="px-2 py-0.5 bg-stone-800 text-stone-300 text-[10px] font-display uppercase tracking-widest rounded border border-stone-700">
+                          <span className="eldfall-chip shrink-0">
                             {creature.tier}
                           </span>
                         </div>
@@ -260,7 +281,7 @@ export default function MissionOverview({ onBack }: { onBack: () => void }) {
                         {/* Stats Grid */}
                         <div className="grid grid-cols-4 sm:grid-cols-6 md:grid-cols-11 gap-1 mb-4">
                           {Object.entries(creature.stats).map(([key, value]) => (
-                            <div key={key} className="bg-stone-950 border border-stone-800 rounded p-1.5 text-center">
+                            <div key={key} className="surface-1 border border-stone-800 rounded-lg p-1.5 text-center">
                               <div className="text-[8px] text-stone-500 uppercase font-bold mb-0.5">{key}</div>
                               <div className="text-white text-xs font-mono">{value}</div>
                             </div>
@@ -269,10 +290,10 @@ export default function MissionOverview({ onBack }: { onBack: () => void }) {
 
                         {/* Weapons */}
                         <div className="mb-4">
-                          <h4 className="text-stone-300 font-bold uppercase text-[10px] tracking-widest mb-2 border-b border-stone-800 pb-1">Weapons</h4>
+                          <h4 className="text-stone-300 font-bold uppercase text-[10px] tracking-eyebrow mb-2 border-b border-stone-800 pb-1">Weapons</h4>
                           <div className="space-y-2">
                             {creature.weapons.map((weapon, wIdx) => (
-                              <div key={wIdx} className="bg-stone-950/50 border border-stone-800/50 rounded p-2 text-xs">
+                              <div key={wIdx} className="bg-stone-950/50 border border-stone-800/50 rounded-lg p-2 text-xs">
                                 <div className="flex flex-wrap items-center gap-3 mb-1">
                                   <span className="font-bold text-red-500">{weapon.name}</span>
                                   <span className="text-stone-500 text-[10px] uppercase">{weapon.type}</span>
@@ -293,13 +314,13 @@ export default function MissionOverview({ onBack }: { onBack: () => void }) {
                         {/* Traits, Skills, Spellcrafts, Combat Arts & Behavior */}
                         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
                           <div>
-                            <h4 className="text-stone-300 font-bold uppercase text-[10px] tracking-widest mb-2 border-b border-stone-800 pb-1">Skills</h4>
+                            <h4 className="text-stone-300 font-bold uppercase text-[10px] tracking-eyebrow mb-2 border-b border-stone-800 pb-1">Skills</h4>
                             <div className="flex flex-wrap gap-1.5">
                               {creature.skills.map((skill, sIdx) => (
                                 <button 
                                   key={sIdx} 
                                   onClick={() => setActiveTooltip(getInfo(skill, 'skill'))}
-                                  className="px-1.5 py-0.5 bg-stone-900 border border-stone-800 text-red-400 text-[10px] rounded hover:bg-stone-800 transition-colors"
+                                  className="px-1.5 py-0.5 bg-stone-900 border border-stone-800 text-red-400 text-[10px] rounded-lg hover:bg-stone-800 transition-colors"
                                 >
                                   {skill}
                                 </button>
@@ -307,13 +328,13 @@ export default function MissionOverview({ onBack }: { onBack: () => void }) {
                             </div>
                           </div>
                           <div>
-                            <h4 className="text-stone-300 font-bold uppercase text-[10px] tracking-widest mb-2 border-b border-stone-800 pb-1">Traits</h4>
+                            <h4 className="text-stone-300 font-bold uppercase text-[10px] tracking-eyebrow mb-2 border-b border-stone-800 pb-1">Traits</h4>
                             <div className="flex flex-wrap gap-1.5">
                               {creature.traits.map((trait, tIdx) => (
                                 <button 
                                   key={tIdx} 
                                   onClick={() => setActiveTooltip(getInfo(trait, 'trait'))}
-                                  className="px-1.5 py-0.5 bg-stone-900 border border-stone-800 text-stone-300 text-[10px] rounded hover:bg-stone-800 transition-colors"
+                                  className="px-1.5 py-0.5 bg-stone-900 border border-stone-800 text-stone-300 text-[10px] rounded-lg hover:bg-stone-800 transition-colors"
                                 >
                                   {trait}
                                 </button>
@@ -324,13 +345,13 @@ export default function MissionOverview({ onBack }: { onBack: () => void }) {
                             <div>
                               {creature.spellcrafts && creature.spellcrafts.length > 0 && (
                                 <div className="mb-2">
-                                  <h4 className="text-stone-300 font-bold uppercase text-[10px] tracking-widest mb-2 border-b border-stone-800 pb-1">Spellcrafts</h4>
+                                  <h4 className="text-stone-300 font-bold uppercase text-[10px] tracking-eyebrow mb-2 border-b border-stone-800 pb-1">Spellcrafts</h4>
                                   <div className="flex flex-wrap gap-1.5">
                                     {creature.spellcrafts.map((spell, sIdx) => (
                                       <button 
                                         key={sIdx} 
                                         onClick={() => setActiveTooltip(getInfo(spell, 'spell'))}
-                                        className="px-1.5 py-0.5 bg-stone-900 border border-stone-800 text-blue-400 text-[10px] rounded hover:bg-stone-800 transition-colors"
+                                        className="px-1.5 py-0.5 bg-stone-900 border border-stone-800 text-blue-400 text-[10px] rounded-lg hover:bg-stone-800 transition-colors"
                                       >
                                         {spell}
                                       </button>
@@ -340,13 +361,13 @@ export default function MissionOverview({ onBack }: { onBack: () => void }) {
                               )}
                               {creature.combatArts && creature.combatArts.length > 0 && (
                                 <div>
-                                  <h4 className="text-stone-300 font-bold uppercase text-[10px] tracking-widest mb-2 border-b border-stone-800 pb-1">Combat Arts</h4>
+                                  <h4 className="text-stone-300 font-bold uppercase text-[10px] tracking-eyebrow mb-2 border-b border-stone-800 pb-1">Combat Arts</h4>
                                   <div className="flex flex-wrap gap-1.5">
                                     {creature.combatArts.map((art, aIdx) => (
                                       <button 
                                         key={aIdx} 
                                         onClick={() => setActiveTooltip(getInfo(art, 'trait'))} // Combat arts are similar to traits in rules
-                                        className="px-1.5 py-0.5 bg-stone-900 border border-stone-800 text-amber-400 text-[10px] rounded hover:bg-stone-800 transition-colors"
+                                        className="px-1.5 py-0.5 bg-stone-900 border border-stone-800 text-amber-400 text-[10px] rounded-lg hover:bg-stone-800 transition-colors"
                                       >
                                         {art}
                                       </button>
@@ -357,7 +378,7 @@ export default function MissionOverview({ onBack }: { onBack: () => void }) {
                             </div>
                           )}
                           <div className={!(creature.spellcrafts || creature.combatArts) ? "lg:col-span-2" : ""}>
-                            <h4 className="text-stone-300 font-bold uppercase text-[10px] tracking-widest mb-2 border-b border-stone-800 pb-1">Behavior</h4>
+                            <h4 className="text-stone-300 font-bold uppercase text-[10px] tracking-eyebrow mb-2 border-b border-stone-800 pb-1">Behavior</h4>
                             <p className="text-stone-400 text-xs leading-relaxed whitespace-pre-wrap">{creature.behavior}</p>
                           </div>
                         </div>
@@ -386,10 +407,10 @@ export default function MissionOverview({ onBack }: { onBack: () => void }) {
               animate={{ scale: 1, opacity: 1, y: 0 }}
               exit={{ scale: 0.9, opacity: 0, y: 20 }}
               onClick={(e) => e.stopPropagation()}
-              className="bg-stone-900 border border-stone-800 rounded-xl shadow-2xl w-full max-w-md overflow-hidden"
+              className="surface-overlay rounded-xl w-full max-w-md"
             >
-              <div className="p-4 border-b border-stone-800 flex justify-between items-center bg-stone-950/50">
-                <h3 className="text-lg font-bold text-red-500 uppercase tracking-widest">{activeTooltip.title}</h3>
+              <div className="p-4 border-b border-stone-800 flex justify-between items-center bg-surface-1/50">
+                <h3 className="text-lg font-bold text-red-500 uppercase tracking-eyebrow">{activeTooltip.title}</h3>
                 <button 
                   onClick={() => setActiveTooltip(null)}
                   className="text-stone-400 hover:text-white transition-colors"
@@ -402,10 +423,10 @@ export default function MissionOverview({ onBack }: { onBack: () => void }) {
                   {activeTooltip.content}
                 </p>
               </div>
-              <div className="p-4 bg-stone-950/50 border-t border-stone-800 text-center">
+              <div className="p-4 bg-surface-1/50 border-t border-stone-800 text-center">
                 <button 
                   onClick={() => setActiveTooltip(null)}
-                  className="text-xs text-stone-500 hover:text-stone-300 uppercase tracking-widest transition-colors"
+                  className="text-xs text-stone-500 hover:text-stone-300 uppercase tracking-eyebrow transition-colors"
                 >
                   Tap anywhere to close
                 </button>
@@ -422,12 +443,12 @@ function CollapsibleSection({ title, children, defaultOpen = false }: { title: s
   const [isOpen, setIsOpen] = useState(defaultOpen);
   
   return (
-    <div className="border border-stone-800 rounded-lg overflow-hidden bg-stone-900/30">
+    <div className="border border-stone-800 rounded-xl overflow-hidden bg-surface-2/30">
       <button 
         onClick={() => setIsOpen(!isOpen)}
-        className="w-full px-4 py-3 flex items-center justify-between bg-stone-900/50 hover:bg-stone-800 transition-colors text-left"
+        className="w-full px-4 py-3 flex items-center justify-between bg-surface-2/50 hover:bg-stone-800 transition-colors text-left"
       >
-        <span className="text-white font-bold uppercase text-sm tracking-widest">{title}</span>
+        <span className="text-white font-bold uppercase text-sm tracking-eyebrow">{title}</span>
         <ChevronDown className={`w-4 h-4 text-stone-400 transition-transform ${isOpen ? 'rotate-180' : ''}`} />
       </button>
       <AnimatePresence initial={false}>
@@ -468,36 +489,46 @@ function MissionDetail({
   };
 
   return (
-    <div className="min-h-screen bg-stone-950 py-8 px-4">
-      <div className="max-w-5xl mx-auto">
-        <button 
-          onClick={onBack}
-          className="flex items-center text-stone-400 hover:text-red-500 transition-colors mb-6 group"
-        >
-          <ArrowLeft className="w-5 h-5 mr-2 group-hover:-translate-x-1 transition-transform" />
-          Back to Quests
-        </button>
+    <div className="min-h-screen bg-stone-950">
+      <header className="page-header">
+        <div className="header-content">
+          <div className="flex items-center gap-4">
+            <button
+              onClick={onBack}
+              className="btn-icon-circle"
+            >
+              <ArrowLeft className="w-5 h-5" />
+            </button>
+            <div className="flex items-center gap-2">
+              <MapIcon className="w-6 h-6 text-red-500" />
+              <h1 className="h1-standard">Quest Detail</h1>
+            </div>
+          </div>
+        </div>
+      </header>
+
+      <div className="max-w-5xl mx-auto px-4 py-8">
 
         <motion.div
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           className="space-y-8"
         >
-          <header>
-            <h1 className="text-3xl md:text-4xl font-bold text-white mb-4">{mission.title}</h1>
-            <p className="text-lg text-stone-300 leading-relaxed max-w-3xl italic">
+          <header className="mb-10 text-center lg:text-left">
+            <h2 className="text-2xl md:text-3xl font-bold text-white mb-3 tracking-tight">{mission.title}</h2>
+            <p className="body-sm italic opacity-80 max-w-2xl mx-auto lg:mx-0">
               "{mission.description}"
             </p>
           </header>
 
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-            <div className="space-y-6">
-              <section className="eldfall-card p-6">
+            <div className="stack-standard">
+              <section className="eldfall-card card-p-lg">
                 <div className="flex items-center mb-6 text-red-500">
-                  <Target className="w-6 h-6 mr-3" />
-                  <h2 className="text-xl font-bold uppercase tracking-wider">Setup</h2>
+                  <Target className="w-5 h-5 mr-3" />
+                  <h2 className="h2-standard">Setup</h2>
                 </div>
-                <ul className="space-y-4 text-stone-300">
+                <ul className="stack-standard body-sm text-stone-300">
                   {mission.setup.map((item, i) => (
                     <li key={i} className="flex items-start">
                       <span className="text-red-900 mr-3 mt-1.5">•</span>
@@ -507,12 +538,12 @@ function MissionDetail({
                 </ul>
               </section>
 
-              <section className="eldfall-card p-6 border-red-900/20">
-                <div className="flex items-center mb-4 text-red-500">
-                  <Trophy className="w-6 h-6 mr-3" />
-                  <h2 className="text-xl font-bold uppercase tracking-wider">Results (VP)</h2>
+              <section className="eldfall-card card-p-lg border-red-900/20">
+                <div className="flex items-center mb-6 text-red-500">
+                  <Trophy className="w-5 h-5 mr-3" />
+                  <h2 className="h2-standard">Results (VP)</h2>
                 </div>
-                <ul className="space-y-4 text-stone-300">
+                <ul className="stack-standard body-sm text-stone-300">
                   {mission.results.map((item, i) => {
                     const isImportant = item.startsWith("IMPORTANT:");
                     return (
@@ -530,17 +561,17 @@ function MissionDetail({
               </section>
 
               {mission.specialEndConditions && mission.specialEndConditions.length > 0 && (
-                <section className="eldfall-card p-6 border-amber-900/20">
-                  <div className="flex items-center mb-4 text-amber-500">
-                    <ScrollText className="w-6 h-6 mr-3" />
-                    <h2 className="text-xl font-bold uppercase tracking-wider">Special End Conditions</h2>
+                <section className="eldfall-card card-p-lg border-amber-900/20">
+                  <div className="flex items-center mb-6 text-amber-500">
+                    <ScrollText className="w-5 h-5 mr-3" />
+                    <h2 className="h2-standard">Special End Conditions</h2>
                   </div>
                   <CollapsibleSection title="End Conditions" defaultOpen={true}>
-                    <ul className="space-y-3 text-stone-300">
+                    <ul className="stack-compact body-xs text-stone-300">
                       {mission.specialEndConditions.map((item, i) => (
                         <li key={i} className="flex items-start">
                           <span className="text-amber-900 mr-3 mt-1">•</span>
-                          <span className="text-sm leading-relaxed">{item}</span>
+                          <span className="">{item}</span>
                         </li>
                       ))}
                     </ul>
@@ -549,14 +580,14 @@ function MissionDetail({
               )}
             </div>
 
-            <div className={`space-y-6 ${!mission.mapImage ? 'lg:col-span-2' : ''}`}>
+            <div className={`stack-standard ${!mission.mapImage ? 'lg:col-span-2' : ''}`}>
               {mission.mapImage && (
-                <section className="eldfall-card p-6 overflow-hidden">
-                  <div className="flex items-center mb-4 text-red-500">
-                    <MapIcon className="w-6 h-6 mr-3" />
-                    <h2 className="text-xl font-bold uppercase tracking-wider">Tactical Map</h2>
+                <section className="eldfall-card card-p-lg overflow-hidden">
+                  <div className="flex items-center mb-6 text-red-500">
+                    <MapIcon className="w-5 h-5 mr-3" />
+                    <h2 className="h2-standard">Tactical Map</h2>
                   </div>
-                  <div className="aspect-square bg-stone-950 rounded border border-stone-800 overflow-hidden">
+                  <div className="aspect-square surface-1 rounded-xl border border-stone-800 overflow-hidden shadow-inner">
                     <img 
                       src={mission.mapImage} 
                       alt="Tactical Map" 
@@ -568,23 +599,23 @@ function MissionDetail({
               )}
 
               {mission.questRules && mission.questRules.length > 0 && (
-                <section className="eldfall-card p-6">
-                  <div className="flex items-center mb-4 text-red-500">
-                    <ScrollText className="w-6 h-6 mr-3" />
-                    <h2 className="text-xl font-bold uppercase tracking-wider">Quest Rules</h2>
+                <section className="eldfall-card card-p-lg">
+                  <div className="flex items-center mb-6 text-red-500">
+                    <ScrollText className="w-5 h-5 mr-3" />
+                    <h2 className="h2-standard">Quest Rules</h2>
                   </div>
-                  <div className="space-y-3">
+                  <div className="stack-standard">
                     {mission.questRules.map((rule, i) => (
                       <div key={i}>
                         <CollapsibleSection title={rule.title} defaultOpen={i === 0}>
                           <div className="space-y-4">
-                            <p className="text-stone-400 text-sm leading-relaxed whitespace-pre-line">
+                            <p className="body-sm whitespace-pre-line">
                               {rule.content}
                             </p>
                             {mission.id === "supply-run" && rule.title === "Hostile Guards" && (
                               <button 
                                 onClick={() => handleQuickView("Tier III")}
-                                className="flex items-center px-3 py-2 bg-red-900/20 text-red-400 border border-red-900/30 rounded text-xs hover:bg-red-900/30 transition-colors group"
+                                className="flex items-center px-3 py-2 bg-red-900/20 text-red-400 border border-red-900/30 rounded-lg text-xs hover:bg-red-900/30 transition-colors group"
                               >
                                 <Info className="w-4 h-4 mr-2" />
                                 View Tier III Hostile Stats & Behavior
@@ -617,82 +648,78 @@ function MissionDetail({
               animate={{ scale: 1, opacity: 1, y: 0 }}
               exit={{ scale: 0.9, opacity: 0, y: 20 }}
               onClick={(e) => e.stopPropagation()}
-              className="bg-stone-950 border border-stone-800 rounded-lg shadow-2xl w-full max-w-4xl max-h-[90vh] flex flex-col overflow-hidden"
+              className="surface-overlay rounded-xl w-full max-w-4xl max-h-[90vh] flex flex-col"
             >
-              <div className="p-4 border-b border-stone-800 flex justify-between items-center bg-stone-900/50">
+              <div className="card-p-lg border-b border-stone-800 flex justify-between items-center bg-surface-2/50 shrink-0">
                 <div className="flex items-center text-red-500">
                   <Ghost className="w-5 h-5 mr-3" />
-                  <h2 className="text-xl font-bold uppercase tracking-widest">{quickCreature.name} Reference</h2>
+                  <h2 className="h2-standard">{quickCreature.name} Reference</h2>
                 </div>
                 <button 
                   onClick={() => setQuickCreature(null)}
-                  className="text-stone-400 hover:text-white transition-colors"
+                  className="btn-icon-circle border-transparent bg-transparent shadow-none hover:bg-stone-800"
                 >
                   <X className="w-5 h-5" />
                 </button>
               </div>
-              
-              <div className="flex-1 overflow-y-auto p-6 custom-scrollbar">
-                <div className="mb-6">
-                  <div className="flex justify-between items-start mb-3">
+                       <div className="flex-1 overflow-y-auto card-p-lg custom-scrollbar">
+                <div className="mb-10">
+                  <div className="flex justify-between items-start mb-6">
                     <div>
-                      <h3 className="text-2xl font-bold text-white mb-1">{quickCreature.name}</h3>
-                      <div className="flex flex-wrap gap-3 mb-2">
-                        <span className="text-stone-500 text-xs uppercase font-bold tracking-tighter">Size: {quickCreature.size}</span>
-                        <span className="text-stone-500 text-xs uppercase font-bold tracking-tighter">Type: {quickCreature.type}</span>
-                        {quickCreature.class && <span className="text-stone-500 text-xs uppercase font-bold tracking-tighter">Class: {quickCreature.class}</span>}
-                        {quickCreature.alignment && <span className="text-stone-500 text-xs uppercase font-bold tracking-tighter">Alignment: {quickCreature.alignment}</span>}
+                      <h3 className="text-2xl font-bold text-white mb-2 leading-tight">{quickCreature.name}</h3>
+                      <div className="flex flex-wrap gap-3">
+                        <span className="text-stone-500 text-[10px] uppercase font-bold tracking-meta">Size: {quickCreature.size}</span>
+                        <span className="text-stone-500 text-[10px] uppercase font-bold tracking-meta">Type: {quickCreature.type}</span>
+                        {quickCreature.class && <span className="text-stone-500 text-[10px] uppercase font-bold tracking-meta">Class: {quickCreature.class}</span>}
                       </div>
                     </div>
-                    <span className="px-3 py-1 bg-stone-800 text-stone-300 text-xs font-display uppercase tracking-widest rounded border border-stone-700">
+                    <span className="eldfall-chip">
                       {quickCreature.tier}
                     </span>
                   </div>
                 </div>
 
                 {/* Stats Grid */}
-                <div className="grid grid-cols-4 sm:grid-cols-6 md:grid-cols-11 gap-1.5 mb-6">
+                <div className="grid grid-cols-4 sm:grid-cols-6 md:grid-cols-11 gap-1 mb-8">
                   {Object.entries(quickCreature.stats).map(([key, value]) => (
-                    <div key={key} className="bg-stone-950 border border-stone-800 rounded p-2 text-center">
-                      <div className="text-[10px] text-stone-500 uppercase font-bold mb-1">{key}</div>
-                      <div className="text-white text-sm font-mono">{value}</div>
+                    <div key={key} className="surface-1 border border-stone-800 rounded-lg p-1.5 text-center">
+                      <div className="text-[8px] text-stone-500 uppercase font-bold mb-0.5">{key}</div>
+                      <div className="text-white text-xs font-mono">{value}</div>
                     </div>
                   ))}
                 </div>
 
                 {/* Weapons */}
-                <div className="mb-6">
-                  <h4 className="text-stone-300 font-bold uppercase text-xs tracking-widest mb-3 border-b border-stone-800 pb-2">Weapons</h4>
-                  <div className="space-y-3">
+                <div className="mb-8">
+                  <h4 className="h3-standard mb-4 border-b border-stone-800 pb-2">Weapons</h4>
+                  <div className="stack-standard">
                     {quickCreature.weapons.map((weapon, wIdx) => (
-                      <div key={wIdx} className="bg-stone-900/30 border border-stone-800 rounded p-3">
+                      <div key={wIdx} className="bg-stone-900/30 border border-stone-800 rounded-xl p-3">
                         <div className="flex flex-wrap items-center gap-4 mb-2">
-                          <span className="font-bold text-red-500 text-sm">{weapon.name}</span>
+                          <span className="font-bold text-red-500 text-sm leading-none">{weapon.name}</span>
                           <span className="text-stone-500 text-[10px] uppercase">{weapon.type}</span>
                           <div className="flex gap-3 text-stone-400 font-mono text-xs">
                             <span>PW: {weapon.pw}</span>
                             <span>RCH: {weapon.rch}</span>
                             <span>STK: {weapon.stk}</span>
-                            {weapon.qty !== undefined && <span>QTY: {weapon.qty}</span>}
-                            {weapon.wgt !== undefined && <span>WGT: {weapon.wgt}</span>}
                           </div>
                         </div>
-                        <p className="text-stone-400 italic text-xs">{weapon.effects}</p>
+                        <p className="body-xs italic">{weapon.effects}</p>
                       </div>
                     ))}
                   </div>
                 </div>
 
                 {/* Traits, Skills, Spellcrafts, Combat Arts & Behavior */}
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
                   <div>
-                    <h4 className="text-stone-300 font-bold uppercase text-xs tracking-widest mb-3 border-b border-stone-800 pb-2">Skills</h4>
+                    <h4 className="h3-standard mb-4 border-b border-stone-800 pb-2">Skills</h4>
                     <div className="flex flex-wrap gap-2">
                       {quickCreature.skills.map((skill, sIdx) => (
                         <button 
                           key={sIdx} 
                           onClick={() => onShowTooltip(skill, 'skill')}
-                          className="px-2 py-1 bg-stone-900 border border-stone-800 text-red-400 text-xs rounded hover:bg-stone-800 transition-colors"
+                          className="px-2 py-0.5 bg-stone-900 border border-stone-800 text-red-400 text-[10px] rounded-lg hover:bg-stone-800 transition-colors"
                         >
                           {skill}
                         </button>
@@ -700,13 +727,13 @@ function MissionDetail({
                     </div>
                   </div>
                   <div>
-                    <h4 className="text-stone-300 font-bold uppercase text-xs tracking-widest mb-3 border-b border-stone-800 pb-2">Traits</h4>
+                    <h4 className="h3-standard mb-4 border-b border-stone-800 pb-2">Traits</h4>
                     <div className="flex flex-wrap gap-2">
                       {quickCreature.traits.map((trait, tIdx) => (
                         <button 
                           key={tIdx} 
                           onClick={() => onShowTooltip(trait, 'trait')}
-                          className="px-2 py-1 bg-stone-900 border border-stone-800 text-stone-300 text-xs rounded hover:bg-stone-800 transition-colors"
+                          className="px-2 py-0.5 bg-stone-900 border border-stone-800 text-stone-300 text-[10px] rounded-lg hover:bg-stone-800 transition-colors"
                         >
                           {trait}
                         </button>
@@ -714,16 +741,16 @@ function MissionDetail({
                     </div>
                   </div>
                   {(quickCreature.spellcrafts || quickCreature.combatArts) && (
-                    <div>
+                    <div className="stack-standard">
                       {quickCreature.spellcrafts && quickCreature.spellcrafts.length > 0 && (
-                        <div className="mb-4">
-                          <h4 className="text-stone-300 font-bold uppercase text-xs tracking-widest mb-3 border-b border-stone-800 pb-2">Spellcrafts</h4>
+                        <div>
+                          <h4 className="h3-standard mb-4 border-b border-stone-800 pb-2">Spellcrafts</h4>
                           <div className="flex flex-wrap gap-2">
                             {quickCreature.spellcrafts.map((spell, sIdx) => (
                               <button 
                                 key={sIdx} 
                                 onClick={() => onShowTooltip(spell, 'spell')}
-                                className="px-2 py-1 bg-stone-900 border border-stone-800 text-blue-400 text-xs rounded hover:bg-stone-800 transition-colors"
+                                className="px-2 py-0.5 bg-stone-900 border border-stone-800 text-blue-400 text-[10px] rounded-lg hover:bg-stone-800 transition-colors"
                               >
                                 {spell}
                               </button>
@@ -733,13 +760,13 @@ function MissionDetail({
                       )}
                       {quickCreature.combatArts && quickCreature.combatArts.length > 0 && (
                         <div>
-                          <h4 className="text-stone-300 font-bold uppercase text-xs tracking-widest mb-3 border-b border-stone-800 pb-2">Combat Arts</h4>
+                          <h4 className="h3-standard mb-4 border-b border-stone-800 pb-2">Combat Arts</h4>
                           <div className="flex flex-wrap gap-2">
                             {quickCreature.combatArts.map((art, aIdx) => (
                               <button 
                                 key={aIdx} 
                                 onClick={() => onShowTooltip(art, 'trait')}
-                                className="px-2 py-1 bg-stone-900 border border-stone-800 text-amber-400 text-xs rounded hover:bg-stone-800 transition-colors"
+                                className="px-2 py-0.5 bg-stone-900 border border-stone-800 text-amber-400 text-[10px] rounded-lg hover:bg-stone-800 transition-colors"
                               >
                                 {art}
                               </button>
@@ -750,16 +777,16 @@ function MissionDetail({
                     </div>
                   )}
                   <div className={!(quickCreature.spellcrafts || quickCreature.combatArts) ? "lg:col-span-2" : ""}>
-                    <h4 className="text-stone-300 font-bold uppercase text-xs tracking-widest mb-3 border-b border-stone-800 pb-2">Behavior</h4>
-                    <p className="text-stone-400 text-xs leading-relaxed whitespace-pre-wrap font-sans">{quickCreature.behavior}</p>
+                    <h4 className="h3-standard mb-4 border-b border-stone-800 pb-2">Behavior</h4>
+                    <p className="body-xs leading-relaxed whitespace-pre-wrap font-sans">{quickCreature.behavior}</p>
                   </div>
                 </div>
               </div>
               
-              <div className="p-4 border-t border-stone-800 bg-stone-900/50 text-center">
+              <div className="card-p surface-1/50 border-t border-stone-800 text-center shrink-0">
                 <button 
                   onClick={() => setQuickCreature(null)}
-                  className="px-6 py-2 bg-stone-800 text-white rounded hover:bg-stone-700 transition-colors text-sm uppercase tracking-widest font-bold"
+                  className="btn-secondary"
                 >
                   Close Reference
                 </button>

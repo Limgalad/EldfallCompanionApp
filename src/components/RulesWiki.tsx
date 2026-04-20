@@ -130,38 +130,45 @@ export default function RulesWiki({ onBack }: { onBack: () => void }) {
   );
 
   return (
-    <div className="min-h-screen bg-stone-950 py-8 px-4">
-      <div className="max-w-7xl mx-auto">
-        <button 
-          onClick={onBack}
-          className="flex items-center text-stone-400 hover:text-red-500 transition-colors mb-6 group"
-        >
-          <ArrowLeft className="w-5 h-5 mr-2 group-hover:-translate-x-1 transition-transform" />
-          Back to Home
-        </button>
+    <div className="min-h-screen bg-stone-950">
+      <header className="page-header">
+        <div className="header-content">
+          <div className="flex items-center gap-4">
+            <button
+              onClick={onBack}
+              className="btn-icon-circle"
+            >
+              <ArrowLeft className="w-5 h-5" />
+            </button>
+            <div className="flex items-center gap-2">
+              <BookOpen className="w-6 h-6 text-red-500" />
+              <h1 className="h1-standard">Rules Wiki</h1>
+            </div>
+          </div>
+        </div>
+      </header>
 
-        <header className="mb-8">
-          <h1 className="text-3xl md:text-4xl font-bold text-white mb-4">Rules Wiki</h1>
-          
+      <main className="max-w-7xl mx-auto px-4 py-8">
+        <div className="mb-8">
           <div className="relative max-w-2xl">
-            <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-stone-500 w-5 h-5" />
+            <Search className="eldfall-input-icon" />
             <input
               type="text"
               placeholder="Search rules, traits, skills, or combat arts..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className="w-full bg-stone-900 border border-stone-800 rounded-full py-3 pl-12 pr-12 text-white focus:outline-none focus:border-red-500/50 transition-colors"
+              className="eldfall-input eldfall-input-with-icon pr-12"
             />
             {searchQuery && (
               <button
                 onClick={() => setSearchQuery("")}
-                className="absolute right-4 top-1/2 -translate-y-1/2 text-stone-500 hover:text-stone-300 transition-colors"
+                className="btn-icon-circle absolute right-2 top-1/2 -translate-y-1/2 border-transparent bg-transparent shadow-none hover:bg-stone-800"
               >
                 <X className="w-5 h-5" />
               </button>
             )}
           </div>
-        </header>
+        </div>
 
         {/* Tabs */}
         <div className="flex space-x-2 md:space-x-4 mb-8 border-b border-stone-900 overflow-x-auto no-scrollbar">
@@ -216,15 +223,15 @@ export default function RulesWiki({ onBack }: { onBack: () => void }) {
                 {filteredRules.map((section) => (
                   <div 
                     key={section.id}
-                    className="eldfall-card p-5 cursor-pointer group"
+                    className="eldfall-card eldfall-card-interactive card-p group"
                     onClick={() => setSelectedItem({ type: "mechanics", data: section })}
                   >
                     <div className="flex justify-between items-start mb-3">
-                      <span className="text-xs font-display uppercase tracking-widest text-red-500/70">{section.category}</span>
+                      <span className="text-xs font-display uppercase tracking-eyebrow text-red-500/70">{section.category}</span>
                       <Sparkles className="w-4 h-4 text-stone-700 group-hover:text-red-500 transition-colors" />
                     </div>
                     <h2 className="text-lg font-bold text-white mb-2 group-hover:text-red-500 transition-colors">{section.title}</h2>
-                    <p className="text-stone-400 text-sm leading-relaxed line-clamp-3">{section.content}</p>
+                    <p className="body-sm line-clamp-3">{section.content}</p>
                   </div>
                 ))}
               </motion.div>
@@ -241,14 +248,14 @@ export default function RulesWiki({ onBack }: { onBack: () => void }) {
                 {filteredStates.map((state) => (
                   <div 
                     key={state.name} 
-                    className="eldfall-card p-4 cursor-pointer group"
+                    className="eldfall-card eldfall-card-interactive card-p group"
                     onClick={() => setSelectedItem({ type: "states", data: state })}
                   >
                     <div className="flex justify-between items-start mb-2">
                       <h3 className="text-base font-bold text-white group-hover:text-red-500 transition-colors">{state.name}</h3>
                       <Info className="w-4 h-4 text-stone-700 group-hover:text-red-500 transition-colors" />
                     </div>
-                    <p className="text-stone-400 text-xs leading-relaxed line-clamp-3">{state.description}</p>
+                    <p className="body-xs line-clamp-3">{state.description}</p>
                   </div>
                 ))}
               </motion.div>
@@ -265,14 +272,14 @@ export default function RulesWiki({ onBack }: { onBack: () => void }) {
                 {filteredTraits.map((trait) => (
                   <div 
                     key={trait.name} 
-                    className="eldfall-card p-4 cursor-pointer group"
+                    className="eldfall-card eldfall-card-interactive card-p group"
                     onClick={() => setSelectedItem({ type: "traits", data: trait })}
                   >
                     <div className="flex justify-between items-start mb-2">
                       <h3 className="text-base font-bold text-white group-hover:text-red-500 transition-colors">{trait.name}</h3>
                       <Info className="w-4 h-4 text-stone-700 group-hover:text-red-500 transition-colors" />
                     </div>
-                    <p className="text-stone-400 text-xs leading-relaxed line-clamp-3">{trait.description}</p>
+                    <p className="body-xs line-clamp-3">{trait.description}</p>
                   </div>
                 ))}
               </motion.div>
@@ -289,14 +296,14 @@ export default function RulesWiki({ onBack }: { onBack: () => void }) {
                 {filteredSkills.map((skill) => (
                   <div 
                     key={skill.name} 
-                    className="eldfall-card p-4 cursor-pointer group"
+                    className="eldfall-card eldfall-card-interactive card-p group"
                     onClick={() => setSelectedItem({ type: "skills", data: skill })}
                   >
                     <div className="flex justify-between items-start mb-2">
                       <h3 className="text-base font-bold text-white group-hover:text-red-500 transition-colors">{skill.name}</h3>
                       <Info className="w-4 h-4 text-stone-700 group-hover:text-red-500 transition-colors" />
                     </div>
-                    <p className="text-stone-400 text-xs leading-relaxed line-clamp-3">{skill.description}</p>
+                    <p className="body-xs line-clamp-3">{skill.description}</p>
                   </div>
                 ))}
               </motion.div>
@@ -313,19 +320,19 @@ export default function RulesWiki({ onBack }: { onBack: () => void }) {
                 {filteredCombatArts.map((cac) => (
                   <div 
                     key={cac.name} 
-                    className="eldfall-card p-5 cursor-pointer group"
+                    className="eldfall-card eldfall-card-interactive card-p group"
                     onClick={() => setSelectedItem({ type: "combatArts", data: cac })}
                   >
                     <div className="flex justify-between items-start mb-3">
-                      <span className="text-xs font-display uppercase tracking-widest text-red-500/70">Combat Art</span>
+                      <span className="text-xs font-display uppercase tracking-eyebrow text-red-500/70">Combat Art</span>
                       <Sword className="w-4 h-4 text-stone-700 group-hover:text-red-500 transition-colors" />
                     </div>
                     <h3 className="text-lg font-bold text-white mb-2 group-hover:text-red-500 transition-colors">{cac.name}</h3>
                     <div className="space-y-2">
-                      <p className="text-stone-300 text-sm leading-relaxed line-clamp-2">{cac.ruleText}</p>
-                      <p className="text-stone-400 text-xs leading-relaxed italic line-clamp-2">{cac.flavorText}</p>
+                      <p className="text-stone-300 body-sm line-clamp-2">{cac.ruleText}</p>
+                      <p className="body-xs italic line-clamp-2">{cac.flavorText}</p>
                     </div>
-                    <div className="mt-4 flex items-center text-xs text-stone-500 uppercase tracking-widest">
+                    <div className="mt-4 flex items-center text-xs text-stone-500 uppercase tracking-eyebrow">
                       <span className="text-red-500 mr-2">{cac.levels.length}</span> Levels Available
                     </div>
                   </div>
@@ -344,11 +351,11 @@ export default function RulesWiki({ onBack }: { onBack: () => void }) {
                 {filteredClasses.map((cls) => (
                   <div 
                     key={cls.name} 
-                    className="eldfall-card p-5 cursor-pointer group"
+                    className="eldfall-card eldfall-card-interactive card-p group"
                     onClick={() => setSelectedItem({ type: "classes", data: cls })}
                   >
                     <h3 className="text-lg font-bold text-white mb-2 group-hover:text-red-500 transition-colors">{cls.name}</h3>
-                    <p className="text-stone-400 text-xs leading-relaxed mb-4 italic line-clamp-2">{cls.description}</p>
+                    <p className="body-xs mb-4 italic line-clamp-2">{cls.description}</p>
                     <div className="space-y-2">
                       {cls.abilities.slice(0, 2).map((ability, i) => (
                         <div key={i} className="flex items-start text-xs">
@@ -382,25 +389,25 @@ export default function RulesWiki({ onBack }: { onBack: () => void }) {
                 initial={{ opacity: 0, scale: 0.95, y: 20 }}
                 animate={{ opacity: 1, scale: 1, y: 0 }}
                 exit={{ opacity: 0, scale: 0.95, y: 20 }}
-                className="relative bg-stone-900 border border-stone-800 rounded-xl max-w-3xl w-full max-h-[85vh] overflow-y-auto p-6 shadow-2xl"
+                className="relative surface-overlay rounded-xl max-w-3xl w-full max-h-[85vh] overflow-y-auto"
               >
-                <div className="flex justify-between items-start mb-6">
+                <div className="card-p-lg border-b border-stone-800 flex justify-between items-start shrink-0">
                   <div>
-                    <span className="text-[10px] font-display uppercase tracking-widest text-red-500 mb-1 block">
+                    <span className="text-[10px] font-display uppercase tracking-eyebrow text-red-500 mb-1 block">
                       {selectedItem.type === "mechanics" ? selectedItem.data.category : selectedItem.type.replace(/([A-Z])/g, ' $1').trim()}
                     </span>
-                    <h2 className="text-2xl font-bold text-white">{selectedItem.data.name || selectedItem.data.title}</h2>
+                    <h2 className="text-2xl font-bold text-white leading-tight">{selectedItem.data.name || selectedItem.data.title}</h2>
                   </div>
                   <button 
                     onClick={() => setSelectedItem(null)}
-                    className="text-stone-500 hover:text-white transition-colors"
+                    className="btn-icon-circle border-transparent bg-transparent shadow-none hover:bg-stone-800"
                   >
                     <ArrowLeft className="w-5 h-5 rotate-90" />
                   </button>
                 </div>
 
-                <div className="space-y-6">
-                  <div className="text-stone-300 text-sm leading-relaxed whitespace-pre-wrap font-sans">
+                <div className="card-p-lg stack-standard">
+                  <div className="text-stone-300 body-sm whitespace-pre-wrap font-sans">
                     <RichText 
                       text={selectedItem.data.description || selectedItem.data.content} 
                       onKeywordClick={setNestedItem} 
@@ -411,8 +418,8 @@ export default function RulesWiki({ onBack }: { onBack: () => void }) {
                     <div className="space-y-4">
                       {selectedItem.data.subsections.map((sub: { title: string; content: string }, i: number) => (
                         <div key={i} className="border-l-2 border-red-900/30 pl-4">
-                          <h4 className="text-white font-bold mb-1 uppercase text-xs tracking-widest">{sub.title}</h4>
-                          <p className="text-stone-400 text-xs leading-relaxed">{sub.content}</p>
+                          <h4 className="text-white font-bold mb-1 uppercase text-xs tracking-eyebrow">{sub.title}</h4>
+                          <p className="body-xs">{sub.content}</p>
                         </div>
                       ))}
                     </div>
@@ -420,7 +427,7 @@ export default function RulesWiki({ onBack }: { onBack: () => void }) {
 
                   {selectedItem.type === "classes" && selectedItem.data.abilities && (
                     <div className="space-y-3">
-                      <h4 className="text-white font-bold uppercase text-xs tracking-widest border-b border-stone-800 pb-2">Class Abilities</h4>
+                      <h4 className="text-white font-bold uppercase text-xs tracking-eyebrow border-b border-stone-800 pb-2">Class Abilities</h4>
                       <div className="space-y-2">
                         {selectedItem.data.abilities.map((ability: string, i: number) => (
                           <div key={i} className="flex items-start text-xs">
@@ -439,13 +446,13 @@ export default function RulesWiki({ onBack }: { onBack: () => void }) {
                         <p className="text-stone-400 text-xs leading-relaxed italic">{selectedItem.data.flavorText}</p>
                       </div>
                       <div className="space-y-3">
-                        <h4 className="text-white font-bold uppercase text-xs tracking-widest border-b border-stone-800 pb-2">Levels</h4>
+                        <h4 className="text-white font-bold uppercase text-xs tracking-eyebrow border-b border-stone-800 pb-2">Levels</h4>
                         <div className="space-y-3">
                           {selectedItem.data.levels.map((level: CombatArt, i: number) => (
-                            <div key={i} className="bg-stone-950/30 border border-stone-800/50 rounded-lg p-3">
+                            <div key={i} className="bg-surface-1/30 border border-stone-800/50 rounded-xl p-3">
                               <div className="flex items-center justify-between mb-2">
                                 <h5 className="text-red-500 text-sm font-bold">{level.name}</h5>
-                                <span className="text-[10px] font-display uppercase tracking-widest text-stone-500 px-2 py-0.5 bg-stone-900 rounded border border-stone-800">
+                                <span className="eldfall-chip">
                                   Level {level.level}
                                 </span>
                               </div>
@@ -477,26 +484,26 @@ export default function RulesWiki({ onBack }: { onBack: () => void }) {
                 initial={{ opacity: 0, scale: 0.9, y: 10 }}
                 animate={{ opacity: 1, scale: 1, y: 0 }}
                 exit={{ opacity: 0, scale: 0.9, y: 10 }}
-                className="relative bg-stone-900 border border-stone-700 rounded-xl max-w-lg w-full overflow-hidden shadow-2xl"
+                className="relative surface-overlay border-stone-700 rounded-xl max-w-lg w-full"
               >
-                <div className="p-4 border-b border-stone-800 flex justify-between items-center bg-stone-950/50">
+                <div className="p-4 border-b border-stone-800 flex justify-between items-center bg-surface-1/50">
                   <div className="flex items-center space-x-2">
                     <Info className="w-4 h-4 text-red-500" />
-                    <h3 className="text-sm font-bold text-white uppercase tracking-widest">{nestedItem.data.name}</h3>
+                    <h3 className="text-sm font-bold text-white uppercase tracking-eyebrow">{nestedItem.data.name}</h3>
                   </div>
-                  <button onClick={() => setNestedItem(null)} className="text-stone-500 hover:text-white transition-colors">
+                  <button onClick={() => setNestedItem(null)} className="btn-icon-circle border-transparent bg-transparent shadow-none hover:bg-stone-800">
                     <X className="w-4 h-4" />
                   </button>
                 </div>
-                <div className="p-5">
+                <div className="card-p stack-compact">
                   <p className="text-stone-300 text-xs leading-relaxed whitespace-pre-wrap font-sans">
                     {nestedItem.data.description}
                   </p>
                 </div>
-                <div className="p-3 bg-stone-950/30 border-t border-stone-800 text-center">
+                <div className="p-3 bg-surface-1/50 border-t border-stone-800 text-center">
                    <button 
                      onClick={() => setNestedItem(null)}
-                     className="text-[10px] text-stone-500 hover:text-stone-300 uppercase tracking-widest transition-colors"
+                     className="text-[10px] text-stone-500 hover:text-stone-300 uppercase tracking-eyebrow transition-colors"
                    >
                      Close Reference
                    </button>
@@ -505,7 +512,7 @@ export default function RulesWiki({ onBack }: { onBack: () => void }) {
             </div>
           )}
         </AnimatePresence>
-      </div>
+      </main>
     </div>
   );
 }
@@ -514,7 +521,7 @@ function TabButton({ active, onClick, icon, label }: { active: boolean; onClick:
   return (
     <button
       onClick={onClick}
-      className={`flex items-center space-x-2 px-4 py-3 text-xs md:text-sm font-display uppercase tracking-widest transition-all relative ${
+      className={`flex items-center space-x-2 px-4 py-3 text-xs md:text-sm font-display uppercase tracking-eyebrow transition-all relative ${
         active ? "text-red-500" : "text-stone-500 hover:text-stone-300"
       }`}
     >

@@ -4,6 +4,13 @@
 @theme {
   --font-sans: "Inter", ui-sans-serif, system-ui, sans-serif;
   --font-display: "Cinzel", serif;
+
+  --letter-spacing-page: 0.2em;
+  --letter-spacing-eyebrow: 0.1em;
+  --letter-spacing-meta: 0.05em;
+
+  --color-surface-1: var(--color-stone-950);
+  --color-surface-2: var(--color-stone-900);
 }
 
 @layer base {
@@ -12,7 +19,117 @@
   }
 
   h1, h2, h3, h4, h5, h6 {
-    @apply font-display tracking-wider;
+    @apply font-display tracking-meta;
+  }
+}
+
+@utility tracking-page {
+  letter-spacing: 0.2em;
+}
+
+@utility tracking-eyebrow {
+  letter-spacing: 0.1em;
+}
+
+@utility tracking-meta {
+  letter-spacing: 0.05em;
+}
+
+@utility body-sm {
+  font-size: 0.875rem; /* text-sm */
+  line-height: 1.6;    /* leading-relaxed */
+  font-weight: 400;
+  color: var(--color-stone-400);
+}
+
+@utility body-xs {
+  font-size: 0.75rem;   /* text-xs */
+  line-height: 1.5;    /* leading-normal */
+  font-weight: 400;
+  color: var(--color-stone-400);
+}
+
+@utility surface-1 {
+  @apply bg-surface-1;
+}
+
+@utility surface-2 {
+  @apply bg-surface-2;
+}
+
+@utility surface-overlay {
+  @apply bg-surface-2 border border-stone-800 shadow-2xl rounded-xl overflow-hidden;
+}
+
+@utility card-p {
+  @apply p-4; /* 16px */
+}
+
+@utility card-p-lg {
+  @apply p-6; /* 24px */
+}
+
+@utility eldfall-chip {
+  @apply inline-flex items-center px-2 py-0.5 rounded-lg border border-stone-800 surface-1 text-stone-300 text-[10px] font-mono tracking-meta;
+}
+
+@utility stack-compact {
+  @apply space-y-2; /* 8px */
+}
+
+@utility stack-standard {
+  @apply space-y-4; /* 16px */
+}
+
+@layer components {
+  .h1-standard {
+    @apply text-xl font-bold text-white uppercase tracking-page;
+  }
+
+  .h2-standard {
+    @apply text-lg font-bold text-white uppercase tracking-eyebrow;
+  }
+
+  .h3-standard {
+    @apply text-base font-bold text-white uppercase tracking-meta;
+  }
+
+  .page-header {
+    @apply sticky top-0 z-50 bg-surface-1/80 backdrop-blur-md border-b border-stone-800 h-16 shrink-0;
+  }
+
+  .header-content {
+    @apply max-w-7xl mx-auto px-4 h-full flex items-center justify-between gap-4;
+  }
+
+  /* Standardized Buttons */
+  .btn-primary {
+    @apply relative flex items-center justify-center px-6 py-2 bg-red-600 hover:bg-red-500 text-white text-sm font-bold rounded-lg transition-all duration-200 hover:scale-[1.02] active:scale-[0.98] shadow-lg shadow-red-900/40 hover:shadow-red-900/60 disabled:opacity-50 disabled:pointer-events-none;
+  }
+
+  .btn-secondary {
+    @apply relative flex items-center justify-center px-6 py-2 surface-2 hover:bg-stone-800 text-white text-sm font-bold rounded-lg border border-stone-700 transition-all duration-200 hover:scale-[1.02] active:scale-[0.98] shadow-md shadow-stone-950/50 hover:shadow-lg hover:shadow-stone-950/80 disabled:opacity-50 disabled:pointer-events-none;
+  }
+
+  .btn-action {
+    @apply relative flex items-center justify-center px-3 py-1.5 text-xs surface-2 hover:bg-stone-800 text-stone-300 border border-stone-800 rounded-lg transition-all duration-200 hover:scale-[1.02] active:scale-[0.98] shadow-sm shadow-stone-950/50 hover:shadow-md hover:text-white disabled:opacity-50 disabled:pointer-events-none;
+  }
+
+  .btn-icon-circle {
+    @apply flex items-center justify-center p-2 bg-surface-2/80 hover:bg-stone-800 border border-stone-700 rounded-full text-stone-300 transition-all duration-200 hover:scale-110 active:scale-95 backdrop-blur-md shadow-md shadow-stone-950/50 hover:shadow-lg;
+  }
+
+  /* Standardized Inputs */
+  .eldfall-input {
+    @apply w-full surface-2 border border-stone-800 rounded-xl py-3 px-4 text-white placeholder-stone-500 focus:outline-none focus:border-red-500/50 transition-all duration-200 shadow-inner shadow-stone-950/50;
+  }
+
+  .eldfall-input-with-icon {
+    @apply pl-12;
+  }
+
+  .eldfall-input-icon {
+    @apply absolute left-4 top-1/2 -translate-y-1/2 text-stone-500 w-5 h-5 transition-colors;
   }
 }
 
@@ -21,7 +138,15 @@
 }
 
 .eldfall-card {
-  @apply bg-stone-900/50 border border-stone-800 backdrop-blur-sm hover:border-red-900/50 transition-all duration-300;
+  @apply bg-surface-2/50 border border-stone-800 backdrop-blur-sm rounded-xl hover:border-red-900/50 transition-all duration-300;
+}
+
+.eldfall-card-solid {
+  @apply surface-2 border border-stone-800 rounded-xl hover:border-red-900/50 transition-all duration-300;
+}
+
+.eldfall-card-interactive {
+  @apply cursor-pointer shadow-lg shadow-stone-950/50 hover:shadow-xl hover:shadow-stone-950/80 hover:scale-[1.01] active:scale-[0.99];
 }
 
 /* Custom Scrollbar */

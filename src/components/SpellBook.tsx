@@ -24,20 +24,20 @@ export default function SpellBook({ onBack }: SpellBookProps) {
   );
 
   return (
-    <div className="min-h-screen bg-stone-950 text-stone-300 pb-20">
+    <div className="min-h-screen surface-1 text-stone-300 pb-20">
       {/* Header */}
-      <header className="sticky top-0 z-50 bg-stone-950/80 backdrop-blur-md border-b border-stone-800">
-        <div className="max-w-7xl mx-auto px-4 h-16 flex items-center justify-between">
+      <header className="page-header">
+        <div className="header-content">
           <div className="flex items-center gap-4">
             <button
               onClick={onBack}
-              className="p-2 hover:bg-stone-800 rounded-full transition-colors text-stone-400 hover:text-white"
+              className="btn-icon-circle"
             >
               <ArrowLeft className="w-5 h-5" />
             </button>
             <div className="flex items-center gap-2">
               <Wand2 className="w-6 h-6 text-red-500" />
-              <h1 className="text-xl font-bold text-white">Spell Book</h1>
+              <h1 className="h1-standard">Spell Book</h1>
             </div>
           </div>
         </div>
@@ -47,21 +47,21 @@ export default function SpellBook({ onBack }: SpellBookProps) {
         {/* Controls */}
         <div className="flex flex-col md:flex-row gap-4 mb-8">
           <div className="relative flex-grow">
-            <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-stone-500" />
+            <Search className="eldfall-input-icon" />
             <input
               type="text"
               placeholder="Search spells by name, effect, or element..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className="w-full bg-stone-900 border border-stone-800 rounded-xl pl-10 pr-4 py-3 text-white placeholder-stone-500 focus:outline-none focus:border-red-500/50 transition-colors"
+              className="eldfall-input eldfall-input-with-icon"
             />
           </div>
           <div className="relative min-w-[200px]">
-            <Filter className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-stone-500" />
+            <Filter className="eldfall-input-icon" />
             <select
               value={selectedSchool || ''}
               onChange={(e) => setSelectedSchool(e.target.value || null)}
-              className="w-full bg-stone-900 border border-stone-800 rounded-xl pl-10 pr-4 py-3 text-white appearance-none focus:outline-none focus:border-red-500/50 transition-colors cursor-pointer"
+              className="eldfall-input eldfall-input-with-icon cursor-pointer appearance-none"
             >
               <option value="">All Schools</option>
               {spellSchools.map(school => (
@@ -88,7 +88,7 @@ export default function SpellBook({ onBack }: SpellBookProps) {
               >
                 <div className="flex items-center gap-3 mb-6 pb-2 border-b border-stone-800">
                   <h2 className="text-2xl font-bold text-white">{school.name}</h2>
-                  <span className="px-2 py-1 bg-stone-900 rounded text-xs font-medium text-stone-400">
+                  <span className="px-2 py-1 surface-2 rounded-lg text-xs font-medium text-stone-400">
                     {school.spells.length} Spells
                   </span>
                 </div>
@@ -111,10 +111,10 @@ export default function SpellBook({ onBack }: SpellBookProps) {
 
 function SpellCard({ spell }: { spell: Spell }) {
   return (
-    <div className="bg-stone-900 border border-stone-800 rounded-xl p-5 hover:border-red-900/50 transition-colors flex flex-col h-full">
+    <div className="eldfall-card-solid eldfall-card-interactive card-p flex flex-col h-full">
       <div className="flex justify-between items-start mb-3">
         <h3 className="text-lg font-bold text-white leading-tight">{spell.name}</h3>
-        <span className="px-2 py-1 bg-stone-950 rounded text-xs font-bold text-red-400 border border-stone-800 whitespace-nowrap ml-2">
+        <span className="eldfall-chip ml-2">
           Lvl {spell.level}
         </span>
       </div>
@@ -131,7 +131,7 @@ function SpellCard({ spell }: { spell: Spell }) {
       </div>
       
       <div className="mt-auto pt-4 border-t border-stone-800/50">
-        <p className="text-sm text-stone-400 leading-relaxed">
+        <p className="body-sm">
           {spell.effect}
         </p>
       </div>
@@ -141,7 +141,7 @@ function SpellCard({ spell }: { spell: Spell }) {
 
 function Badge({ label, value }: { label: string, value: string }) {
   return (
-    <div className="inline-flex items-center text-xs bg-stone-950 border border-stone-800 rounded px-2 py-1">
+    <div className="eldfall-chip">
       <span className="text-stone-500 mr-1">{label}:</span>
       <span className="text-stone-300">{value}</span>
     </div>
@@ -150,8 +150,8 @@ function Badge({ label, value }: { label: string, value: string }) {
 
 function StatBox({ label, value }: { label: string, value: string }) {
   return (
-    <div className="bg-stone-950 border border-stone-800 rounded p-2 text-center flex flex-col justify-center">
-      <span className="text-[10px] text-stone-500 uppercase tracking-wider mb-1">{label}</span>
+    <div className="surface-1 border border-stone-800 rounded-lg p-2 text-center flex flex-col justify-center">
+      <span className="text-[8px] text-stone-500 uppercase tracking-meta mb-1">{label}</span>
       <span className="text-sm font-bold text-stone-200">{value}</span>
     </div>
   );

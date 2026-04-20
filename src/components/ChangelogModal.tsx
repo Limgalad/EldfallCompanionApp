@@ -12,35 +12,35 @@ export default function ChangelogModal({ onClose }: ChangelogModalProps) {
       <motion.div 
         initial={{ opacity: 0, scale: 0.95 }}
         animate={{ opacity: 1, scale: 1 }}
-        className="bg-stone-900 border border-stone-800 rounded-2xl w-full max-w-2xl overflow-hidden shadow-2xl max-h-[90vh] flex flex-col"
+        className="surface-overlay rounded-xl w-full max-w-2xl max-h-[90vh] flex flex-col"
       >
-        <div className="p-6 border-b border-stone-800 flex items-center justify-between shrink-0">
+        <div className="card-p-lg border-b border-stone-800 flex items-center justify-between shrink-0">
           <div className="flex items-center text-red-500">
             <History className="w-5 h-5 mr-2" />
             <h3 className="text-xl font-bold text-white">Changelog & Updates</h3>
           </div>
           <button 
             onClick={onClose}
-            className="p-2 hover:bg-stone-800 rounded-full text-stone-400 transition-colors"
+            className="btn-icon-circle border-transparent bg-transparent shadow-none hover:bg-stone-800"
           >
             <X className="w-5 h-5" />
           </button>
         </div>
         
-        <div className="p-6 overflow-y-auto custom-scrollbar">
+        <div className="card-p-lg overflow-y-auto custom-scrollbar">
           {/* Current Version */}
-          <div className="mb-8">
-            <div className="flex items-center justify-between mb-4">
+          <div className="mb-10">
+            <div className="flex items-center justify-between mb-6">
               <h4 className="text-lg font-bold text-white flex items-center">
                 <Star className="w-5 h-5 text-yellow-500 mr-2" />
                 Version 1.1.0
               </h4>
-              <span className="text-xs font-mono text-green-500 bg-green-950/30 px-2 py-1 rounded border border-green-900/50">
+              <span className="eldfall-chip border-green-900/50 text-green-500 bg-green-950/30">
                 Latest Release
               </span>
             </div>
             
-            <ul className="space-y-3 text-sm text-stone-300">
+            <ul className="stack-compact body-sm text-stone-300">
               <li className="flex items-start">
                 <span className="text-blue-500 mr-2 mt-0.5">•</span>
                 <div>
@@ -69,33 +69,33 @@ export default function ChangelogModal({ onClose }: ChangelogModalProps) {
           </div>
 
           {/* Previous Versions */}
-          <div className="mb-8 opacity-75">
-            <h4 className="text-md font-bold text-stone-400 mb-3 flex items-center">
+          <div className="mb-10 opacity-75">
+            <h4 className="text-md font-bold text-stone-400 mb-4 flex items-center">
               <Wrench className="w-4 h-4 text-stone-500 mr-2" />
               Previous Updates
             </h4>
-            <div className="space-y-4">
-              <div>
-                <div className="text-xs font-mono text-stone-500 mb-1 flex items-center justify-between">
+            <div className="stack-standard">
+              <div className="stack-compact">
+                <div className="text-xs font-medium text-stone-500 mb-1 flex items-center justify-between">
                   <span>v1.0.5</span>
                   <span className="text-[10px] uppercase opacity-50 italic">Errata Update</span>
                 </div>
-                <ul className="space-y-1 text-sm text-stone-400">
+                <ul className="stack-compact body-sm">
                   <li>• Implemented 9 APR errata updates: changes to Throwing, Impede, and Cleave rules.</li>
                   <li>• Added Hostile AI behaviors to the Creatures Database.</li>
                   <li>• Enhanced type safety across Missions and Factions.</li>
                 </ul>
               </div>
-              <div>
-                <div className="text-xs font-mono text-stone-500 mb-1">v1.0.3</div>
-                <ul className="space-y-1 text-sm text-stone-400">
+              <div className="stack-compact">
+                <div className="text-xs font-medium text-stone-500 mb-1">v1.0.3</div>
+                <ul className="stack-compact body-sm">
                   <li>• Added competitive quests for Season 1.</li>
                   <li>• Integrated new spellbook rules and class masteries.</li>
                 </ul>
               </div>
-              <div>
-                <div className="text-xs font-mono text-stone-500 mb-1">v1.0.2</div>
-                <ul className="space-y-1 text-sm text-stone-400">
+              <div className="stack-compact">
+                <div className="text-xs font-medium text-stone-500 mb-1">v1.0.2</div>
+                <ul className="stack-compact body-sm">
                   <li>• Added secure bug reporting system.</li>
                   <li>• UI polish and performance improvements.</li>
                 </ul>
@@ -104,12 +104,12 @@ export default function ChangelogModal({ onClose }: ChangelogModalProps) {
           </div>
 
           {/* Upcoming Features */}
-          <div className="bg-stone-950/50 border border-stone-800 rounded-xl p-5">
-            <h4 className="text-md font-bold text-white mb-3 flex items-center">
+          <div className="bg-stone-950/50 border border-stone-800 rounded-xl card-p">
+            <h4 className="text-md font-bold text-white mb-4 flex items-center">
               <Rocket className="w-5 h-5 text-purple-500 mr-2" />
               Upcoming Features
             </h4>
-            <ul className="space-y-3 text-sm text-stone-400">
+            <ul className="stack-compact text-sm text-stone-400">
               <li className="flex items-start">
                 <span className="text-purple-500 mr-2 mt-0.5">→</span>
                 Expanding core rules and game mechanics.
