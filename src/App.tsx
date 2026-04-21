@@ -132,7 +132,7 @@ export default function App() {
             </p>
             <div className="flex flex-wrap justify-center gap-4">
               <button className="btn-primary">
-                Sponsor App
+                Buy Me a Coffee
               </button>
               <button 
                 onClick={() => setIsBugModalOpen(true)}
@@ -152,7 +152,7 @@ export default function App() {
             onClick={() => setIsChangelogOpen(true)}
             className="mt-4 text-[10px] opacity-50 hover:opacity-100 uppercase tracking-eyebrow transition-opacity flex items-center justify-center w-full gap-2"
           >
-            <History className="w-3 h-3" /> Version 1.0.5 &bull; View Changelog
+            <History className="w-3 h-3" /> Version 1.1.0 &bull; View Changelog
           </button>
         </footer>
       </div>

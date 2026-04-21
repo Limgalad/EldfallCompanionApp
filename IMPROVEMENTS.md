@@ -19,8 +19,8 @@ This document outlines the results of a comprehensive code review and lists pote
     - Creating an editing interface for tiles and rules.
 - **Expanded Reference Sections**: Implement Phase 4 features:
     - [x] **Spell Book**: Add a new tile with categorized spells (e.g., by school/element).
-    - [ ] **Creatures Database**: Create a searchable creature reference with stats and behaviors.
-    - [ ] **Quest Schemes**: Add a tile for all schemes used in quests.
+    - [x] **Creatures Database**: Create a searchable creature reference with stats and behaviors.
+    - [x] **Quest Schemes**: Add a tile for all schemes used in quests.
     - [ ] **Equipment & Upgrades**: Implement a reference for equipment and upgrades.
 - **Search Improvements**: The current search is basic. Enhance with:
     - [x] Fuzzy search or autocomplete.
