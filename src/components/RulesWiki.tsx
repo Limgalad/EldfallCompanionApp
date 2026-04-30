@@ -445,7 +445,7 @@ export default function RulesWiki({ onBack }: { onBack: () => void }) {
         </div>
 
         {/* Tabs */}
-        <div className="flex space-x-2 md:space-x-4 mb-8 border-b border-stone-900 overflow-x-auto no-scrollbar">
+        <div id="rules-wiki-tabs" className="flex space-x-2 md:space-x-4 mb-8 border-b border-stone-900 overflow-x-auto custom-scrollbar">
           <TabButton 
             active={activeTab === "mechanics"} 
             onClick={() => setActiveTab("mechanics")}

@@ -199,7 +199,7 @@ export default function SpellBook({ onBack }: SpellBookProps) {
           )}
         </div>
 
-        <div className="flex space-x-2 md:space-x-4 mb-8 border-b border-stone-900 overflow-x-auto no-scrollbar">
+        <div id="spell-book-tabs" className="flex space-x-2 md:space-x-4 mb-8 border-b border-stone-900 overflow-x-auto custom-scrollbar">
           <TabButton
             active={selectedSchool === null}
             onClick={() => setSelectedSchool(null)}
