@@ -23,7 +23,7 @@ A companion app for Eldfall Chronicles, featuring mission overviews, rules docum
     - [x] Create a detailed rulebook reference (`RulesEldfall1.6.md`).
     - [x] **Full Makeover**: All rule tiles (Traits, Skills, States, Combat Arts, Classes) are now clickable and open a detailed modal with full text.
 - [ ] **Phase 4: Expanded Reference**
-    - [ ] **Spell Book**: Implement a spell reference tile with all spells categorized by their relative school.
+    - [x] **Spell Book**: Implement a spell reference tile with all spells categorized by their relative school.
     - [x] **Creatures**: Add a creature database to view stats and behaviors. (Demo data added, pending full rules).
     - [x] **Quest Schemes**: Implement a tile/modal for all schemes used in Quests.
     - [ ] **Equipment & Upgrades (Nice to have)**: Add a reference for all equipment and upgrades.
