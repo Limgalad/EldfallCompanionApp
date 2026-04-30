@@ -2,7 +2,7 @@ import React, { useEffect, useMemo, useState } from 'react';
 import { motion } from 'motion/react';
 import { ArrowLeft, Wand2, Search, Sparkles, Menu, X } from 'lucide-react';
 import { spellSchools, Spell, SpellSchool } from '../data/spells';
-import { normalizeText, rankFuzzyResults } from '../utils/search';
+import { normalizeText, prepareFuzzySearchEntries, rankPreparedFuzzyResults } from '../utils/search';
 
 interface SpellBookProps {
   onBack: () => void;
@@ -17,6 +17,17 @@ type SpellSearchResult = {
 const getSpellId = (schoolName: string, spellName: string, spellIndex: number) =>
   `spell-${normalizeText(`${schoolName} ${spellName} ${spellIndex}`).replace(/\s+/g, '-')}`;
 
+const spellSearchEntries = prepareFuzzySearchEntries(
+  spellSchools.flatMap((school) =>
+    school.spells.map((spell, spellIndex) => ({
+      id: getSpellId(school.name, spell.name, spellIndex),
+      schoolName: school.name,
+      spell,
+    })),
+  ),
+  (entry) => `${entry.spell.name} ${entry.spell.effect} ${entry.spell.element} ${entry.spell.type} ${entry.schoolName}`,
+);
+
 export default function SpellBook({ onBack }: SpellBookProps) {
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedSchool, setSelectedSchool] = useState<SpellSchool['name'] | null>(null);
@@ -26,16 +37,9 @@ export default function SpellBook({ onBack }: SpellBookProps) {
   const hasSearchQuery = searchQuery.trim().length > 0;
 
   const searchResults = useMemo<SpellSearchResult[]>(
-    () => rankFuzzyResults(
+    () => rankPreparedFuzzyResults(
       searchQuery,
-      spellSchools.flatMap((school) =>
-        school.spells.map((spell, spellIndex) => ({
-          id: getSpellId(school.name, spell.name, spellIndex),
-          schoolName: school.name,
-          spell,
-        })),
-      ),
-      (entry) => `${entry.spell.name} ${entry.spell.effect} ${entry.spell.element} ${entry.spell.type} ${entry.schoolName}`,
+      spellSearchEntries,
       (left, right) => left.spell.name.localeCompare(right.spell.name),
     ),
     [searchQuery],

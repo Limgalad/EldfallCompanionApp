@@ -2,7 +2,7 @@ import React, { useMemo, useState, useEffect } from "react";
 import { motion, AnimatePresence } from "motion/react";
 import { rules, traits, skills, classes, combatArtCategories, states, RuleSection, CombatArtCategory, Trait, Skill, State, ClassInfo, CombatArt } from "../data/rules";
 import { ArrowLeft, Search, BookOpen, Shield, Zap, Sparkles, Users, Sword, Activity, Info, X, Menu } from "lucide-react";
-import { rankFuzzyResults } from "../utils/search";
+import { prepareFuzzySearchEntries, rankPreparedFuzzyResults } from "../utils/search";
 
 const LINKABLE_KEYWORDS: { name: string; type: "states" | "traits" | "skills" }[] = [
   { name: "Blinded", type: "states" },
@@ -61,6 +61,42 @@ const SEARCH_CATEGORY_LABELS: Record<SearchCategory, string> = {
 };
 
 const escapeRegExp = (value: string) => value.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+const sortedLinkableKeywords = [...LINKABLE_KEYWORDS].sort((a, b) => b.name.length - a.name.length);
+const linkableKeywordPattern = sortedLinkableKeywords.map((keyword) => `\\b${escapeRegExp(keyword.name)}\\b`).join("|");
+const linkableKeywordRegex = new RegExp(`(${linkableKeywordPattern})`, "gi");
+const stateLookup = new Map(states.map((state) => [state.name.toLowerCase(), state]));
+const traitLookup = new Map(traits.map((trait) => [trait.name.toLowerCase(), trait]));
+const skillLookup = new Map(skills.map((skill) => [skill.name.toLowerCase(), skill]));
+const keywordLookup = new Map(sortedLinkableKeywords.map((keyword) => [keyword.name.toLowerCase(), keyword]));
+
+const getSelectedItemTitle = (item: SelectedItem) =>
+  item.type === "mechanics" ? item.data.title : item.data.name;
+
+const getSelectedItemBody = (item: SelectedItem) => {
+  if (item.type === "mechanics") {
+    return item.data.content;
+  }
+
+  if (item.type === "combatArts") {
+    return item.data.ruleText;
+  }
+
+  return item.data.description;
+};
+
+const getKeywordData = (keyword: (typeof LINKABLE_KEYWORDS)[number]) => {
+  const normalizedName = keyword.name.toLowerCase();
+
+  if (keyword.type === "states") {
+    return stateLookup.get(normalizedName);
+  }
+
+  if (keyword.type === "traits") {
+    return traitLookup.get(normalizedName);
+  }
+
+  return skillLookup.get(normalizedName);
+};
 
 function HighlightedText({ text, query }: { text: string; query: string }) {
   const trimmedQuery = query.trim();
@@ -92,27 +128,20 @@ function HighlightedText({ text, query }: { text: string; query: string }) {
 const RichText = ({ text, onKeywordClick, highlightQuery = "" }: { text: string; onKeywordClick: (item: KeywordItem) => void; highlightQuery?: string }) => {
   if (!text) return null;
 
-  const sortedKeywords = [...LINKABLE_KEYWORDS].sort((a, b) => b.name.length - a.name.length);
-  const pattern = sortedKeywords.map(k => `\\b${k.name}\\b`).join('|');
-  
-  if (!pattern) return <>{text}</>;
-
-  const regex = new RegExp(`(${pattern})`, 'gi');
-  const parts = text.split(regex);
+  const parts = text.split(linkableKeywordRegex);
 
   return (
     <>
       {parts.map((part, i) => {
-        const keyword = sortedKeywords.find(k => k.name.toLowerCase() === part.toLowerCase());
+        const keyword = keywordLookup.get(part.toLowerCase());
         if (keyword) {
-          let data;
-          if (keyword.type === 'states') data = states.find(s => s.name === keyword.name);
-          if (keyword.type === 'traits') data = traits.find(t => t.name === keyword.name);
+          const data = getKeywordData(keyword);
           
           if (data) {
             return (
               <button
                 key={i}
+                type="button"
                 onClick={(e) => {
                   e.stopPropagation();
                   onKeywordClick({ type: keyword.type, data });
@@ -152,70 +181,90 @@ export default function RulesWiki({ onBack }: { onBack: () => void }) {
     window.scrollTo(0, 0);
   }, [activeTab]);
 
-  const searchEntries = useMemo<SearchResultEntry[]>(
-    () => [
-      ...rules.map((section) => ({
-        id: `mechanics-${section.id}`,
-        category: "mechanics" as const,
-        title: section.title,
-        preview: section.content,
-        searchText: [section.title, section.content, ...(section.subsections?.flatMap((sub) => [sub.title, sub.content]) ?? [])].join(" "),
-        selectedItem: { type: "mechanics", data: section } as SelectedItem,
-      })),
-      ...states.map((state) => ({
-        id: `states-${state.name}`,
-        category: "states" as const,
-        title: state.name,
-        preview: state.description,
-        searchText: `${state.name} ${state.description}`,
-        selectedItem: { type: "states", data: state } as SelectedItem,
-      })),
-      ...traits.map((trait) => ({
-        id: `traits-${trait.name}`,
-        category: "traits" as const,
-        title: trait.name,
-        preview: trait.description,
-        searchText: `${trait.name} ${trait.description}`,
-        selectedItem: { type: "traits", data: trait } as SelectedItem,
-      })),
-      ...skills.map((skill) => ({
-        id: `skills-${skill.name}`,
-        category: "skills" as const,
-        title: skill.name,
-        preview: skill.description,
-        searchText: `${skill.name} ${skill.description}`,
-        selectedItem: { type: "skills", data: skill } as SelectedItem,
-      })),
-      ...classes.map((cls) => ({
-        id: `classes-${cls.name}`,
-        category: "classes" as const,
-        title: cls.name,
-        preview: cls.description,
-        searchText: `${cls.name} ${cls.description} ${cls.abilities.join(" ")}`,
-        selectedItem: { type: "classes", data: cls } as SelectedItem,
-      })),
-      ...combatArtCategories.map((combatArtCategory) => ({
-        id: `combatArts-${combatArtCategory.name}`,
-        category: "combatArts" as const,
-        title: combatArtCategory.name,
-        preview: combatArtCategory.ruleText,
-        searchText: [
-          combatArtCategory.name,
-          combatArtCategory.ruleText,
-          combatArtCategory.flavorText,
-          ...combatArtCategory.levels.flatMap((level) => [level.name, level.description]),
-        ].join(" "),
-        selectedItem: { type: "combatArts", data: combatArtCategory } as SelectedItem,
-      })),
-    ],
+  useEffect(() => {
+    const handleKeyDown = (event: KeyboardEvent) => {
+      if (event.key !== "Escape") {
+        return;
+      }
+
+      if (nestedItem) {
+        setNestedItem(null);
+        return;
+      }
+
+      setSelectedItem(null);
+    };
+
+    window.addEventListener("keydown", handleKeyDown);
+    return () => window.removeEventListener("keydown", handleKeyDown);
+  }, [nestedItem]);
+
+  const searchEntries = useMemo(
+    () => prepareFuzzySearchEntries<SearchResultEntry>(
+      [
+        ...rules.map((section) => ({
+          id: `mechanics-${section.id}`,
+          category: "mechanics" as const,
+          title: section.title,
+          preview: section.content,
+          searchText: [section.title, section.content, ...(section.subsections?.flatMap((sub) => [sub.title, sub.content]) ?? [])].join(" "),
+          selectedItem: { type: "mechanics", data: section } as SelectedItem,
+        })),
+        ...states.map((state) => ({
+          id: `states-${state.name}`,
+          category: "states" as const,
+          title: state.name,
+          preview: state.description,
+          searchText: `${state.name} ${state.description}`,
+          selectedItem: { type: "states", data: state } as SelectedItem,
+        })),
+        ...traits.map((trait) => ({
+          id: `traits-${trait.name}`,
+          category: "traits" as const,
+          title: trait.name,
+          preview: trait.description,
+          searchText: `${trait.name} ${trait.description}`,
+          selectedItem: { type: "traits", data: trait } as SelectedItem,
+        })),
+        ...skills.map((skill) => ({
+          id: `skills-${skill.name}`,
+          category: "skills" as const,
+          title: skill.name,
+          preview: skill.description,
+          searchText: `${skill.name} ${skill.description}`,
+          selectedItem: { type: "skills", data: skill } as SelectedItem,
+        })),
+        ...classes.map((cls) => ({
+          id: `classes-${cls.name}`,
+          category: "classes" as const,
+          title: cls.name,
+          preview: cls.description,
+          searchText: `${cls.name} ${cls.description} ${cls.abilities.join(" ")}`,
+          selectedItem: { type: "classes", data: cls } as SelectedItem,
+        })),
+        ...combatArtCategories.map((combatArtCategory) => ({
+          id: `combatArts-${combatArtCategory.name}`,
+          category: "combatArts" as const,
+          title: combatArtCategory.name,
+          preview: combatArtCategory.ruleText,
+          searchText: [
+            combatArtCategory.name,
+            combatArtCategory.ruleText,
+            combatArtCategory.flavorText,
+            ...combatArtCategory.levels.flatMap((level) => [level.name, level.description]),
+          ].join(" "),
+          selectedItem: { type: "combatArts", data: combatArtCategory } as SelectedItem,
+        })),
+      ],
+      (entry) => `${entry.title} ${entry.searchText}`,
+    ),
     [],
   );
 
   const rankedSearchEntries = useMemo(
-    () => rankFuzzyResults(
+    () => rankPreparedFuzzyResults(
       searchQuery,
       searchEntries,
-      (entry) => `${entry.title} ${entry.searchText}`,
       (left, right) => left.title.localeCompare(right.title),
     ),
     [searchEntries, searchQuery],
@@ -322,6 +371,8 @@ export default function RulesWiki({ onBack }: { onBack: () => void }) {
             </button>
             {searchQuery && (
               <button
+                type="button"
+                aria-label="Clear rules search"
                 onClick={() => setSearchQuery("")}
                 className="btn-icon-circle absolute right-2 top-1/2 -translate-y-1/2 border-transparent bg-transparent shadow-none hover:bg-stone-800"
               >
@@ -433,7 +484,7 @@ export default function RulesWiki({ onBack }: { onBack: () => void }) {
           />
         </div>
 
-        <main>
+        <div>
           {hasSearchQuery ? (
             visibleSearchCategories.length > 0 ? (
               <div className="space-y-8">
@@ -473,9 +524,10 @@ export default function RulesWiki({ onBack }: { onBack: () => void }) {
                 className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4"
               >
                 {rules.map((section) => (
-                  <div 
+                  <button
                     key={section.id}
-                    className="eldfall-card eldfall-card-interactive card-p group"
+                    type="button"
+                    className="eldfall-card eldfall-card-interactive card-p group text-left"
                     onClick={() => setSelectedItem({ type: "mechanics", data: section })}
                   >
                     <div className="flex justify-between items-start mb-3">
@@ -484,7 +536,7 @@ export default function RulesWiki({ onBack }: { onBack: () => void }) {
                     </div>
                     <h2 className="text-lg font-bold text-white mb-2 group-hover:text-red-500 transition-colors">{section.title}</h2>
                     <p className="body-sm line-clamp-3">{section.content}</p>
-                  </div>
+                  </button>
                 ))}
               </motion.div>
             )}
@@ -498,9 +550,10 @@ export default function RulesWiki({ onBack }: { onBack: () => void }) {
                 className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-4"
               >
                 {states.map((state) => (
-                  <div 
-                    key={state.name} 
-                    className="eldfall-card eldfall-card-interactive card-p group"
+                  <button
+                    key={state.name}
+                    type="button"
+                    className="eldfall-card eldfall-card-interactive card-p group text-left"
                     onClick={() => setSelectedItem({ type: "states", data: state })}
                   >
                     <div className="flex justify-between items-start mb-2">
@@ -508,7 +561,7 @@ export default function RulesWiki({ onBack }: { onBack: () => void }) {
                       <Info className="w-4 h-4 text-stone-700 group-hover:text-red-500 transition-colors" />
                     </div>
                     <p className="body-xs line-clamp-3">{state.description}</p>
-                  </div>
+                  </button>
                 ))}
               </motion.div>
             )}
@@ -522,9 +575,10 @@ export default function RulesWiki({ onBack }: { onBack: () => void }) {
                 className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-4"
               >
                 {traits.map((trait) => (
-                  <div 
-                    key={trait.name} 
-                    className="eldfall-card eldfall-card-interactive card-p group"
+                  <button
+                    key={trait.name}
+                    type="button"
+                    className="eldfall-card eldfall-card-interactive card-p group text-left"
                     onClick={() => setSelectedItem({ type: "traits", data: trait })}
                   >
                     <div className="flex justify-between items-start mb-2">
@@ -532,7 +586,7 @@ export default function RulesWiki({ onBack }: { onBack: () => void }) {
                       <Info className="w-4 h-4 text-stone-700 group-hover:text-red-500 transition-colors" />
                     </div>
                     <p className="body-xs line-clamp-3">{trait.description}</p>
-                  </div>
+                  </button>
                 ))}
               </motion.div>
             )}
@@ -546,9 +600,10 @@ export default function RulesWiki({ onBack }: { onBack: () => void }) {
                 className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-4"
               >
                 {skills.map((skill) => (
-                  <div 
-                    key={skill.name} 
-                    className="eldfall-card eldfall-card-interactive card-p group"
+                  <button
+                    key={skill.name}
+                    type="button"
+                    className="eldfall-card eldfall-card-interactive card-p group text-left"
                     onClick={() => setSelectedItem({ type: "skills", data: skill })}
                   >
                     <div className="flex justify-between items-start mb-2">
@@ -556,7 +611,7 @@ export default function RulesWiki({ onBack }: { onBack: () => void }) {
                       <Info className="w-4 h-4 text-stone-700 group-hover:text-red-500 transition-colors" />
                     </div>
                     <p className="body-xs line-clamp-3">{skill.description}</p>
-                  </div>
+                  </button>
                 ))}
               </motion.div>
             )}
@@ -570,9 +625,10 @@ export default function RulesWiki({ onBack }: { onBack: () => void }) {
                 className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4"
               >
                 {combatArtCategories.map((cac) => (
-                  <div 
-                    key={cac.name} 
-                    className="eldfall-card eldfall-card-interactive card-p group"
+                  <button
+                    key={cac.name}
+                    type="button"
+                    className="eldfall-card eldfall-card-interactive card-p group text-left"
                     onClick={() => setSelectedItem({ type: "combatArts", data: cac })}
                   >
                     <div className="flex justify-between items-start mb-3">
@@ -587,7 +643,7 @@ export default function RulesWiki({ onBack }: { onBack: () => void }) {
                     <div className="mt-4 flex items-center text-xs text-stone-500 uppercase tracking-eyebrow">
                       <span className="text-red-500 mr-2">{cac.levels.length}</span> Levels Available
                     </div>
-                  </div>
+                  </button>
                 ))}
               </motion.div>
             )}
@@ -601,9 +657,10 @@ export default function RulesWiki({ onBack }: { onBack: () => void }) {
                 className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4"
               >
                 {classes.map((cls) => (
-                  <div 
-                    key={cls.name} 
-                    className="eldfall-card eldfall-card-interactive card-p group"
+                  <button
+                    key={cls.name}
+                    type="button"
+                    className="eldfall-card eldfall-card-interactive card-p group text-left"
                     onClick={() => setSelectedItem({ type: "classes", data: cls })}
                   >
                     <h3 className="text-lg font-bold text-white mb-2 group-hover:text-red-500 transition-colors">{cls.name}</h3>
@@ -611,7 +668,7 @@ export default function RulesWiki({ onBack }: { onBack: () => void }) {
                     <div className="space-y-2">
                       {cls.abilities.slice(0, 2).map((ability, i) => (
                         <div key={i} className="flex items-start text-xs">
-                          <span className="text-red-500 mr-2 mt-0.5">•</span>
+                          <span className="text-red-500 mr-2 mt-0.5">-</span>
                           <span className="text-stone-300 line-clamp-1">{ability}</span>
                         </div>
                       ))}
@@ -619,13 +676,13 @@ export default function RulesWiki({ onBack }: { onBack: () => void }) {
                         <p className="text-stone-500 text-[10px] mt-2">+ {cls.abilities.length - 2} more abilities...</p>
                       )}
                     </div>
-                  </div>
+                  </button>
                 ))}
               </motion.div>
             )}
           </AnimatePresence>
           )}
-        </main>
+        </div>
 
         {/* Modal for Details */}
         <AnimatePresence>
@@ -642,6 +699,9 @@ export default function RulesWiki({ onBack }: { onBack: () => void }) {
                 initial={{ opacity: 0, scale: 0.95, y: 20 }}
                 animate={{ opacity: 1, scale: 1, y: 0 }}
                 exit={{ opacity: 0, scale: 0.95, y: 20 }}
+                role="dialog"
+                aria-modal="true"
+                aria-labelledby="rules-detail-title"
                 className="relative surface-overlay rounded-xl max-w-3xl w-full max-h-[85vh] overflow-y-auto"
               >
                 <div className="card-p-lg border-b border-stone-800 flex justify-between items-start shrink-0">
@@ -649,9 +709,11 @@ export default function RulesWiki({ onBack }: { onBack: () => void }) {
                     <span className="text-[10px] font-display uppercase tracking-eyebrow text-red-500 mb-1 block">
                       {selectedItem.type === "mechanics" ? selectedItem.data.category : selectedItem.type.replace(/([A-Z])/g, ' $1').trim()}
                     </span>
-                    <h2 className="text-2xl font-bold text-white leading-tight">{selectedItem.data.name || selectedItem.data.title}</h2>
+                    <h2 id="rules-detail-title" className="text-2xl font-bold text-white leading-tight">{getSelectedItemTitle(selectedItem)}</h2>
                   </div>
                   <button 
+                    type="button"
+                    aria-label="Close rules detail"
                     onClick={() => setSelectedItem(null)}
                     className="btn-icon-circle border-transparent bg-transparent shadow-none hover:bg-stone-800"
                   >
@@ -662,7 +724,7 @@ export default function RulesWiki({ onBack }: { onBack: () => void }) {
                 <div className="card-p-lg stack-standard">
                   <div className="text-stone-300 body-sm whitespace-pre-wrap font-sans">
                     <RichText 
-                      text={selectedItem.data.description || selectedItem.data.content} 
+                      text={getSelectedItemBody(selectedItem)} 
                       onKeywordClick={setNestedItem}
                       highlightQuery={searchQuery}
                     />
@@ -685,7 +747,7 @@ export default function RulesWiki({ onBack }: { onBack: () => void }) {
                       <div className="space-y-2">
                         {selectedItem.data.abilities.map((ability: string, i: number) => (
                           <div key={i} className="flex items-start text-xs">
-                            <span className="text-red-500 mr-2 mt-0.5">•</span>
+                            <span className="text-red-500 mr-2 mt-0.5">-</span>
                             <span className="text-stone-300">{ability}</span>
                           </div>
                         ))}
@@ -738,14 +800,22 @@ export default function RulesWiki({ onBack }: { onBack: () => void }) {
                 initial={{ opacity: 0, scale: 0.9, y: 10 }}
                 animate={{ opacity: 1, scale: 1, y: 0 }}
                 exit={{ opacity: 0, scale: 0.9, y: 10 }}
+                role="dialog"
+                aria-modal="true"
+                aria-labelledby="rules-reference-title"
                 className="relative surface-overlay border-stone-700 rounded-xl max-w-lg w-full"
               >
                 <div className="p-4 border-b border-stone-800 flex justify-between items-center bg-surface-1/50">
                   <div className="flex items-center space-x-2">
                     <Info className="w-4 h-4 text-red-500" />
-                    <h3 className="text-sm font-bold text-white uppercase tracking-eyebrow">{nestedItem.data.name}</h3>
+                    <h3 id="rules-reference-title" className="text-sm font-bold text-white uppercase tracking-eyebrow">{nestedItem.data.name}</h3>
                   </div>
-                  <button onClick={() => setNestedItem(null)} className="btn-icon-circle border-transparent bg-transparent shadow-none hover:bg-stone-800">
+                  <button
+                    type="button"
+                    aria-label="Close reference"
+                    onClick={() => setNestedItem(null)}
+                    className="btn-icon-circle border-transparent bg-transparent shadow-none hover:bg-stone-800"
+                  >
                     <X className="w-4 h-4" />
                   </button>
                 </div>
@@ -756,6 +826,7 @@ export default function RulesWiki({ onBack }: { onBack: () => void }) {
                 </div>
                 <div className="p-3 bg-surface-1/50 border-t border-stone-800 text-center">
                    <button 
+                     type="button"
                      onClick={() => setNestedItem(null)}
                      className="text-[10px] text-stone-500 hover:text-stone-300 uppercase tracking-eyebrow transition-colors"
                    >
