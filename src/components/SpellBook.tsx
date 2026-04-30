@@ -1,82 +1,73 @@
-import React, { useMemo, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import { motion } from 'motion/react';
-import { ArrowLeft, Wand2, Search, Filter, Sparkles } from 'lucide-react';
+import { ArrowLeft, Wand2, Search, Sparkles, Menu, X } from 'lucide-react';
 import { spellSchools, Spell, SpellSchool } from '../data/spells';
+import { normalizeText, rankFuzzyResults } from '../utils/search';
 
 interface SpellBookProps {
   onBack: () => void;
 }
 
-const normalizeText = (value: string) =>
-  value
-    .toLowerCase()
-    .replace(/[^a-z0-9\s]/g, ' ')
-    .replace(/\s+/g, ' ')
-    .trim();
-
-const getFuzzyScore = (query: string, text: string) => {
-  const normalizedQuery = normalizeText(query);
-  const normalizedText = normalizeText(text);
-
-  if (!normalizedQuery) {
-    return 1;
-  }
-
-  const directIndex = normalizedText.indexOf(normalizedQuery);
-  if (directIndex >= 0) {
-    return 1000 - directIndex;
-  }
-
-  let queryIndex = 0;
-  let gapPenalty = 0;
-  let lastMatchIndex = -1;
-
-  for (let i = 0; i < normalizedText.length && queryIndex < normalizedQuery.length; i += 1) {
-    if (normalizedText[i] === normalizedQuery[queryIndex]) {
-      if (lastMatchIndex >= 0) {
-        gapPenalty += i - lastMatchIndex - 1;
-      }
-      lastMatchIndex = i;
-      queryIndex += 1;
-    }
-  }
-
-  if (queryIndex !== normalizedQuery.length) {
-    return 0;
-  }
-
-  return Math.max(100 - gapPenalty, 1);
+type SpellSearchResult = {
+  id: string;
+  schoolName: SpellSchool['name'];
+  spell: Spell;
 };
+
+const getSpellId = (schoolName: string, spellName: string, spellIndex: number) =>
+  `spell-${normalizeText(`${schoolName} ${spellName} ${spellIndex}`).replace(/\s+/g, '-')}`;
 
 export default function SpellBook({ onBack }: SpellBookProps) {
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedSchool, setSelectedSchool] = useState<SpellSchool['name'] | null>(null);
+  const [isFilterMenuOpen, setIsFilterMenuOpen] = useState(false);
+  const [highlightedSpellId, setHighlightedSpellId] = useState<string | null>(null);
 
-  const filteredSchools = useMemo(
-    () =>
-      spellSchools
-        .map((school) => {
-          const filteredSpells = school.spells
-            .map((spell) => ({
-              spell,
-              score: getFuzzyScore(
-                searchQuery,
-                `${spell.name} ${spell.effect} ${spell.element} ${spell.type} ${school.name}`,
-              ),
-            }))
-            .filter(({ score }) => score > 0)
-            .sort((left, right) => right.score - left.score || left.spell.name.localeCompare(right.spell.name))
-            .map(({ spell }) => spell);
+  const hasSearchQuery = searchQuery.trim().length > 0;
 
-          return { ...school, spells: filteredSpells };
-        })
-        .filter(
-          (school) =>
-            (selectedSchool === null || school.name === selectedSchool) &&
-            school.spells.length > 0,
-        ),
-    [searchQuery, selectedSchool],
+  const searchResults = useMemo<SpellSearchResult[]>(
+    () => rankFuzzyResults(
+      searchQuery,
+      spellSchools.flatMap((school) =>
+        school.spells.map((spell, spellIndex) => ({
+          id: getSpellId(school.name, spell.name, spellIndex),
+          schoolName: school.name,
+          spell,
+        })),
+      ),
+      (entry) => `${entry.spell.name} ${entry.spell.effect} ${entry.spell.element} ${entry.spell.type} ${entry.schoolName}`,
+      (left, right) => left.spell.name.localeCompare(right.spell.name),
+    ),
+    [searchQuery],
   );
+
+  const visibleSchools = useMemo(
+    () => spellSchools.filter((school) => selectedSchool === null || school.name === selectedSchool),
+    [selectedSchool],
+  );
+
+  const autocompleteResults = useMemo(
+    () => (hasSearchQuery ? searchResults.slice(0, 6) : []),
+    [hasSearchQuery, searchResults],
+  );
+
+  useEffect(() => {
+    if (!highlightedSpellId) {
+      return;
+    }
+
+    const element = document.getElementById(highlightedSpellId);
+    element?.scrollIntoView?.({ behavior: 'smooth', block: 'center' });
+
+    const timeoutId = window.setTimeout(() => setHighlightedSpellId(null), 2400);
+    return () => window.clearTimeout(timeoutId);
+  }, [highlightedSpellId, selectedSchool]);
+
+  const navigateToSpell = (result: SpellSearchResult) => {
+    setSelectedSchool(result.schoolName);
+    setSearchQuery('');
+    setHighlightedSpellId(result.id);
+  };
 
   return (
     <div className="min-h-screen surface-1 text-stone-300 pb-20">
@@ -100,41 +91,173 @@ export default function SpellBook({ onBack }: SpellBookProps) {
 
       <main className="max-w-7xl mx-auto px-4 py-8">
         {/* Controls */}
-        <div className="flex flex-col md:flex-row gap-4 mb-8">
-          <div className="relative flex-grow">
+        <div className="mb-8">
+          <div className="relative max-w-2xl">
             <Search className="eldfall-input-icon" />
             <input
               type="text"
               placeholder="Search spells by name, effect, or element..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className="eldfall-input eldfall-input-with-icon"
+              className="eldfall-input eldfall-input-with-icon pr-24"
             />
-          </div>
-          <div className="relative min-w-[200px]">
-            <Filter className="eldfall-input-icon" />
-            <select
-              value={selectedSchool || ''}
-              onChange={(e) => setSelectedSchool(e.target.value || null)}
-              className="eldfall-input eldfall-input-with-icon cursor-pointer appearance-none"
+            <button
+              type="button"
+              aria-label="Open spell school filters"
+              aria-expanded={isFilterMenuOpen}
+              onClick={() => setIsFilterMenuOpen((current) => !current)}
+              className={`btn-icon-circle absolute right-10 top-1/2 -translate-y-1/2 border-transparent bg-transparent shadow-none hover:bg-stone-800 ${
+                selectedSchool !== null ? 'text-red-400' : ''
+              }`}
             >
-              <option value="">All Schools</option>
-              {spellSchools.map(school => (
-                <option key={school.name} value={school.name}>{school.name}</option>
-              ))}
-            </select>
+              <Menu className="w-5 h-5" />
+            </button>
+            {searchQuery && (
+              <button
+                type="button"
+                aria-label="Clear spell search"
+                onClick={() => setSearchQuery('')}
+                className="btn-icon-circle absolute right-2 top-1/2 -translate-y-1/2 border-transparent bg-transparent shadow-none hover:bg-stone-800"
+              >
+                <X className="w-5 h-5" />
+              </button>
+            )}
+
+            {isFilterMenuOpen && (
+              <div className="absolute right-0 top-[calc(100%+0.75rem)] z-20 w-56 rounded-xl border border-stone-800 bg-stone-900/95 p-2 shadow-2xl backdrop-blur-sm">
+                <div className="px-3 py-2 text-[10px] uppercase tracking-eyebrow text-stone-500">
+                  Spell School
+                </div>
+                <div className="space-y-1">
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setSelectedSchool(null);
+                      setIsFilterMenuOpen(false);
+                    }}
+                    className={`flex w-full items-center justify-between rounded-lg px-3 py-2 text-left text-xs font-bold uppercase tracking-eyebrow transition-colors ${
+                      selectedSchool === null
+                        ? 'bg-red-900/20 text-red-400'
+                        : 'text-stone-400 hover:bg-stone-800 hover:text-stone-200'
+                    }`}
+                  >
+                    <span>All Schools</span>
+                    {selectedSchool === null && <span className="text-[10px]">Active</span>}
+                  </button>
+
+                  {spellSchools.map((school) => (
+                    <button
+                      key={school.name}
+                      type="button"
+                      onClick={() => {
+                        setSelectedSchool(school.name);
+                        setIsFilterMenuOpen(false);
+                      }}
+                      className={`flex w-full items-center justify-between rounded-lg px-3 py-2 text-left text-xs font-bold uppercase tracking-eyebrow transition-colors ${
+                        selectedSchool === school.name
+                          ? 'bg-red-900/20 text-red-400'
+                          : 'text-stone-400 hover:bg-stone-800 hover:text-stone-200'
+                      }`}
+                    >
+                      <span>{school.name}</span>
+                      {selectedSchool === school.name && <span className="text-[10px]">Active</span>}
+                    </button>
+                  ))}
+                </div>
+              </div>
+            )}
           </div>
+
+          {autocompleteResults.length > 0 && (
+            <div className="mt-3 max-w-2xl bg-stone-900/95 border border-stone-800 rounded-xl overflow-hidden shadow-2xl">
+              <div className="px-4 py-2 border-b border-stone-800 text-[10px] uppercase tracking-eyebrow text-stone-500">
+                Suggestions
+              </div>
+              <div className="divide-y divide-stone-800">
+                {autocompleteResults.map((result) => (
+                  <button
+                    key={`suggestion-${result.id}`}
+                    type="button"
+                    onClick={() => navigateToSpell(result)}
+                    className="w-full px-4 py-3 text-left hover:bg-stone-800 transition-colors"
+                  >
+                    <div className="flex items-center justify-between gap-3">
+                      <span className="text-sm font-bold text-white">{result.spell.name}</span>
+                      <span className="text-[10px] uppercase tracking-eyebrow text-red-400">
+                        {result.schoolName}
+                      </span>
+                    </div>
+                    <p className="body-xs mt-1 line-clamp-2">{result.spell.effect}</p>
+                  </button>
+                ))}
+              </div>
+            </div>
+          )}
+        </div>
+
+        <div className="flex space-x-2 md:space-x-4 mb-8 border-b border-stone-900 overflow-x-auto no-scrollbar">
+          <TabButton
+            active={selectedSchool === null}
+            onClick={() => setSelectedSchool(null)}
+            label="All Schools"
+          />
+          {spellSchools.map((school) => (
+            <TabButton
+              key={school.name}
+              active={selectedSchool === school.name}
+              onClick={() => setSelectedSchool(school.name)}
+              label={school.name}
+            />
+          ))}
         </div>
 
         {/* Content */}
         <div className="space-y-12">
-          {filteredSchools.length === 0 ? (
+          {hasSearchQuery ? (
+            searchResults.length > 0 ? (
+              <section className="space-y-4">
+                <div className="flex items-center justify-between border-b border-stone-900 pb-3">
+                  <h2 className="text-xl font-bold text-white">Search Results</h2>
+                  <span className="text-xs uppercase tracking-eyebrow text-stone-500">
+                    {searchResults.length} match{searchResults.length === 1 ? '' : 'es'}
+                  </span>
+                </div>
+
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                  {searchResults.map((result) => (
+                    <button
+                      key={result.id}
+                      type="button"
+                      onClick={() => navigateToSpell(result)}
+                      className="eldfall-card eldfall-card-interactive card-p group text-left"
+                    >
+                      <div className="flex justify-between items-start mb-3">
+                        <span className="text-xs font-display uppercase tracking-eyebrow text-red-500/70">
+                          {result.schoolName}
+                        </span>
+                        <span className="eldfall-chip ml-2">Lvl {result.spell.level}</span>
+                      </div>
+                      <h3 className="text-lg font-bold text-white mb-2 group-hover:text-red-500 transition-colors">
+                        {result.spell.name}
+                      </h3>
+                      <p className="body-sm line-clamp-3">{result.spell.effect}</p>
+                    </button>
+                  ))}
+                </div>
+              </section>
+            ) : (
+              <div className="text-center py-20 text-stone-500">
+                <Sparkles className="w-12 h-12 mx-auto mb-4 opacity-20" />
+                <p>No spells found matching your criteria.</p>
+              </div>
+            )
+          ) : visibleSchools.length === 0 ? (
             <div className="text-center py-20 text-stone-500">
               <Sparkles className="w-12 h-12 mx-auto mb-4 opacity-20" />
               <p>No spells found matching your criteria.</p>
             </div>
           ) : (
-            filteredSchools.map((school, index) => (
+            visibleSchools.map((school, index) => (
               <motion.section
                 key={school.name}
                 initial={{ opacity: 0, y: 20 }}
@@ -150,8 +273,14 @@ export default function SpellBook({ onBack }: SpellBookProps) {
                 
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                   {school.spells.map((spell, spellIndex) => (
-                    <div key={`${school.name}-${spell.name}-${spellIndex}`}>
-                      <SpellCard spell={spell} />
+                    <div
+                      id={getSpellId(school.name, spell.name, spellIndex)}
+                      key={`${school.name}-${spell.name}-${spellIndex}`}
+                    >
+                      <SpellCard
+                        spell={spell}
+                        isHighlighted={highlightedSpellId === getSpellId(school.name, spell.name, spellIndex)}
+                      />
                     </div>
                   ))}
                 </div>
@@ -164,9 +293,13 @@ export default function SpellBook({ onBack }: SpellBookProps) {
   );
 }
 
-function SpellCard({ spell }: { spell: Spell }) {
+function SpellCard({ spell, isHighlighted = false }: { spell: Spell; isHighlighted?: boolean }) {
   return (
-    <div className="eldfall-card-solid eldfall-card-interactive card-p flex flex-col h-full">
+    <div
+      className={`eldfall-card-solid eldfall-card-interactive card-p flex flex-col h-full transition-all ${
+        isHighlighted ? 'ring-2 ring-red-500 shadow-2xl shadow-red-950/40' : ''
+      }`}
+    >
       <div className="flex justify-between items-start mb-3">
         <h3 className="text-lg font-bold text-white leading-tight">{spell.name}</h3>
         <span className="eldfall-chip ml-2">
@@ -191,6 +324,27 @@ function SpellCard({ spell }: { spell: Spell }) {
         </p>
       </div>
     </div>
+  );
+}
+
+function TabButton({ active, onClick, label }: { active: boolean; onClick: () => void; label: string }) {
+  return (
+    <button
+      type="button"
+      onClick={onClick}
+      className={`flex items-center space-x-2 px-4 py-3 text-xs md:text-sm font-display uppercase tracking-eyebrow transition-all relative whitespace-nowrap ${
+        active ? 'text-red-500' : 'text-stone-500 hover:text-stone-300'
+      }`}
+    >
+      <Wand2 className="w-4 h-4" />
+      <span>{label}</span>
+      {active && (
+        <motion.div
+          layoutId="activeSpellSchoolTab"
+          className="absolute bottom-0 left-0 right-0 h-0.5 bg-red-500"
+        />
+      )}
+    </button>
   );
 }
 

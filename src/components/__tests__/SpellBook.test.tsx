@@ -24,11 +24,32 @@ describe('SpellBook', () => {
     expect(screen.getByText(/Ethereal Blades/i)).toBeInTheDocument();
   });
 
+  it('shows spell search suggestions', () => {
+    render(<SpellBook onBack={() => {}} />);
+    const searchInput = screen.getByPlaceholderText(/Search spells by name, effect, or element.../i);
+    fireEvent.change(searchInput, { target: { value: 'Ethereal' } });
+    expect(screen.getByText(/Suggestions/i)).toBeInTheDocument();
+    expect(screen.getAllByText(/Ethereal Blades/i).length).toBeGreaterThan(0);
+  });
+
   it('filters spells by school', () => {
     render(<SpellBook onBack={() => {}} />);
-    const schoolSelect = screen.getByRole('combobox');
-    fireEvent.change(schoolSelect, { target: { value: 'Armamancy' } });
+    fireEvent.click(screen.getByRole('button', { name: /^Armamancy$/i }));
     expect(screen.getByRole('heading', { name: /Armamancy/i })).toBeInTheDocument();
     expect(screen.queryByRole('heading', { name: /Conjuration/i })).not.toBeInTheDocument();
+  });
+
+  it('searches all schools and navigates to the exact spell', () => {
+    render(<SpellBook onBack={() => {}} />);
+    fireEvent.click(screen.getByRole('button', { name: /^Armamancy$/i }));
+
+    const searchInput = screen.getByPlaceholderText(/Search spells by name, effect, or element.../i);
+    fireEvent.change(searchInput, { target: { value: 'Summon Gargoyle' } });
+
+    fireEvent.click(screen.getByRole('button', { name: /Conjuration.*Summon Gargoyle/i }));
+
+    expect(screen.getByRole('heading', { name: /Conjuration/i })).toBeInTheDocument();
+    expect(screen.getByText(/Summon Gargoyle/i)).toBeInTheDocument();
+    expect(screen.queryByRole('heading', { name: /Armamancy/i })).not.toBeInTheDocument();
   });
 });

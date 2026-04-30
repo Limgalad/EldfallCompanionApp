@@ -2,6 +2,7 @@ import React, { useMemo, useState, useEffect } from "react";
 import { motion, AnimatePresence } from "motion/react";
 import { rules, traits, skills, classes, combatArtCategories, states, RuleSection, CombatArtCategory, Trait, Skill, State, ClassInfo, CombatArt } from "../data/rules";
 import { ArrowLeft, Search, BookOpen, Shield, Zap, Sparkles, Users, Sword, Activity, Info, X, Menu } from "lucide-react";
+import { rankFuzzyResults } from "../utils/search";
 
 const LINKABLE_KEYWORDS: { name: string; type: "states" | "traits" | "skills" }[] = [
   { name: "Blinded", type: "states" },
@@ -60,47 +61,6 @@ const SEARCH_CATEGORY_LABELS: Record<SearchCategory, string> = {
 };
 
 const escapeRegExp = (value: string) => value.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
-
-const normalizeText = (value: string) =>
-  value
-    .toLowerCase()
-    .replace(/[^a-z0-9\s]/g, " ")
-    .replace(/\s+/g, " ")
-    .trim();
-
-const getFuzzyScore = (query: string, text: string) => {
-  const normalizedQuery = normalizeText(query);
-  const normalizedText = normalizeText(text);
-
-  if (!normalizedQuery) {
-    return 1;
-  }
-
-  const directIndex = normalizedText.indexOf(normalizedQuery);
-  if (directIndex >= 0) {
-    return 1000 - directIndex;
-  }
-
-  let queryIndex = 0;
-  let gapPenalty = 0;
-  let lastMatchIndex = -1;
-
-  for (let i = 0; i < normalizedText.length && queryIndex < normalizedQuery.length; i += 1) {
-    if (normalizedText[i] === normalizedQuery[queryIndex]) {
-      if (lastMatchIndex >= 0) {
-        gapPenalty += i - lastMatchIndex - 1;
-      }
-      lastMatchIndex = i;
-      queryIndex += 1;
-    }
-  }
-
-  if (queryIndex !== normalizedQuery.length) {
-    return 0;
-  }
-
-  return Math.max(100 - gapPenalty, 1);
-};
 
 function HighlightedText({ text, query }: { text: string; query: string }) {
   const trimmedQuery = query.trim();
@@ -252,13 +212,12 @@ export default function RulesWiki({ onBack }: { onBack: () => void }) {
   );
 
   const rankedSearchEntries = useMemo(
-    () => searchEntries
-      .map((entry) => ({
-        ...entry,
-        score: getFuzzyScore(searchQuery, `${entry.title} ${entry.searchText}`),
-      }))
-      .filter((entry) => entry.score > 0)
-      .sort((left, right) => right.score - left.score || left.title.localeCompare(right.title)),
+    () => rankFuzzyResults(
+      searchQuery,
+      searchEntries,
+      (entry) => `${entry.title} ${entry.searchText}`,
+      (left, right) => left.title.localeCompare(right.title),
+    ),
     [searchEntries, searchQuery],
   );
 
