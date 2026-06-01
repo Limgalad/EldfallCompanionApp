@@ -16,9 +16,9 @@ export default function MissionOverview({ onBack }: { onBack: () => void }) {
   const [selectedFaction, setSelectedFaction] = useState<Faction>("Neutral");
   const [activeTooltip, setActiveTooltip] = useState<{ title: string, content: string } | null>(null);
 
-  const selectedMission = missionId ? missions.find(m => m.id === missionId) || null : null;
-  const showSchemes = view === "schemes";
-  const showCreatures = view === "creatures";
+  const selectedMission = missionId && !["schemes", "creatures"].includes(missionId) ? missions.find(m => m.id === missionId) || null : null;
+  const showSchemes = view === "schemes" || missionId === "schemes";
+  const showCreatures = view === "creatures" || missionId === "creatures";
 
   const getInfo = (name: string, type: 'skill' | 'trait' | 'spell') => {
     const baseName = name.split(' ')[0];
@@ -79,14 +79,14 @@ export default function MissionOverview({ onBack }: { onBack: () => void }) {
               </div>
               <div className="hidden sm:flex items-center gap-3">
                 <button 
-                  onClick={() => navigate("/missions/schemes")}
+                  onClick={() => navigate("/missions/v/schemes")}
                   className="btn-action"
                 >
                   <BookOpen className="w-4 h-4 mr-2" />
                   Schemes
                 </button>
                 <button 
-                  onClick={() => navigate("/missions/creatures")}
+                  onClick={() => navigate("/missions/v/creatures")}
                   className="btn-action"
                 >
                   <Ghost className="w-4 h-4 mr-2" />
@@ -103,14 +103,14 @@ export default function MissionOverview({ onBack }: { onBack: () => void }) {
               </div>
               <div className="flex sm:hidden flex-col gap-3">
                 <button 
-                  onClick={() => navigate("/missions/schemes")}
+                  onClick={() => navigate("/missions/v/schemes")}
                   className="btn-action w-full"
                 >
                   <BookOpen className="w-4 h-4 mr-2" />
                   Quest Schemes
                 </button>
                 <button 
-                  onClick={() => navigate("/missions/creatures")}
+                  onClick={() => navigate("/missions/v/creatures")}
                   className="btn-action w-full"
                 >
                   <Ghost className="w-4 h-4 mr-2" />

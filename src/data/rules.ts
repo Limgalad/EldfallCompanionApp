@@ -1,7 +1,7 @@
 export interface RuleSection {
   id: string;
   title: string;
-  category: "Core" | "Combat" | "Magic" | "Abilities" | "Reference" | "Model Profiles" | "Game play" | "Game Sequence";
+  category: "Core" | "Combat" | "Magic" | "Abilities" | "Reference" | "Model Profiles" | "Game play" | "Game Sequence" | "Hostiles" | "General Effect" | "Movement" | "Normal Action" | "Special Action" | "Environment";
   content: string;
   subsections?: {
     title: string;
@@ -204,16 +204,39 @@ export const rules: RuleSection[] = [
     ]
   },
   {
-    id: "movement",
-    title: "Movement",
-    category: "Game play",
-    content: "There are two kinds of movement: Normal Movement and Special Movement.",
+    id: "normal-movement",
+    title: "Normal Movement",
+    category: "Movement",
+    content: "Normal Movement allows models to navigate the battlefield using their base speed or remaining stationary.",
     subsections: [
-      { 
-        title: "General Rules", 
-        content: "- A player may voluntarily move or place models only on non-vertical surfaces, unless stated otherwise.\n- When declaring a Movement, the player must clearly indicate the movement path.\n- While moving, a model can rotate and has 360° Line of Sight.\n- A model can move through allied models, but not through enemy models.\n- A model's Movement automatically ends if it enters Base Contact with an enemy model.\n- A model may not end its Movement with its Hitbox within another model's Hitbox.\n- A model which declared a Special Movement cannot perform any other Normal or Special Action during the same Activation Sequence (unless stated otherwise).\n- A model can move over any scenery piece or obstacle smaller than or equal in height to the model's Hitbox without spending additional Speed points." 
+      {
+        title: "Idle",
+        content: "The model does not move and remains stationary. The player may rotate the miniature and change its Line of Sight."
       },
-      { title: "Ladder", content: "If a model is moving vertically up a Ladder or over a surface narrower than the model's base size, Movement costs double. Example: Moving up a 2\" ladder costs 4 SPD." }
+      {
+        title: "Walk",
+        content: "The most common type of Movement. The model may move up to its Speed value."
+      }
+    ]
+  },
+  {
+    id: "special-movement",
+    title: "Special Movement",
+    category: "Movement",
+    content: "Special Movement provides more complex ways to move, often at a cost or requiring specific conditions.",
+    subsections: [
+      {
+        title: "Run",
+        content: "The model may move a distance of up to its doubled Speed value."
+      },
+      {
+        title: "Climb",
+        content: "When a model declares Climb, its Speed becomes halved (rounded up). Climb allows a model to move over an obstacle — a vertical surface or scenery — that is higher than its Hitbox.\n\n- A model cannot perform any other Action while on a vertical surface; if it would perform any Action other than Nothing, it falls and must apply any possible Fall Damage.\n- A model may end its movement on a vertical surface."
+      },
+      {
+        title: "Jump",
+        content: "A model may perform a Jump to reach higher or lower ground, to cross a gap, or to reach ground behind an obstacle higher than the model's Hitbox.\n\n- The distance a model can jump over is equal to half of its Speed value.\n- If the distance is larger than the model's halved Speed value, but the model's Hitbox would reach the target surface, it pulls itself up.\n- If the model's Hitbox does not reach the surface, the model falls vertically and must apply Fall Damage if necessary."
+      }
     ]
   },
   {
@@ -323,6 +346,332 @@ export const rules: RuleSection[] = [
       { title: "Mana Counters", content: "Mana Counters represent the energy required for casting Spells. In the Active Role, a Mage can convert any number of Activation Points into Mana Counters. Mana Counters are cumulative and do not disappear at the end of the turn." },
       { title: "The 5 Types of Spells", content: "Sorcery (short-lasting, destructive), Healing (restorative), Enchantments (extended effects), Transmutation (permanent changes to environment), Conjuration (summoning rituals)." }
     ]
+  },
+  {
+    id: "hostiles-intro",
+    title: "Hostiles",
+    category: "Hostiles",
+    content: "Hostiles are models controlled by the game (AI). They function like any other model with their own Profile Cards, and behave according to Hostile Behavior cards."
+  },
+  {
+    id: "hostiles-turn-order",
+    title: "Hostiles Turn Order",
+    category: "Hostiles",
+    content: "Rules governing when and how Hostiles interact with the standard game turn sequence.",
+    subsections: [
+      {
+        title: "Timing & Resources",
+        content: "- Hostiles perform their Active Role after all players have finished their turns.\n- Hostiles regain Activation Points during every player's Upkeep Phase.\n- Players regain Activation Points at the beginning of every Hostiles turn.\n- Hostiles perform their Reaction Step after the Active Player's Action Step and before the Resolution Step."
+      },
+      {
+        title: "Movement & Orientation",
+        content: "- When a Hostile declares an Action targeting a model, it must rotate to face the target directly.\n- If a Hostile suffers a Hit, it must turn directly towards the attacker (Exception: Hostiles with the Construct or Undead I Trait turn on Wound instead).\n- Unless clearly specified otherwise, a Hostile moves via the shortest route.\n- Hostiles ignore tokens unless specified otherwise.\n- Hostiles can pre-measure distances even on Realism mode."
+      }
+    ]
+  },
+  {
+    id: "hostiles-activations",
+    title: "Hostile Activations",
+    category: "Hostiles",
+    content: "Hostiles activate according to their Tiers (marked on the bottom of the AI card), beginning with the lowest Tier.",
+    subsections: [
+      {
+        title: "Order of Activations",
+        content: "If multiple Hostiles share the same Tier, the one with the highest Morale activates first. If both same, players decide. Hostiles of the same Tier must exhaust all AP before moving to a higher Tier."
+      },
+      {
+        title: "Activation Sequence",
+        content: "The Activation Sequence for Hostiles is the same as for regular models, however some Hostiles may have Special Behaviors, special abilities and particular Target Priorities."
+      }
+    ]
+  },
+  {
+    id: "hostiles-behaviors",
+    title: "Hierarchy of Behaviors",
+    category: "Hostiles",
+    content: "Within the numbered Hierarchy of Behaviors, the highlighted text states a specific condition; the following text explains the action.",
+    subsections: [
+      {
+        title: "Condition Check",
+        content: "Check conditions hierarchically from Behavior 1 downward until a condition is met. If none are met, the Hostile does not Activate or React."
+      },
+      {
+        title: "Targeting Priority",
+        content: "If more than one possible target matches the condition, the model matching the Hostile's Target Priority the most becomes the target. If tie, move towards nearest enemy."
+      }
+    ]
+  },
+  {
+    id: "broken-morale",
+    title: "Broken Morale",
+    category: "General Effect",
+    content: "If at any time the number of Alive models in a party falls below half of their original number, Broken Morale is triggered. The models of that party become affected by the **Panicked State** until the end of the game. (If the number of models rises above half again, this rule ceases to be in effect.)"
+  },
+  {
+    id: "friendly-fire-general",
+    title: "Friendly Fire (General)",
+    category: "General Effect",
+    content: "If a model delivers a Hit that could deal damage to an allied model, that allied model must perform a Morale roll. On failure, that allied model becomes **Panicked** until its next Strategic Phase."
+  },
+  {
+    id: "priority-over-core",
+    title: "Priority Over the Core Rules",
+    category: "General Effect",
+    content: "Abilities (Skills, Traits, Combat Arts, Spellcrafts), Spells, Items, Upgrades, Class-specific Abilities, Stratagems, and certain Effects take priority over the core rules and may override their restrictions. Rules stated on cards or within Spells take precedence."
+  },
+  {
+    id: "end-of-game",
+    title: "End of the Game",
+    category: "General Effect",
+    content: "Rules determining when and how a Quest concludes.",
+    subsections: [
+      {
+        title: "Quest End Conditions",
+        content: "- The Quest automatically ends if, at the beginning of their turn, a player has all models in either the Incapacitated or Dead State.\n- Unless specified otherwise, the game ends after the last player concludes their 5th turn.\n- If all players have the same amount of VP, the game ends in a draw."
+      },
+      {
+        title: "Victory Points (VP)",
+        content: "- The victorious player is the player who scored the greater amount of Victory Points (VP).\n- Unless stated otherwise, the maximum number of VP a player can obtain in a single Quest is 10."
+      }
+    ]
+  },
+  {
+    id: "recovery-check",
+    title: "Recovery Check",
+    category: "General Effect",
+    content: "During its own Strategic Phase, an Incapacitated model may perform a Toughness (T) roll to regain health.",
+    subsections: [
+      {
+        title: "Recovery Results",
+        content: "- **On success:** The model regains 1 HP and gains the Weakened State.\n- **On failure:** The model remains Incapacitated."
+      },
+      {
+        title: "Assisted Recovery",
+        content: "An Incapacitated model with an allied model in Base Contact (where neither model is Engaged) may reroll the Recovery Check once."
+      }
+    ]
+  },
+  {
+    id: "characters-general",
+    title: "Characters",
+    category: "General Effect",
+    content: "Models with a specific name are Characters. Characters cannot be assigned Upgrades when creating your party."
+  },
+  {
+    id: "monster-factions",
+    title: "Monster Factions",
+    category: "General Effect",
+    content: "Certain Factions do not coexist with civilized Factions. Currently, the Oni Clans and Goblin Wartribes are Monster Factions.",
+    subsections: [
+      {
+        title: "Recruitment Restrictions",
+        content: "Monster Factions cannot hire Neutral models when creating a party and may only use Neutral Upgrades and Neutral Schemes."
+      }
+    ]
+  },
+  {
+    id: "action-assist",
+    title: "Assist",
+    category: "Normal Action",
+    content: "An Action which an activated model can declare by targeting itself or one or more allied models. Most commonly used to cast support Spells among allies.",
+    subsections: [
+      {
+        title: "Rules",
+        content: "- Unless specified otherwise, Line of Sight is required to perform the Assist Action when targeting allied models.\n- If the assisting model has Strike 1, it may only target one model. If its Strike is greater than 1, it may target up to its Strike value.\n- The requirements of the used Skills, Spells or Items must be fulfilled."
+      }
+    ]
+  },
+  {
+    id: "action-attack",
+    title: "Attack",
+    category: "Normal Action",
+    content: "An Action which an activated or reacting model may declare by targeting one or more enemy models.",
+    subsections: [
+      {
+        title: "General Rules",
+        content: "- Unless specified otherwise, Line of Sight is required.\n- During the declaration, the player must choose and declare which Skill(s), Combat Art, and Item or Spell the model will use.\n- The Attack can be Ranged or Melee depending on the Item, Spell or Skill.\n- In the Reactive Role, the default Strike value becomes 1."
+      },
+      {
+        title: "Melee Attack",
+        content: "A Melee Attack is an Attack Action performed with an Item or a Spell of the Melee Type. A model may always choose to perform a Melee Attack unarmed instead of using other Melee Weapons."
+      },
+      {
+        title: "Ranged Attack",
+        content: "A Ranged Attack is an Attack Action performed with an Item or a Spell of the Ranged Type. Uses Accuracy attribute for Ranged Items and Intellect for Spells (unless stated otherwise)."
+      }
+    ]
+  },
+  {
+    id: "action-death-blow",
+    title: "Death Blow",
+    category: "Normal Action",
+    content: "An Action that renders an Incapacitated enemy model into the Dead State. The model must be in Base Contact with the target. No roll is required."
+  },
+  {
+    id: "action-dodge",
+    title: "Dodge",
+    category: "Normal Action",
+    content: "To avoid a potential or incoming attack, the model performs a successful Agility roll using 1 die. If successful, ignore non-critical Hits from the enemy's Attack.",
+    subsections: [
+      {
+        title: "Rules",
+        content: "- Even if the roll was unsuccessful, the model may move for a distance of its halved Speed value in any direction at the end of the Resolution Step.\n- May enter or cancel the Crouched State.\n- When an Engaged model declares Dodge, it may move out of the enemy model's melee Reach, canceling the Engaged State."
+      }
+    ]
+  },
+  {
+    id: "action-interact",
+    title: "Interact",
+    category: "Normal Action",
+    content: "The model must be in Base Contact with an object described by the Quest. The model may perform a roll against the object using the attribute prescribed by the Quest."
+  },
+  {
+    id: "action-nothing",
+    title: "Nothing",
+    category: "Normal Action",
+    content: "The model does nothing."
+  },
+  {
+    id: "action-perceive",
+    title: "Perceive",
+    category: "Normal Action",
+    content: "Allows a model to target and reveal an enemy model, Spell or Item represented by a token (Intrigue, Shrouded, etc.). Requires Line of Sight and a successful Intellect roll."
+  },
+  {
+    id: "action-trade",
+    title: "Trade",
+    category: "Normal Action",
+    content: "A model performing this Action can exchange any number of Items in its Inventory with an allied model in Base Contact. Default Items listed on profile cannot be exchanged."
+  },
+  {
+    id: "action-duel",
+    title: "Issue a Duel",
+    category: "Special Action",
+    content: "Only a member belonging to the player's original party can declare this Action. If accepted, both dueling models' Activation Points are restored and a duel begins.",
+    subsections: [
+      {
+        title: "Rules",
+        content: "- The opposing player may decide whether to accept or refuse.\n- The duel ends when one of the two models becomes Incapacitated or Dead, or when the game ends.\n- The player that won the duel receives 6 Victory Points. A draw results in both sides receiving 3 Victory Points."
+      }
+    ]
+  },
+  {
+    id: "action-ritual",
+    title: "Ritual",
+    category: "Special Action",
+    content: "By declaring Ritual, a model can immediately cast a Conjuration Spell (without any roll required), or some Spells that can only be cast with the Ritual Action."
+  },
+  {
+    id: "action-uncover",
+    title: "Uncover",
+    category: "Special Action",
+    content: "By passing a halved Intellect roll, the Hidden State of all enemy models or Items within this model's Awareness is canceled."
+  },
+  {
+    id: "env-aquatic",
+    title: "Aquatic (Shallow / Deep)",
+    category: "Environment",
+    content: "Models in Aquatic Environments (Shallow / Deep) suffer movement restrictions and additional effects from electricity. Shallow: half SPD and AG, reduces Burn. Deep: additional action restrictions and drowning risk for heavy armor. Does not affect Flying models. Lightning/Electric damage PW is doubled.",
+    subsections: [
+      {
+        title: "Shallow",
+        content: "- Models move at half SPD (2 inches of Movement per inch moved) and their AG is halved.\n- Burn I is negated. Burn II is reduced to Burn I. Burn III is reduced to Burn II."
+      },
+      {
+        title: "Deep",
+        content: "- All effects of Shallow Aquatic apply.\n- Models cannot declare Jump, Attack, Assist, or Ritual actions.\n- Models with ARM 2+ must roll AG (with a negative modifier equal to their ARM) at activation. On failure, they drown and are considered Dead."
+      }
+    ]
+  },
+  {
+    id: "env-dangerous",
+    title: "Dangerous",
+    category: "Environment",
+    content: "When a model moves on or touches this Environment, it suffers 1 Wound, unless it declares Dodge and passes an AG roll during its Activation. Does not affect models with Elemental, Construct, Spirit, Undead Traits, or those in Flying State."
+  },
+  {
+    id: "env-dark",
+    title: "Dark",
+    category: "Environment",
+    content: "Model's LoS is limited to within Awareness. Models targeting another model outside half their Awareness suffer a –3 modifier. Exception: Coalition of Thenion models are not affected."
+  },
+  {
+    id: "env-dense",
+    title: "Dense",
+    category: "Environment",
+    content: "Melee Attacks with RCH 1 or more suffer –1 STK. Ranged Attacks within or through the area suffer –1 STK. Models in Flying State or Mounted cannot enter or remain in this terrain."
+  },
+  {
+    id: "env-difficult",
+    title: "Difficult",
+    category: "Environment",
+    content: "Models move through this Environment at half SPD (2 inches of Movement per inch moved). Does not affect models using the Flicker skill or models in the Flying State."
+  },
+  {
+    id: "env-forest",
+    title: "Forest",
+    category: "Environment",
+    content: "Ranged Attacks within or through this Environment suffer –3 Attack modifier. LoS cannot be drawn through two or more Forest areas."
+  },
+  {
+    id: "env-freezing",
+    title: "Freezing",
+    category: "Environment",
+    content: "During the Strategic Phase, a model must perform a Toughness roll with +ARM modifier (Creatures cannot apply ARM). On fail, the model becomes Fatigued. Models with 1 or more Wounds must perform another Toughness roll. On fail, the model suffers 1 Wound."
+  },
+  {
+    id: "env-hazy",
+    title: "Hazy",
+    category: "Environment",
+    content: "Ranged Attacks cannot target through the area. Ranged Attacks from within or into suffer halved Attack modifier. Melee Attacks outside Base Contact suffer –3 Attack modifier. Does not affect models using the Flicker skill or models in the Flying State."
+  },
+  {
+    id: "env-managmatic",
+    title: "Managmatic",
+    category: "Environment",
+    content: "Attacks with Spell Type, performed by models with the following classes gain +2 PW: Mage, Sorcerer, Mystic, Vitalist, Enchanter, Summoner, Artificer. These models also gain +1 SPD."
+  },
+  {
+    id: "env-mountainous",
+    title: "Mountainous",
+    category: "Environment",
+    content: "Models move through this Environment at half SPD (2 inches of Movement per inch moved). Does not affect models using the Flicker skill or models in the Flying State."
+  },
+  {
+    id: "env-profane-miasma",
+    title: "Profane Miasma",
+    category: "Environment",
+    content: "Ranged Attacks from outside cannot target models inside this Environment. Ranged Attacks from within suffer halved Attack modifier. Melee Attacks outside Base Contact suffer –3 Attack modifier. At the End Phase, a model within or in contact at any point of the turn suffers a PW 10 hit with Ignore Armor and Weakening Traits. Does not affect models with Affinity (Profane) or Elemental Essence (Profane)."
+  },
+  {
+    id: "env-sacred-ground",
+    title: "Sacred Ground",
+    category: "Environment",
+    content: "During the Strategic Phase, a model may choose to: Recover 1 HP, or Remove one State. If Incapacitated, a successful Morale roll is required.\n\nModels with Affinity (Profane), Elemental Essence (Profane), or Undead cannot benefit from Sacred Ground. Instead, these models suffer: 1 Wound upon contact, –1 HP during each Strategic Phase, and if Incapacitated, they are immediately Dead."
+  },
+  {
+    id: "env-scorching",
+    title: "Scorching",
+    category: "Environment",
+    content: "During the Strategic Phase, models with ARM less than 1 must perform a Toughness roll with –ARM modifier. On fail, the model becomes Fatigued."
+  },
+  {
+    id: "env-swamp",
+    title: "Swamp",
+    category: "Environment",
+    content: "At the start of its Activation, the model must perform an AG roll. On fail, it cannot move."
+  },
+  {
+    id: "env-toxic",
+    title: "Toxic",
+    category: "Environment",
+    content: "During the Strategic Phase, the model must perform a Toughness roll. On fail, it suffers 1 Wound."
+  },
+  {
+    id: "env-unscalable",
+    title: "Unscalable",
+    category: "Environment",
+    content: "Only models with the Climbing Skill can move across this Environment. Does not affect models using the Flicker skill or models in the Flying State."
   }
 ];
 

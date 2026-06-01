@@ -2,11 +2,11 @@ import React, { useMemo, useState, useEffect } from "react";
 import { motion, AnimatePresence } from "motion/react";
 import { useParams, useNavigate } from "react-router-dom";
 import { rules, traits, skills, classes, combatArtCategories, states, RuleSection, CombatArtCategory, Trait, Skill, State, ClassInfo, CombatArt } from "../data/rules";
-import { ArrowLeft, Search, BookOpen, Shield, Zap, Sparkles, Users, Sword, Activity, Info, X, Menu } from "lucide-react";
+import { ArrowLeft, Search, BookOpen, Shield, Zap, Sparkles, Users, Sword, Activity, Info, X, Menu, Target } from "lucide-react";
 import { prepareFuzzySearchEntries, rankPreparedFuzzyResults, slugify } from "../utils/search";
 import MetaTags from "./MetaTags";
 
-const LINKABLE_KEYWORDS: { name: string; type: "states" | "traits" | "skills" | "mechanics" }[] = [
+const LINKABLE_KEYWORDS: { name: string; type: "states" | "traits" | "skills" | "mechanics" | "hostiles" | "movement" | "actions" | "environments" }[] = [
   { name: "Blinded", type: "states" },
   { name: "Engaged", type: "states" },
   { name: "Flying", type: "states" },
@@ -73,24 +73,69 @@ const LINKABLE_KEYWORDS: { name: string; type: "states" | "traits" | "skills" | 
   { name: "Fall Damage", type: "mechanics" },
   { name: "Magic", type: "mechanics" },
   { name: "Mana Counter", type: "mechanics" },
+  { name: "Hostiles", type: "hostiles" },
+  { name: "AI", type: "hostiles" },
+  { name: "Behavior", type: "hostiles" },
+  { name: "Target Priority", type: "hostiles" },
+  { name: "Tiers", type: "hostiles" },
   { name: "Inventory", type: "mechanics" },
   { name: "Items", type: "mechanics" },
   { name: "Weapons", type: "mechanics" },
   { name: "Shields", type: "mechanics" },
   { name: "Accessory", type: "mechanics" },
   { name: "Consumables", type: "mechanics" },
+  { name: "Broken Morale", type: "mechanics" },
+  { name: "Friendly Fire", type: "mechanics" },
+  { name: "End of the Game", type: "mechanics" },
+  { name: "Recovery Check", type: "mechanics" },
+  { name: "Monster Factions", type: "mechanics" },
+  { name: "Walk", type: "actions" },
+  { name: "Climb", type: "actions" },
+  { name: "Jump", type: "actions" },
+  { name: "Run", type: "actions" },
+  { name: "Idle", type: "actions" },
+  { name: "Assist", type: "actions" },
+  { name: "Attack", type: "actions" },
+  { name: "Dodge", type: "actions" },
+  { name: "Interact", type: "actions" },
+  { name: "Trade", type: "actions" },
+  { name: "Duel", type: "actions" },
+  { name: "Ritual", type: "actions" },
+  { name: "Perceive", type: "actions" },
+  { name: "Aquatic", type: "environments" },
+  { name: "Dangerous", type: "environments" },
+  { name: "Dark", type: "environments" },
+  { name: "Dense", type: "environments" },
+  { name: "Difficult", type: "environments" },
+  { name: "Forest", type: "environments" },
+  { name: "Freezing", type: "environments" },
+  { name: "Hazy", type: "environments" },
+  { name: "Managmatic", type: "environments" },
+  { name: "Mountainous", type: "environments" },
+  { name: "Profane Miasma", type: "environments" },
+  { name: "Sacred Ground", type: "environments" },
+  { name: "Scorching", type: "environments" },
+  { name: "Swamp", type: "environments" },
+  { name: "Toxic", type: "environments" },
+  { name: "Unscalable", type: "environments" },
 ];
 
 type KeywordItem = 
   | { type: "states"; data: State }
   | { type: "traits"; data: Trait }
   | { type: "skills"; data: Skill }
+  | { type: "hostiles"; data: RuleSection }
+  | { type: "actions"; data: RuleSection }
+  | { type: "environments"; data: RuleSection }
   | { type: "mechanics"; data: RuleSection };
 
-type SearchCategory = "all" | "mechanics" | "states" | "traits" | "skills" | "classes" | "combatArts";
+type SearchCategory = "all" | "mechanics" | "states" | "traits" | "skills" | "classes" | "combatArts" | "hostiles" | "actions" | "environments";
 
 type SelectedItem =
   | { type: "mechanics"; data: RuleSection }
+  | { type: "hostiles"; data: RuleSection }
+  | { type: "actions"; data: RuleSection }
+  | { type: "environments"; data: RuleSection }
   | { type: "states"; data: State }
   | { type: "traits"; data: Trait }
   | { type: "skills"; data: Skill }
@@ -108,12 +153,15 @@ type SearchResultEntry = {
 
 const SEARCH_CATEGORY_LABELS: Record<SearchCategory, string> = {
   all: "All",
-  mechanics: "CORE GAME ELEMENTS",
+  mechanics: "CORE RULES",
+  hostiles: "Hostiles",
   states: "States",
   traits: "Traits",
   skills: "Skills",
   classes: "Classes",
   combatArts: "Combat Arts",
+  actions: "Actions",
+  environments: "Environments",
 };
 
 const escapeRegExp = (value: string) => value.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
@@ -126,10 +174,10 @@ const skillLookup = new Map(skills.map((skill) => [skill.name.toLowerCase(), ski
 const keywordLookup = new Map(sortedLinkableKeywords.map((keyword) => [keyword.name.toLowerCase(), keyword]));
 
 const getSelectedItemTitle = (item: SelectedItem) =>
-  item.type === "mechanics" ? item.data.title : item.data.name;
+  (item.type === "mechanics" || item.type === "hostiles" || item.type === "actions" || item.type === "environments") ? item.data.title : item.data.name;
 
 const getSelectedItemBody = (item: SelectedItem) => {
-  if (item.type === "mechanics") {
+  if (item.type === "mechanics" || item.type === "hostiles" || item.type === "actions" || item.type === "environments") {
     return item.data.content;
   }
 
@@ -181,12 +229,40 @@ const keywordToRuleId = new Map([
   ["distance", "distance-measurement"],
   ["measurement", "distance-measurement"],
   ["base contact", "distance-measurement"],
-  ["movement", "movement"],
-  ["ladder", "movement"],
+  ["movement", "normal-movement"],
+  ["walk", "action-attack"], // Note: Walk is part of basic attack/movement
+  ["idle", "action-attack"],
+  ["climb", "action-attack"],
+  ["jump", "action-attack"],
+  ["run", "action-attack"],
+  ["assist", "action-assist"],
+  ["attack", "action-attack"],
+  ["death blow", "action-death-blow"],
+  ["dodge", "action-dodge"],
+  ["interact", "action-interact"],
+  ["nothing", "action-nothing"],
+  ["perceive", "action-perceive"],
+  ["trade", "action-trade"],
+  ["duel", "action-duel"],
+  ["ritual", "action-ritual"],
+  ["uncover", "action-uncover"],
   ["line of sight", "los"],
   ["los", "los"],
   ["awareness", "awareness"],
   ["actions", "actions"],
+  ["assist", "action-assist"],
+  ["attack", "action-attack"],
+  ["melee attack", "action-attack"],
+  ["ranged attack", "action-attack"],
+  ["death blow", "action-death-blow"],
+  ["dodge", "action-dodge"],
+  ["interact", "action-interact"],
+  ["nothing", "action-nothing"],
+  ["perceive", "action-perceive"],
+  ["trade", "action-trade"],
+  ["duel", "action-duel"],
+  ["ritual", "action-ritual"],
+  ["uncover", "action-uncover"],
   ["activation points", "activation-points"],
   ["active role", "active-reactive-role"],
   ["reactive role", "active-reactive-role"],
@@ -230,6 +306,19 @@ const keywordToRuleId = new Map([
   ["enchantment", "spells-magic"],
   ["transmutation", "spells-magic"],
   ["conjuration", "spells-magic"],
+  ["hostiles", "hostiles-intro"],
+  ["ai", "hostiles-intro"],
+  ["hostile turn", "hostiles-activations"],
+  ["behavior", "hostiles-behaviors"],
+  ["target priority", "hostiles-behaviors"],
+  ["tiers", "hostiles-activations"],
+  ["broken morale", "broken-morale"],
+  ["friendly fire", "friendly-fire-general"],
+  ["priority over the core rules", "priority-over-core"],
+  ["end of the game", "end-of-game"],
+  ["recovery check", "recovery-check"],
+  ["characters", "characters-general"],
+  ["monster factions", "monster-factions"],
 ]);
 
 const getKeywordData = (keyword: (typeof LINKABLE_KEYWORDS)[number]) => {
@@ -247,12 +336,33 @@ const getKeywordData = (keyword: (typeof LINKABLE_KEYWORDS)[number]) => {
     return skillLookup.get(normalizedName);
   }
 
+  if (keyword.type === "hostiles") {
+    const ruleId = keywordToRuleId.get(normalizedName);
+    if (ruleId) {
+      return rules.find(r => r.id === ruleId);
+    }
+    return rulesLookup.get(normalizedName);
+  }
+
+  if (keyword.type === "actions") {
+    const ruleId = keywordToRuleId.get(normalizedName);
+    if (ruleId) {
+      return rules.find(r => r.id === ruleId);
+    }
+    return rulesLookup.get(normalizedName);
+  }
+
   if (keyword.type === "mechanics") {
     const ruleId = keywordToRuleId.get(normalizedName);
     if (ruleId) {
       return rules.find(r => r.id === ruleId);
     }
     return rulesLookup.get(normalizedName);
+  }
+
+  if (keyword.type === "environments") {
+    const ruleId = keywordToRuleId.get(normalizedName) || `env-${normalizedName.toLowerCase().replace(/\s+/g, '-')}`;
+    return rules.find(r => r.id === ruleId) || rulesLookup.get(normalizedName);
   }
 
   return null;
@@ -341,6 +451,9 @@ export default function RulesWiki({ onBack }: { onBack: () => void }) {
   const getSubItem = (type: string, id: string) => {
     const slug = id.toLowerCase();
     if (type === "mechanics") return rules.find(r => r.id === slug);
+    if (type === "hostiles") return rules.find(r => r.id === slug);
+    if (type === "actions") return rules.find(r => r.id === slug);
+    if (type === "environments") return rules.find(r => r.id === slug);
     if (type === "states") return states.find(s => slugify(s.name) === slug);
     if (type === "traits") return traits.find(t => slugify(t.name) === slug);
     if (type === "skills") return skills.find(s => slugify(s.name) === slug);
@@ -385,7 +498,7 @@ export default function RulesWiki({ onBack }: { onBack: () => void }) {
   }, [nestedItem, selectedItem, handleCloseItem]);
 
   const handleSelectItem = (item: SelectedItem) => {
-    const id = item.type === "mechanics" ? item.data.id : slugify(getSelectedItemTitle(item));
+    const id = (item.type === "mechanics" || item.type === "hostiles" || item.type === "actions" || item.type === "environments") ? item.data.id : slugify(getSelectedItemTitle(item));
     navigate(`/rules/${item.type}/${id}`);
   };
 
@@ -397,14 +510,25 @@ export default function RulesWiki({ onBack }: { onBack: () => void }) {
   const searchEntries = useMemo(
     () => prepareFuzzySearchEntries<SearchResultEntry>(
       [
-        ...rules.map((section) => ({
-          id: `mechanics-${section.id}`,
-          category: "mechanics" as const,
-          title: section.title,
-          preview: section.content,
-          searchText: [section.title, section.content, ...(section.subsections?.flatMap((sub) => [sub.title, sub.content]) ?? [])].join(" "),
-          selectedItem: { type: "mechanics", data: section } as SelectedItem,
-        })),
+        ...rules.map((section) => {
+          const isAction = section.category === "Normal Action" || section.category === "Special Action";
+          const isHostile = section.category === "Hostiles";
+          const isEnv = section.category === "Environment";
+          
+          let category: "mechanics" | "hostiles" | "actions" | "environments" = "mechanics";
+          if (isHostile) category = "hostiles";
+          else if (isAction) category = "actions";
+          else if (isEnv) category = "environments";
+
+          return {
+            id: `rules-${section.id}`,
+            category,
+            title: section.title,
+            preview: section.content,
+            searchText: [section.title, section.content, ...(section.subsections?.flatMap((sub) => [sub.title, sub.content]) ?? [])].join(" "),
+            selectedItem: { type: category, data: section } as SelectedItem,
+          };
+        }),
         ...states.map((state) => ({
           id: `states-${state.name}`,
           category: "states" as const,
@@ -481,11 +605,14 @@ export default function RulesWiki({ onBack }: { onBack: () => void }) {
   const searchResultsByCategory = useMemo(
     () => ({
       mechanics: filteredSearchEntries.filter((entry) => entry.category === "mechanics"),
+      hostiles: filteredSearchEntries.filter((entry) => entry.category === "hostiles"),
       states: filteredSearchEntries.filter((entry) => entry.category === "states"),
       traits: filteredSearchEntries.filter((entry) => entry.category === "traits"),
       skills: filteredSearchEntries.filter((entry) => entry.category === "skills"),
       classes: filteredSearchEntries.filter((entry) => entry.category === "classes"),
       combatArts: filteredSearchEntries.filter((entry) => entry.category === "combatArts"),
+      actions: filteredSearchEntries.filter((entry) => entry.category === "actions"),
+      environments: filteredSearchEntries.filter((entry) => entry.category === "environments"),
     }),
     [filteredSearchEntries],
   );
@@ -643,42 +770,60 @@ export default function RulesWiki({ onBack }: { onBack: () => void }) {
         </div>
 
         {/* Tabs */}
-        <div id="rules-wiki-tabs" className="flex space-x-2 md:space-x-4 mb-8 border-b border-stone-900 overflow-x-auto custom-scrollbar">
+        <div id="rules-wiki-tabs" className="flex space-x-2 md:space-x-4 mb-8 border-b border-[#844f2b] overflow-x-auto custom-scrollbar">
           <TabButton 
             active={activeTab === "mechanics"} 
             onClick={() => handleTabChange("mechanics")}
-            icon={<BookOpen className="w-4 h-4" />}
-            label="CORE GAME ELEMENTS"
+            icon={<BookOpen className="w-5 h-5" />}
+            label="CORE RULES"
           />
           <TabButton 
             active={activeTab === "states"} 
             onClick={() => handleTabChange("states")}
-            icon={<Activity className="w-4 h-4" />}
+            icon={<Activity className="w-5 h-5" />}
             label="States"
           />
           <TabButton 
             active={activeTab === "traits"} 
             onClick={() => handleTabChange("traits")}
-            icon={<Shield className="w-4 h-4" />}
+            icon={<Shield className="w-5 h-5" />}
             label="Traits"
           />
           <TabButton 
             active={activeTab === "skills"} 
             onClick={() => handleTabChange("skills")}
-            icon={<Zap className="w-4 h-4" />}
+            icon={<Zap className="w-5 h-5" />}
             label="Skills"
           />
           <TabButton 
             active={activeTab === "combatArts"} 
             onClick={() => handleTabChange("combatArts")}
-            icon={<Sword className="w-4 h-4" />}
+            icon={<Sword className="w-5 h-5" />}
             label="Combat Arts"
           />
           <TabButton 
             active={activeTab === "classes"} 
             onClick={() => handleTabChange("classes")}
-            icon={<Users className="w-4 h-4" />}
+            icon={<Users className="w-5 h-5" />}
             label="Classes"
+          />
+          <TabButton 
+            active={activeTab === "actions"} 
+            onClick={() => handleTabChange("actions")}
+            icon={<Activity className="w-5 h-5" />}
+            label="Actions"
+          />
+          <TabButton 
+            active={activeTab === "hostiles"} 
+            onClick={() => handleTabChange("hostiles")}
+            icon={<Target className="w-5 h-5" />}
+            label="Hostiles"
+          />
+          <TabButton 
+            active={activeTab === "environments"} 
+            onClick={() => handleTabChange("environments")}
+            icon={<Sparkles className="w-5 h-5" />}
+            label="Environments"
           />
         </div>
 
@@ -721,7 +866,7 @@ export default function RulesWiki({ onBack }: { onBack: () => void }) {
                 exit={{ opacity: 0, y: -10 }}
                 className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4"
               >
-                {rules.map((section) => (
+                {rules.filter(r => r.category !== "Hostiles" && r.category !== "Normal Action" && r.category !== "Special Action" && r.category !== "Environment").map((section) => (
                   <button
                     key={section.id}
                     type="button"
@@ -731,6 +876,86 @@ export default function RulesWiki({ onBack }: { onBack: () => void }) {
                     <div className="flex justify-between items-start mb-3">
                       <span className="text-xs font-display uppercase tracking-eyebrow text-red-500/70">{section.category}</span>
                       <Sparkles className="w-4 h-4 text-stone-700 group-hover:text-red-500 transition-colors" />
+                    </div>
+                    <h2 className="text-lg font-bold text-white mb-2 group-hover:text-red-500 transition-colors">{section.title}</h2>
+                    <p className="body-sm line-clamp-3 text-stone-400">{section.content}</p>
+                  </button>
+                ))}
+              </motion.div>
+            )}
+
+            {activeTab === "environments" && (
+              <motion.div
+                key="environments"
+                initial={{ opacity: 0, y: 10 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -10 }}
+                className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4"
+              >
+                {rules.filter(r => r.category === "Environment").map((section) => (
+                  <button
+                    key={section.id}
+                    type="button"
+                    className="eldfall-card eldfall-card-interactive card-p group text-left"
+                    onClick={() => handleSelectItem({ type: "environments", data: section } as SelectedItem)}
+                  >
+                    <div className="flex justify-between items-start mb-3">
+                      <span className="text-xs font-display uppercase tracking-eyebrow text-red-500/70">{section.category}</span>
+                      <Sparkles className="w-4 h-4 text-stone-700 group-hover:text-red-500 transition-colors" />
+                    </div>
+                    <h2 className="text-lg font-bold text-white mb-2 group-hover:text-red-500 transition-colors">{section.title}</h2>
+                    <p className="body-sm line-clamp-3 text-stone-400">{section.content}</p>
+                  </button>
+                ))}
+              </motion.div>
+            )}
+
+            {activeTab === "actions" && (
+              <motion.div
+                key="actions"
+                initial={{ opacity: 0, y: 10 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -10 }}
+                className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4"
+              >
+                {rules
+                  .filter(r => r.category === "Normal Action" || r.category === "Special Action")
+                  .map((section) => (
+                    <button
+                      key={section.id}
+                      type="button"
+                      className="eldfall-card eldfall-card-interactive card-p group text-left"
+                      onClick={() => handleSelectItem({ type: "actions", data: section } as SelectedItem)}
+                    >
+                      <div className="flex justify-between items-start mb-3">
+                        <span className="text-[10px] font-display uppercase tracking-eyebrow text-red-500/70">{section.category}</span>
+                        <Activity className="w-4 h-4 text-stone-700 group-hover:text-red-500 transition-colors" />
+                      </div>
+                      <h2 className="text-lg font-bold text-white mb-2 group-hover:text-red-500 transition-colors">{section.title}</h2>
+                      <p className="body-sm line-clamp-3 text-stone-400">{section.content}</p>
+                    </button>
+                  ))}
+              </motion.div>
+            )}
+
+            {activeTab === "hostiles" && (
+              <motion.div
+                key="hostiles"
+                initial={{ opacity: 0, y: 10 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -10 }}
+                className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4"
+              >
+                {rules.filter(r => r.category === "Hostiles").map((section) => (
+                  <button
+                    key={section.id}
+                    type="button"
+                    className="eldfall-card eldfall-card-interactive card-p group text-left"
+                    onClick={() => handleSelectItem({ type: "hostiles", data: section } as SelectedItem)}
+                  >
+                    <div className="flex justify-between items-start mb-3">
+                      <span className="text-xs font-display uppercase tracking-eyebrow text-red-500/70">{section.category}</span>
+                      <Target className="w-4 h-4 text-stone-700 group-hover:text-red-500 transition-colors" />
                     </div>
                     <h2 className="text-lg font-bold text-white mb-2 group-hover:text-red-500 transition-colors">{section.title}</h2>
                     <p className="body-sm line-clamp-3 text-stone-400">{section.content}</p>
@@ -905,7 +1130,7 @@ export default function RulesWiki({ onBack }: { onBack: () => void }) {
                 <div className="card-p-lg border-b border-stone-800 flex justify-between items-start shrink-0">
                   <div>
                     <span className="text-[10px] font-display uppercase tracking-eyebrow text-red-500 mb-1 block">
-                      {selectedItem.type === "mechanics" ? selectedItem.data.category : selectedItem.type.replace(/([A-Z])/g, ' $1').trim()}
+                      {(selectedItem.type === "mechanics" || selectedItem.type === "hostiles" || selectedItem.type === "actions") ? selectedItem.data.category : selectedItem.type.replace(/([A-Z])/g, ' $1').trim()}
                     </span>
                     <h2 id="rules-detail-title" className="text-2xl font-bold text-white leading-tight">{getSelectedItemTitle(selectedItem)}</h2>
                   </div>
@@ -928,7 +1153,7 @@ export default function RulesWiki({ onBack }: { onBack: () => void }) {
                     />
                   </div>
                   
-                  {selectedItem.type === "mechanics" && selectedItem.data.subsections && (
+                  {(selectedItem.type === "mechanics" || selectedItem.type === "hostiles" || selectedItem.type === "actions" || selectedItem.type === "environments") && selectedItem.data.subsections && (
                     <div className="space-y-4">
                       {selectedItem.data.subsections.map((sub: { title: string; content: string }, i: number) => (
                         <div key={i} className="border-l-2 border-red-900/30 pl-4">
@@ -1007,7 +1232,7 @@ export default function RulesWiki({ onBack }: { onBack: () => void }) {
                   <div className="flex items-center space-x-2">
                     <Info className="w-4 h-4 text-red-500" />
                     <h3 id="rules-reference-title" className="text-sm font-bold text-white uppercase tracking-eyebrow">
-                      {nestedItem.type === "mechanics" ? nestedItem.data.title : nestedItem.data.name}
+                      {(nestedItem.type === "mechanics" || nestedItem.type === "hostiles" || nestedItem.type === "actions" || nestedItem.type === "environments") ? nestedItem.data.title : nestedItem.data.name}
                     </h3>
                   </div>
                   <button
@@ -1021,9 +1246,9 @@ export default function RulesWiki({ onBack }: { onBack: () => void }) {
                 </div>
                 <div className="card-p stack-compact">
                   <p className="text-stone-300 text-xs leading-relaxed whitespace-pre-wrap font-sans">
-                    {nestedItem.type === "mechanics" ? nestedItem.data.content : (nestedItem.data as State | Trait | Skill).description}
+                    {(nestedItem.type === "mechanics" || nestedItem.type === "hostiles" || nestedItem.type === "actions" || nestedItem.type === "environments") ? nestedItem.data.content : (nestedItem.data as State | Trait | Skill).description}
                   </p>
-                  {nestedItem.type === "mechanics" && nestedItem.data.subsections && (
+                  {(nestedItem.type === "mechanics" || nestedItem.type === "hostiles" || nestedItem.type === "actions" || nestedItem.type === "environments") && nestedItem.data.subsections && (
                     <div className="mt-4 space-y-3">
                       {nestedItem.data.subsections.slice(0, 3).map((sub: { title: string; content: string }, i: number) => (
                         <div key={i} className="border-l border-red-900/30 pl-3">
@@ -1056,11 +1281,13 @@ function TabButton({ active, onClick, icon, label }: { active: boolean; onClick:
   return (
     <button
       onClick={onClick}
-      className={`flex items-center space-x-2 px-4 py-3 text-xs md:text-sm font-display uppercase tracking-eyebrow transition-all relative ${
+      className={`flex items-center space-x-2 px-4 py-3 text-xs md:text-sm font-display uppercase tracking-eyebrow transition-all relative shrink-0 whitespace-nowrap ${
         active ? "text-red-500" : "text-stone-500 hover:text-stone-300"
       }`}
     >
-      {icon}
+      <div className="flex items-center justify-center min-w-[1.25rem] h-5">
+        {icon}
+      </div>
       <span>{label}</span>
       {active && (
         <motion.div 
