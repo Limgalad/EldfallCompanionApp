@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useMemo } from "react";
 import { motion, AnimatePresence } from "motion/react";
 import { useParams, useNavigate } from "react-router-dom";
 import { missions } from "../data/missions";
@@ -44,6 +44,37 @@ export default function MissionOverview({ onBack }: { onBack: () => void }) {
     setActiveTooltip(getInfo(name, type));
   };
 
+  const structuredData = useMemo(() => {
+    if (!selectedMission) return null;
+    return {
+      "@context": "https://schema.org",
+      "@type": "HowTo",
+      "name": `How to play ${selectedMission.title} mission in Eldfall Chronicles`,
+      "description": selectedMission.description,
+      "url": `https://eldfallcompanion.tabletophub.nl/missions/${selectedMission.id}`,
+      "image": selectedMission.mapImage ? `https://eldfallcompanion.tabletophub.nl${selectedMission.mapImage}` : undefined,
+      "step": [
+        {
+          "@type": "HowToSection",
+          "name": "Setup",
+          "itemListElement": selectedMission.setup.map((s, i) => ({
+            "@type": "HowToStep",
+            "position": i + 1,
+            "text": s
+          }))
+        },
+        ...(selectedMission.questRules ? selectedMission.questRules.map(r => ({
+          "@type": "HowToSection",
+          "name": r.title,
+          "itemListElement": [{
+            "@type": "HowToStep",
+            "text": r.content
+          }]
+        })) : [])
+      ]
+    };
+  }, [selectedMission]);
+
   useEffect(() => {
     window.scrollTo(0, 0);
   }, [selectedMission]);
@@ -54,6 +85,9 @@ export default function MissionOverview({ onBack }: { onBack: () => void }) {
         title={selectedMission ? `${selectedMission.title} - Quest Overview` : showSchemes ? "Quest Schemes - Quest Overview" : showCreatures ? "Creatures Database - Quest Overview" : "Quest Overview"}
         description={selectedMission ? selectedMission.description : "Explore Eldfall Chronicles Season 1 missions, objective markers, and quest schemes."}
         image={selectedMission?.mapImage ? `https://eldfallcompanion.tabletophub.nl${selectedMission.mapImage}` : undefined}
+        type={selectedMission ? "howto" : "website"}
+        structuredData={structuredData}
+        canonicalPath={selectedMission ? `/missions/${selectedMission.id}` : showSchemes ? "/missions/v/schemes" : showCreatures ? "/missions/v/creatures" : "/missions"}
       />
       
       {selectedMission ? (

@@ -6,14 +6,18 @@ interface MetaTagsProps {
   title?: string;
   description?: string;
   image?: string;
-  type?: 'website' | 'article';
+  type?: 'website' | 'article' | 'factcheck' | 'howto';
+  structuredData?: Record<string, unknown>;
+  canonicalPath?: string;
 }
 
 export default function MetaTags({ 
   title, 
   description, 
   image = "https://images.unsplash.com/photo-1518709268805-4e9042af9f23?auto=format&fit=crop&q=80&w=1200&h=630",
-  type = "website"
+  type = "website",
+  structuredData,
+  canonicalPath
 }: MetaTagsProps) {
   const location = useLocation();
   const baseUrl = "https://eldfallcompanion.tabletophub.nl";
@@ -25,12 +29,12 @@ export default function MetaTags({
   
   const fullDescription = description || "The ultimate companion app for Eldfall Chronicles tabletop game. Explore Season 1 missions, tactical maps, and a complete searchable rules wiki.";
   
-  const canonicalUrl = currentUrl;
+  const canonicalUrl = canonicalPath ? `${baseUrl}${canonicalPath}` : currentUrl;
 
   // Generate structured data
-  const jsonLd = {
+  const baseJsonLd = structuredData || {
     "@context": "https://schema.org",
-    "@type": type === 'article' ? "Article" : "WebSite",
+    "@type": (type === 'article' || type === 'howto' || type === 'factcheck') ? "Article" : "WebSite",
     "name": fullTitle,
     "headline": title || "Eldfall Chronicles Companion",
     "description": fullDescription,
@@ -39,18 +43,20 @@ export default function MetaTags({
     "author": {
       "@type": "Person",
       "name": "Eldfall Community"
-    },
-    ...type === 'website' ? {
-      "potentialAction": {
-        "@type": "SearchAction",
-        "target": {
-          "@type": "EntryPoint",
-          "urlTemplate": `${baseUrl}/rules?q={search_term_string}`
-        },
-        "query-input": "required name=search_term_string"
-      }
-    } : {}
+    }
   };
+
+  const jsonLd = (!structuredData && type === 'website') ? {
+    ...baseJsonLd,
+    potentialAction: {
+      "@type": "SearchAction",
+      "target": {
+        "@type": "EntryPoint",
+        "urlTemplate": `${baseUrl}/rules?q={search_term_string}`
+      },
+      "query-input": "required name=search_term_string"
+    }
+  } : baseJsonLd;
 
   return (
     <Helmet>

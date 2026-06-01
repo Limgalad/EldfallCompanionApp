@@ -255,11 +255,61 @@ export default function RulesWiki({ onBack }: { onBack: () => void }) {
     </button>
   );
 
+  const structuredData = useMemo(() => {
+    if (!selectedItem) return null;
+    const title = getSelectedItemTitle(selectedItem);
+    const body = getSelectedItemBody(selectedItem);
+    const url = `https://eldfallcompanion.tabletophub.nl/rules/${selectedItem.type}/${urlId}`;
+
+    if (selectedItem.type === "mechanics" || selectedItem.type === "actions") {
+      return {
+        "@context": "https://schema.org",
+        "@type": "HowTo",
+        "name": `How to use ${title} in Eldfall Chronicles`,
+        "description": body.substring(0, 160),
+        "url": url,
+        "step": [
+          {
+            "@type": "HowToStep",
+            "text": body
+          },
+          ...(isRuleSection(selectedItem) && selectedItem.data.subsections ? 
+            selectedItem.data.subsections.map(sub => ({
+              "@type": "HowToStep",
+              "name": sub.title,
+              "text": sub.content
+            })) : [])
+        ]
+      };
+    }
+
+    return {
+      "@context": "https://schema.org",
+      "@type": "FactCheck",
+      "name": title,
+      "description": body.substring(0, 160),
+      "url": url,
+      "claimReviewed": `Rules for ${title} in Eldfall Chronicles`,
+      "reviewRating": {
+        "@type": "Rating",
+        "ratingValue": "5",
+        "bestRating": "5"
+      },
+      "author": {
+        "@type": "Organization",
+        "name": "Eldfall Chronicles"
+      }
+    };
+  }, [selectedItem, urlId]);
+
   return (
     <div className="min-h-screen bg-stone-950">
       <MetaTags 
         title={selectedItem ? `${getSelectedItemTitle(selectedItem)} - Rules Wiki` : "Rules Wiki"}
         description={selectedItem ? getSelectedItemBody(selectedItem).substring(0, 160) : "Searchable rules wiki for Eldfall Chronicles. Explore mechanics, states, traits, skills, and combat arts."}
+        type={selectedItem ? (selectedItem.type === "mechanics" || selectedItem.type === "actions" ? "howto" : "factcheck") : "website"}
+        structuredData={structuredData}
+        canonicalPath={selectedItem ? `/rules/${selectedItem.type}/${urlId}` : `/rules/${activeTab}`}
       />
       <header className="page-header">
         <div className="header-content">

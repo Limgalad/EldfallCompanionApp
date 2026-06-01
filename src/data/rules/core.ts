@@ -17,8 +17,55 @@ export const rules: RuleSection[] = [
     id: "attributes",
     title: "Attributes",
     category: "Model Profiles",
-    content: "The set parameters which display the degree of a certain model's default capabilities, also referred to as \"Stats\". Likelihood of a dice roll success, used to simulate various Actions performed by the model, is primarily based on the model's attribute value.\n\nSTA (Stamina): The default number of Activation Points a model receives at the beginning of its every turn and how swiftly it can wield certain Items.\nSPD (Speed): The default distance that a model can cross on the field when moving, in inches.\nARM (Armor): The default amount of natural or artificial protection the model has to cope with the received Power of a Hit.\nHP (Health Points): How many Wounds a model can withstand before becoming Incapacitated.\nOFF (Offense): A model's default active melee capability used during its Active Role to conduct a Melee Attack.\nDEF (Defense): A model's default reactive melee capability used during its Reactive Role to conduct a Melee Attack.\nACC (Accuracy): A model's default capability with ranged projectile weapons when performing Ranged Attacks.\nINT (Intellect): A model's default mental dexterity and capability of casting Spells and perceiving surroundings.\nAG (Agility): The default physical nimbleness mainly used when avoiding incoming attacks (Dodge) and escaping certain dangers.\nT (Toughness): The default physical strength and endurance of a model.\nM (Morale): The default mental fortitude of a model."
-  },
+    content: "The set parameters which display the degree of a certain model's default capabilities, also referred to as \"Stats\". Likelihood of a dice roll success, used to simulate various Actions performed by the model, is primarily based on the model's attribute value.\n",
+    subsections: [
+      {
+        title: "STA (Stamina):",
+        content: "he default number of Activation Points a model receives at the beginning of its every turn and how swiftly it can wield certain Items."
+      },
+	        {
+        title: "SPD (Speed):",
+        content: "The default distance that a model can cross on the field when moving, in inches."
+      },
+      {
+        title: "ARM (Armor):",
+        content: "he default amount of natural or artificial protection the model has to cope with the received Power of a Hit."
+      },
+	        {
+        title: "HP (Health Points):",
+        content: "How many Wounds a model can withstand before becoming Incapacitated."
+      },
+      {
+        title: "OFF (Offense):",
+        content: "A model's default active melee capability used during its Active Role to conduct a Melee Attack."
+      },
+      {
+        title: "DEF (Defense):",
+        content: "A model's default reactive melee capability used during its Reactive Role to conduct a Melee Attack."
+      },
+      {
+        title: "ACC (Accuracy):",
+        content: "A model's default capability with ranged projectile weapons when performing Ranged Attacks."
+      },
+	        {
+        title: "INT (Intellect):",
+        content: "A model's default mental dexterity and capability of casting Spells and perceiving surroundings."
+      },
+	        {
+        title: "AG (Agility):",
+        content: "The default physical nimbleness mainly used when avoiding incoming attacks (Dodge) and escaping certain dangers."
+      },
+	      
+	        {
+        title: "T (Toughness):",
+        content: "The default physical strength and endurance of a model."
+      },
+	        {
+        title: "M (Morale):",
+        content: "The default mental fortitude of a model."
+      }
+    ]
+ },
   {
     id: "size",
     title: "Size",
