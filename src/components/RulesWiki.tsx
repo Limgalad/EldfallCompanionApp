@@ -1,146 +1,14 @@
 import React, { useMemo, useState, useEffect } from "react";
 import { motion, AnimatePresence } from "motion/react";
 import { useParams, useNavigate, useSearchParams } from "react-router-dom";
-import { rules, traits, skills, classes, combatArtCategories, states, RuleSection, CombatArtCategory, Trait, Skill, State, ClassInfo, CombatArt } from "../data/rules";
-import { ArrowLeft, Search, BookOpen, Shield, Zap, Sparkles, Users, Sword, Activity, Info, X, Menu, Target, ExternalLink } from "lucide-react";
+import { rules, traits, skills, classes, combatArtCategories, states } from "../data/rules";
+import { ArrowLeft, Search, BookOpen, Shield, Zap, Sparkles, Users, Sword, Activity, Info, X, Target, ExternalLink } from "lucide-react";
 import { prepareFuzzySearchEntries, rankPreparedFuzzyResults, slugify } from "../utils/search";
 import MetaTags from "./MetaTags";
-
-const LINKABLE_KEYWORDS: { name: string; type: "states" | "traits" | "skills" | "mechanics" | "hostiles" | "movement" | "actions" | "environments" }[] = [
-  { name: "Blinded", type: "states" },
-  { name: "Engaged", type: "states" },
-  { name: "Flying", type: "states" },
-  { name: "Bleeding", type: "states" },
-  { name: "Crippled", type: "states" },
-  { name: "Weakened", type: "states" },
-  { name: "Shrouded", type: "states" },
-  { name: "Confused", type: "states" },
-  { name: "Panicked", type: "states" },
-  { name: "Poisoned", type: "states" },
-  { name: "Dead", type: "states" },
-  { name: "Crouched", type: "states" },
-  { name: "Immobilized", type: "states" },
-  { name: "Incapacitated", type: "states" },
-  { name: "Surprise Attack", type: "traits" },
-  { name: "Two-Handed", type: "traits" },
-  { name: "Stagger", type: "traits" },
-  { name: "Mindgame", type: "traits" },
-  { name: "Knockdown", type: "traits" },
-  { name: "Models", type: "mechanics" },
-  { name: "Class", type: "mechanics" },
-  { name: "Stamina", type: "mechanics" },
-  { name: "Speed", type: "mechanics" },
-  { name: "Armor", type: "mechanics" },
-  { name: "HP", type: "mechanics" },
-  { name: "Offense", type: "mechanics" },
-  { name: "Defense", type: "mechanics" },
-  { name: "Accuracy", type: "mechanics" },
-  { name: "Intellect", type: "mechanics" },
-  { name: "Agility", type: "mechanics" },
-  { name: "Toughness", type: "mechanics" },
-  { name: "Morale", type: "mechanics" },
-  { name: "Size", type: "mechanics" },
-  { name: "Hitbox", type: "mechanics" },
-  { name: "Recruitment Cost", type: "mechanics" },
-  { name: "Limit", type: "mechanics" },
-  { name: "Traits", type: "mechanics" },
-  { name: "Skills", type: "mechanics" },
-  { name: "Combat Arts", type: "mechanics" },
-  { name: "Spellcraft", type: "mechanics" },
-  { name: "Special", type: "mechanics" },
-  { name: "Stratagems", type: "mechanics" },
-  { name: "Dice Rolls", type: "mechanics" },
-  { name: "Modifiers", type: "mechanics" },
-  { name: "Distance", type: "mechanics" },
-  { name: "Movement", type: "mechanics" },
-  { name: "Line of Sight", type: "mechanics" },
-  { name: "Awareness", type: "mechanics" },
-  { name: "Actions", type: "mechanics" },
-  { name: "Activation Points", type: "mechanics" },
-  { name: "Active Role", type: "mechanics" },
-  { name: "Reactive Role", type: "mechanics" },
-  { name: "Reach", type: "mechanics" },
-  { name: "Casting Aura", type: "mechanics" },
-  { name: "Templates", type: "mechanics" },
-  { name: "AoE", type: "mechanics" },
-  { name: "Strike", type: "mechanics" },
-  { name: "Hit", type: "mechanics" },
-  { name: "Critical Hit", type: "mechanics" },
-  { name: "Confrontation", type: "mechanics" },
-  { name: "Damage", type: "mechanics" },
-  { name: "Wound", type: "mechanics" },
-  { name: "Incapped", type: "mechanics" },
-  { name: "Fall Damage", type: "mechanics" },
-  { name: "Magic", type: "mechanics" },
-  { name: "Mana Counter", type: "mechanics" },
-  { name: "Hostiles", type: "hostiles" },
-  { name: "AI", type: "hostiles" },
-  { name: "Behavior", type: "hostiles" },
-  { name: "Target Priority", type: "hostiles" },
-  { name: "Tiers", type: "hostiles" },
-  { name: "Inventory", type: "mechanics" },
-  { name: "Items", type: "mechanics" },
-  { name: "Weapons", type: "mechanics" },
-  { name: "Shields", type: "mechanics" },
-  { name: "Accessory", type: "mechanics" },
-  { name: "Consumables", type: "mechanics" },
-  { name: "Broken Morale", type: "mechanics" },
-  { name: "Friendly Fire", type: "mechanics" },
-  { name: "End of the Game", type: "mechanics" },
-  { name: "Recovery Check", type: "mechanics" },
-  { name: "Monster Factions", type: "mechanics" },
-  { name: "Walk", type: "actions" },
-  { name: "Climb", type: "actions" },
-  { name: "Jump", type: "actions" },
-  { name: "Run", type: "actions" },
-  { name: "Idle", type: "actions" },
-  { name: "Assist", type: "actions" },
-  { name: "Attack", type: "actions" },
-  { name: "Dodge", type: "actions" },
-  { name: "Interact", type: "actions" },
-  { name: "Trade", type: "actions" },
-  { name: "Duel", type: "actions" },
-  { name: "Ritual", type: "actions" },
-  { name: "Perceive", type: "actions" },
-  { name: "Aquatic", type: "environments" },
-  { name: "Dangerous", type: "environments" },
-  { name: "Dark", type: "environments" },
-  { name: "Dense", type: "environments" },
-  { name: "Difficult", type: "environments" },
-  { name: "Forest", type: "environments" },
-  { name: "Freezing", type: "environments" },
-  { name: "Hazy", type: "environments" },
-  { name: "Managmatic", type: "environments" },
-  { name: "Mountainous", type: "environments" },
-  { name: "Profane Miasma", type: "environments" },
-  { name: "Sacred Ground", type: "environments" },
-  { name: "Scorching", type: "environments" },
-  { name: "Swamp", type: "environments" },
-  { name: "Toxic", type: "environments" },
-  { name: "Unscalable", type: "environments" },
-];
-
-type KeywordItem = 
-  | { type: "states"; data: State }
-  | { type: "traits"; data: Trait }
-  | { type: "skills"; data: Skill }
-  | { type: "hostiles"; data: RuleSection }
-  | { type: "actions"; data: RuleSection }
-  | { type: "environments"; data: RuleSection }
-  | { type: "mechanics"; data: RuleSection };
-
-type SearchCategory = "all" | "mechanics" | "states" | "traits" | "skills" | "classes" | "combatArts" | "hostiles" | "actions" | "environments";
-
-type SelectedItem =
-  | { type: "mechanics"; data: RuleSection }
-  | { type: "hostiles"; data: RuleSection }
-  | { type: "actions"; data: RuleSection }
-  | { type: "environments"; data: RuleSection }
-  | { type: "states"; data: State }
-  | { type: "traits"; data: Trait }
-  | { type: "skills"; data: Skill }
-  | { type: "combatArts"; data: CombatArtCategory }
-  | { type: "classes"; data: ClassInfo };
+import { SearchCategory, SelectedItem, KeywordItem } from "../types";
+import { isRuleSection, isClass, isCombatArtCategory, getSelectedItemTitle, getSelectedItemBody } from "../utils/rulesGuards";
+import { HighlightedText } from "./wiki/RichText";
+import { RuleSectionDetail, ClassDetail, CombatArtDetail, GenericDetail } from "./wiki/DetailViewComponents";
 
 type SearchResultEntry = {
   id: string;
@@ -164,274 +32,6 @@ const SEARCH_CATEGORY_LABELS: Record<SearchCategory, string> = {
   environments: "Environments",
 };
 
-const escapeRegExp = (value: string) => value.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
-const sortedLinkableKeywords = [...LINKABLE_KEYWORDS].sort((a, b) => b.name.length - a.name.length);
-const linkableKeywordPattern = sortedLinkableKeywords.map((keyword) => `\\b${escapeRegExp(keyword.name)}\\b`).join("|");
-const linkableKeywordRegex = new RegExp(`(${linkableKeywordPattern})`, "gi");
-const stateLookup = new Map(states.map((state) => [state.name.toLowerCase(), state]));
-const traitLookup = new Map(traits.map((trait) => [trait.name.toLowerCase(), trait]));
-const skillLookup = new Map(skills.map((skill) => [skill.name.toLowerCase(), skill]));
-const keywordLookup = new Map(sortedLinkableKeywords.map((keyword) => [keyword.name.toLowerCase(), keyword]));
-
-const getSelectedItemTitle = (item: SelectedItem) =>
-  (item.type === "mechanics" || item.type === "hostiles" || item.type === "actions" || item.type === "environments") ? item.data.title : item.data.name;
-
-const getSelectedItemBody = (item: SelectedItem) => {
-  if (item.type === "mechanics" || item.type === "hostiles" || item.type === "actions" || item.type === "environments") {
-    return item.data.content;
-  }
-
-  if (item.type === "combatArts") {
-    return item.data.ruleText;
-  }
-
-  return item.data.description;
-};
-
-const rulesLookup = new Map(rules.map((r) => [r.title.toLowerCase(), r]));
-// Special handling for keywords that might map to specific rule IDs
-const keywordToRuleId = new Map([
-  ["stamina", "attributes"],
-  ["speed", "attributes"],
-  ["armor", "attributes"],
-  ["offense", "attributes"],
-  ["defense", "attributes"],
-  ["accuracy", "attributes"],
-  ["intellect", "attributes"],
-  ["agility", "attributes"],
-  ["toughness", "attributes"],
-  ["morale", "attributes"],
-  ["hp", "attributes"],
-  ["inventory", "inventory"],
-  ["items", "items"],
-  ["weapons", "items"],
-  ["shields", "items"],
-  ["accessory", "items"],
-  ["consumables", "items"],
-  ["recruitment cost", "recruitment-cost"],
-  ["limit", "limit"],
-  ["models", "models"],
-  ["class", "class"],
-  ["traits", "traits"],
-  ["skills", "skills"],
-  ["combat arts", "combat-arts"],
-  ["spellcraft", "spellcraft"],
-  ["special", "special"],
-  ["stratagems", "stratagems"],
-  ["hitbox", "size"],
-  ["size", "size"],
-  ["dice rolls", "dice-rolls"],
-  ["attribute roll", "dice-rolls"],
-  ["attack roll", "dice-rolls"],
-  ["damage roll", "dice-rolls"],
-  ["reroll", "dice-rolls"],
-  ["modifiers", "modifiers"],
-  ["distance", "distance-measurement"],
-  ["measurement", "distance-measurement"],
-  ["base contact", "distance-measurement"],
-  ["movement", "normal-movement"],
-  ["walk", "action-attack"], // Note: Walk is part of basic attack/movement
-  ["idle", "action-attack"],
-  ["climb", "action-attack"],
-  ["jump", "action-attack"],
-  ["run", "action-attack"],
-  ["assist", "action-assist"],
-  ["attack", "action-attack"],
-  ["death blow", "action-death-blow"],
-  ["dodge", "action-dodge"],
-  ["interact", "action-interact"],
-  ["nothing", "action-nothing"],
-  ["perceive", "action-perceive"],
-  ["trade", "action-trade"],
-  ["duel", "action-duel"],
-  ["ritual", "action-ritual"],
-  ["uncover", "action-uncover"],
-  ["line of sight", "los"],
-  ["los", "los"],
-  ["awareness", "awareness"],
-  ["actions", "actions"],
-  ["assist", "action-assist"],
-  ["attack", "action-attack"],
-  ["melee attack", "action-attack"],
-  ["ranged attack", "action-attack"],
-  ["death blow", "action-death-blow"],
-  ["dodge", "action-dodge"],
-  ["interact", "action-interact"],
-  ["nothing", "action-nothing"],
-  ["perceive", "action-perceive"],
-  ["trade", "action-trade"],
-  ["duel", "action-duel"],
-  ["ritual", "action-ritual"],
-  ["uncover", "action-uncover"],
-  ["activation points", "activation-points"],
-  ["active role", "active-reactive-role"],
-  ["reactive role", "active-reactive-role"],
-  ["game sequence", "game-sequence-overview"],
-  ["turn phases", "turn-phases"],
-  ["strategic phase", "turn-phases"],
-  ["upkeep phase", "turn-phases"],
-  ["tactical phase", "turn-phases"],
-  ["end phase", "turn-phases"],
-  ["activation sequence", "activation-sequence"],
-  ["activation step", "activation-sequence"],
-  ["movement step", "activation-sequence"],
-  ["reaction step", "activation-sequence"],
-  ["action step", "activation-sequence"],
-  ["resolution step", "activation-sequence"],
-  ["reaction rules", "reaction-rules"],
-  ["attack of opportunity", "reaction-rules"],
-  ["reach", "reach"],
-  ["rch", "reach"],
-  ["casting aura", "casting-aura"],
-  ["template", "templates-aoe"],
-  ["templates", "templates-aoe"],
-  ["aoe", "templates-aoe"],
-  ["strike", "strikes-hits"],
-  ["stk", "strikes-hits"],
-  ["hit", "strikes-hits"],
-  ["critical hit", "strikes-hits"],
-  ["confrontation", "confrontation"],
-  ["damage", "damage-wounds"],
-  ["wound", "damage-wounds"],
-  ["incapacitated", "damage-wounds"],
-  ["incapped", "damage-wounds"],
-  ["fall damage", "damage-wounds"],
-  ["magic", "spells-magic"],
-  ["spell", "spells-magic"],
-  ["spells", "spells-magic"],
-  ["mana counter", "spells-magic"],
-  ["mana counters", "spells-magic"],
-  ["sorcery", "spells-magic"],
-  ["healing", "spells-magic"],
-  ["enchantment", "spells-magic"],
-  ["transmutation", "spells-magic"],
-  ["conjuration", "spells-magic"],
-  ["hostiles", "hostiles-intro"],
-  ["ai", "hostiles-intro"],
-  ["hostile turn", "hostiles-activations"],
-  ["behavior", "hostiles-behaviors"],
-  ["target priority", "hostiles-behaviors"],
-  ["tiers", "hostiles-activations"],
-  ["broken morale", "broken-morale"],
-  ["friendly fire", "friendly-fire-general"],
-  ["priority over the core rules", "priority-over-core"],
-  ["end of the game", "end-of-game"],
-  ["recovery check", "recovery-check"],
-  ["characters", "characters-general"],
-  ["monster factions", "monster-factions"],
-]);
-
-const getKeywordData = (keyword: (typeof LINKABLE_KEYWORDS)[number]) => {
-  const normalizedName = keyword.name.toLowerCase();
-
-  if (keyword.type === "states") {
-    return stateLookup.get(normalizedName);
-  }
-
-  if (keyword.type === "traits") {
-    return traitLookup.get(normalizedName);
-  }
-
-  if (keyword.type === "skills") {
-    return skillLookup.get(normalizedName);
-  }
-
-  if (keyword.type === "hostiles") {
-    const ruleId = keywordToRuleId.get(normalizedName);
-    if (ruleId) {
-      return rules.find(r => r.id === ruleId);
-    }
-    return rulesLookup.get(normalizedName);
-  }
-
-  if (keyword.type === "actions") {
-    const ruleId = keywordToRuleId.get(normalizedName);
-    if (ruleId) {
-      return rules.find(r => r.id === ruleId);
-    }
-    return rulesLookup.get(normalizedName);
-  }
-
-  if (keyword.type === "mechanics") {
-    const ruleId = keywordToRuleId.get(normalizedName);
-    if (ruleId) {
-      return rules.find(r => r.id === ruleId);
-    }
-    return rulesLookup.get(normalizedName);
-  }
-
-  if (keyword.type === "environments") {
-    const ruleId = keywordToRuleId.get(normalizedName) || `env-${normalizedName.toLowerCase().replace(/\s+/g, '-')}`;
-    return rules.find(r => r.id === ruleId) || rulesLookup.get(normalizedName);
-  }
-
-  return null;
-};
-
-function HighlightedText({ text, query }: { text: string; query: string }) {
-  const trimmedQuery = query.trim();
-
-  if (!trimmedQuery) {
-    return <>{text}</>;
-  }
-
-  const parts = text.split(new RegExp(`(${escapeRegExp(trimmedQuery)})`, "gi"));
-
-  return (
-    <>
-      {parts.map((part, index) => (
-        part.toLowerCase() === trimmedQuery.toLowerCase() ? (
-          <mark
-            key={`${part}-${index}`}
-            className="bg-red-500/15 text-red-200 rounded px-0.5"
-          >
-            {part}
-          </mark>
-        ) : (
-          <React.Fragment key={`${part}-${index}`}>{part}</React.Fragment>
-        )
-      ))}
-    </>
-  );
-}
-
-const RichText = ({ text, onKeywordClick, highlightQuery = "" }: { text: string; onKeywordClick: (item: KeywordItem) => void; highlightQuery?: string }) => {
-  if (!text) return null;
-
-  const parts = text.split(linkableKeywordRegex);
-
-  return (
-    <>
-      {parts.map((part, i) => {
-        const keyword = keywordLookup.get(part.toLowerCase());
-        if (keyword) {
-          const data = getKeywordData(keyword);
-          
-          if (data) {
-            return (
-              <button
-                key={i}
-                type="button"
-                onClick={(e) => {
-                  e.stopPropagation();
-                  onKeywordClick({ type: keyword.type, data } as KeywordItem);
-                }}
-                className="text-red-500 hover:text-red-400 font-bold underline decoration-red-900/50 underline-offset-2 transition-colors inline"
-              >
-                {part}
-              </button>
-            );
-          }
-        }
-        return (
-          <React.Fragment key={`${part}-${i}`}>
-            <HighlightedText text={part} query={highlightQuery} />
-          </React.Fragment>
-        );
-      })}
-    </>
-  );
-};
 
 export default function RulesWiki({ onBack }: { onBack: () => void }) {
   const { category: urlCategory, id: urlId } = useParams<{ category: SearchCategory; id: string }>();
@@ -439,8 +39,6 @@ export default function RulesWiki({ onBack }: { onBack: () => void }) {
   const [searchParams, setSearchParams] = useSearchParams();
 
   const searchQuery = searchParams.get("q") || "";
-  const [searchCategory, setSearchCategory] = useState<SearchCategory>("all");
-  const [isFilterMenuOpen, setIsFilterMenuOpen] = useState(false);
 
   const updateSearchQuery = (query: string) => {
     if (query) {
@@ -599,11 +197,8 @@ export default function RulesWiki({ onBack }: { onBack: () => void }) {
   );
 
   const filteredSearchEntries = useMemo(
-    () =>
-      rankedSearchEntries.filter((entry) =>
-        searchCategory === "all" ? true : entry.category === searchCategory,
-      ),
-    [rankedSearchEntries, searchCategory],
+    () => rankedSearchEntries,
+    [rankedSearchEntries],
   );
 
   const autocompleteResults = useMemo(
@@ -612,27 +207,29 @@ export default function RulesWiki({ onBack }: { onBack: () => void }) {
   );
 
   const searchResultsByCategory = useMemo(
-    () => ({
-      mechanics: filteredSearchEntries.filter((entry) => entry.category === "mechanics"),
-      hostiles: filteredSearchEntries.filter((entry) => entry.category === "hostiles"),
-      states: filteredSearchEntries.filter((entry) => entry.category === "states"),
-      traits: filteredSearchEntries.filter((entry) => entry.category === "traits"),
-      skills: filteredSearchEntries.filter((entry) => entry.category === "skills"),
-      classes: filteredSearchEntries.filter((entry) => entry.category === "classes"),
-      combatArts: filteredSearchEntries.filter((entry) => entry.category === "combatArts"),
-      actions: filteredSearchEntries.filter((entry) => entry.category === "actions"),
-      environments: filteredSearchEntries.filter((entry) => entry.category === "environments"),
-    }),
-    [filteredSearchEntries],
+    () => {
+      const results: Record<Exclude<SearchCategory, "all">, SearchResultEntry[]> = {
+        mechanics: [], hostiles: [], states: [], traits: [], skills: [], 
+        classes: [], combatArts: [], actions: [], environments: []
+      };
+      
+      if (!searchQuery.trim()) {
+        return results;
+      }
+
+      filteredSearchEntries.forEach((entry) => {
+        results[entry.category].push(entry);
+      });
+      
+      return results;
+    },
+    [filteredSearchEntries, searchQuery],
   );
 
   const hasSearchQuery = searchQuery.trim().length > 0;
-  const visibleSearchCategories =
-    searchCategory === "all"
-      ? (Object.keys(searchResultsByCategory) as Exclude<SearchCategory, "all">[]).filter(
-          (category) => searchResultsByCategory[category].length > 0,
-        )
-      : [searchCategory];
+  const visibleSearchCategories = (Object.keys(searchResultsByCategory) as Exclude<SearchCategory, "all">[]).filter(
+    (category) => searchResultsByCategory[category].length > 0,
+  );
 
   const renderSearchResultCard = (entry: SearchResultEntry) => (
     <button
@@ -690,19 +287,8 @@ export default function RulesWiki({ onBack }: { onBack: () => void }) {
               placeholder="Search rules, traits, skills, or combat arts..."
               value={searchQuery}
               onChange={(e) => updateSearchQuery(e.target.value)}
-              className="eldfall-input eldfall-input-with-icon pr-24"
+              className="eldfall-input eldfall-input-with-icon pr-12"
             />
-            <button
-              type="button"
-              aria-label="Open search filters"
-              aria-expanded={isFilterMenuOpen}
-              onClick={() => setIsFilterMenuOpen((current) => !current)}
-              className={`btn-icon-circle absolute right-10 top-1/2 -translate-y-1/2 border-transparent bg-transparent shadow-none hover:bg-stone-800 ${
-                searchCategory !== "all" ? "text-red-400" : ""
-              }`}
-            >
-              <Menu className="w-5 h-5" />
-            </button>
             {searchQuery && (
               <button
                 type="button"
@@ -712,34 +298,6 @@ export default function RulesWiki({ onBack }: { onBack: () => void }) {
               >
                 <X className="w-5 h-5" />
               </button>
-            )}
-
-            {isFilterMenuOpen && (
-              <div className="absolute right-0 top-[calc(100%+0.75rem)] z-20 w-56 rounded-xl border border-stone-800 bg-stone-900/95 p-2 shadow-2xl backdrop-blur-sm">
-                <div className="px-3 py-2 text-[10px] uppercase tracking-eyebrow text-stone-500">
-                  Search Scope
-                </div>
-                <div className="space-y-1">
-                  {(Object.keys(SEARCH_CATEGORY_LABELS) as SearchCategory[]).map((category) => (
-                    <button
-                      key={category}
-                      type="button"
-                      onClick={() => {
-                        setSearchCategory(category);
-                        setIsFilterMenuOpen(false);
-                      }}
-                      className={`flex w-full items-center justify-between rounded-lg px-3 py-2 text-left text-xs font-bold uppercase tracking-eyebrow transition-colors ${
-                        searchCategory === category
-                          ? "bg-red-900/20 text-red-400"
-                          : "text-stone-400 hover:bg-stone-800 hover:text-stone-200"
-                      }`}
-                    >
-                      <span>{SEARCH_CATEGORY_LABELS[category]}</span>
-                      {searchCategory === category && <span className="text-[10px]">Active</span>}
-                    </button>
-                  ))}
-                </div>
-              </div>
             )}
           </div>
 
@@ -755,7 +313,6 @@ export default function RulesWiki({ onBack }: { onBack: () => void }) {
                     type="button"
                     onClick={() => {
                       updateSearchQuery(entry.title);
-                      setSearchCategory(entry.category);
                       handleSelectItem(entry.selectedItem);
                     }}
                     className="w-full px-4 py-3 text-left hover:bg-stone-800 transition-colors"
@@ -779,7 +336,7 @@ export default function RulesWiki({ onBack }: { onBack: () => void }) {
         </div>
 
         {/* Tabs */}
-        <div id="rules-wiki-tabs" className="flex space-x-2 md:space-x-4 mb-8 border-b border-stone-900 overflow-x-auto custom-scrollbar">
+        <div id="rules-wiki-tabs" className="flex space-x-2 md:space-x-4 mb-8 border-b border-stone-800 overflow-x-auto custom-scrollbar">
           <TabButton 
             active={activeTab === "mechanics"} 
             onClick={() => handleTabChange("mechanics")}
@@ -842,14 +399,12 @@ export default function RulesWiki({ onBack }: { onBack: () => void }) {
               <div className="space-y-8">
                 {visibleSearchCategories.map((category) => (
                   <section key={category} className="space-y-4">
-                    {searchCategory === "all" && (
-                      <div className="flex items-center justify-between border-b border-stone-900 pb-3">
-                        <h2 className="text-xl font-bold text-white">{SEARCH_CATEGORY_LABELS[category]}</h2>
-                        <span className="text-xs uppercase tracking-eyebrow text-stone-500">
-                          {searchResultsByCategory[category].length} match{searchResultsByCategory[category].length === 1 ? "" : "es"}
-                        </span>
-                      </div>
-                    )}
+                    <div className="flex items-center justify-between border-b border-stone-900 pb-3">
+                      <h2 className="text-xl font-bold text-white">{SEARCH_CATEGORY_LABELS[category]}</h2>
+                      <span className="text-xs uppercase tracking-eyebrow text-stone-500">
+                        {searchResultsByCategory[category].length} match{searchResultsByCategory[category].length === 1 ? "" : "es"}
+                      </span>
+                    </div>
 
                     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                       {searchResultsByCategory[category].map(renderSearchResultCard)}
@@ -1162,67 +717,38 @@ export default function RulesWiki({ onBack }: { onBack: () => void }) {
                     onClick={handleCloseItem}
                     className="btn-icon-circle border-transparent bg-transparent shadow-none hover:bg-stone-800"
                   >
-                    <ArrowLeft className="w-5 h-5 rotate-90" />
+                    <X className="w-5 h-5" />
                   </button>
                 </div>
 
                 <div className="card-p-lg stack-standard">
-                  <div className="text-stone-300 body-sm whitespace-pre-wrap font-sans">
-                    <RichText 
-                      text={getSelectedItemBody(selectedItem)} 
-                      onKeywordClick={setNestedItem}
-                      highlightQuery={searchQuery}
+                  {isRuleSection(selectedItem) && (
+                    <RuleSectionDetail 
+                      item={selectedItem} 
+                      onKeywordClick={setNestedItem} 
+                      searchQuery={searchQuery} 
                     />
-                  </div>
-                  
-                  {(selectedItem.type === "mechanics" || selectedItem.type === "hostiles" || selectedItem.type === "actions" || selectedItem.type === "environments") && selectedItem.data.subsections && (
-                    <div className="space-y-4">
-                      {selectedItem.data.subsections.map((sub: { title: string; content: string }, i: number) => (
-                        <div key={i} className="border-l-2 border-red-900/30 pl-4">
-                          <h4 className="text-white font-bold mb-1 uppercase text-xs tracking-eyebrow">{sub.title}</h4>
-                          <p className="body-xs">{sub.content}</p>
-                        </div>
-                      ))}
-                    </div>
                   )}
-
-                  {selectedItem.type === "classes" && selectedItem.data.abilities && (
-                    <div className="space-y-3">
-                      <h4 className="text-white font-bold uppercase text-xs tracking-eyebrow border-b border-stone-800 pb-2">Class Abilities</h4>
-                      <div className="space-y-2">
-                        {selectedItem.data.abilities.map((ability: string, i: number) => (
-                          <div key={i} className="flex items-start text-xs">
-                            <span className="text-red-500 mr-2 mt-0.5">-</span>
-                            <span className="text-stone-300">{ability}</span>
-                          </div>
-                        ))}
-                      </div>
-                    </div>
+                  {isClass(selectedItem) && (
+                    <ClassDetail 
+                      item={selectedItem} 
+                      onKeywordClick={setNestedItem} 
+                      searchQuery={searchQuery} 
+                    />
                   )}
-
-                  {selectedItem.type === "combatArts" && (
-                    <div className="space-y-4">
-                      <div className="space-y-2">
-                        <p className="text-stone-200 text-sm leading-relaxed">{selectedItem.data.ruleText}</p>
-                        <p className="text-stone-400 text-xs leading-relaxed italic">{selectedItem.data.flavorText}</p>
-                      </div>
-                      <div className="space-y-3">
-                        <h4 className="text-white font-bold uppercase text-xs tracking-eyebrow border-b border-stone-800 pb-2">Levels</h4>
-                        <div className="space-y-3">
-                          {selectedItem.data.levels.map((level: CombatArt, i: number) => (
-                            <div key={i} className="bg-surface-1/30 border border-stone-800/50 rounded-xl p-3">
-                              <div className="flex items-center justify-between mb-2">
-                                <h5 className="text-red-500 text-sm font-bold">{level.name}</h5>
-                                <span className="eldfall-chip">
-                                  Level {level.level}
-                                </span>
-                              </div>
-                              <p className="text-stone-400 text-xs leading-relaxed">{level.description}</p>
-                            </div>
-                          ))}
-                        </div>
-                      </div>
-                    </div>
+                  {isCombatArtCategory(selectedItem) && (
+                    <CombatArtDetail 
+                      item={selectedItem} 
+                      onKeywordClick={setNestedItem} 
+                      searchQuery={searchQuery} 
+                    />
+                  )}
+                  {(!isRuleSection(selectedItem) && !isClass(selectedItem) && !isCombatArtCategory(selectedItem)) && (
+                    <GenericDetail 
+                      item={selectedItem} 
+                      onKeywordClick={setNestedItem} 
+                      searchQuery={searchQuery} 
+                    />
                   )}
                 </div>
               </motion.div>
@@ -1268,11 +794,11 @@ export default function RulesWiki({ onBack }: { onBack: () => void }) {
                 </div>
                 <div className="card-p stack-compact">
                   <p className="text-stone-300 text-xs leading-relaxed whitespace-pre-wrap font-sans">
-                    {(nestedItem.type === "mechanics" || nestedItem.type === "hostiles" || nestedItem.type === "actions" || nestedItem.type === "environments") ? nestedItem.data.content : (nestedItem.data as State | Trait | Skill).description}
+                    {getSelectedItemBody(nestedItem)}
                   </p>
-                  {(nestedItem.type === "mechanics" || nestedItem.type === "hostiles" || nestedItem.type === "actions" || nestedItem.type === "environments") && nestedItem.data.subsections && (
+                  {isRuleSection(nestedItem) && nestedItem.data.subsections && (
                     <div className="mt-4 space-y-3">
-                      {nestedItem.data.subsections.slice(0, 3).map((sub: { title: string; content: string }, i: number) => (
+                      {nestedItem.data.subsections.slice(0, 3).map((sub, i) => (
                         <div key={i} className="border-l border-red-900/30 pl-3">
                           <h4 className="text-white font-bold text-[10px] uppercase tracking-eyebrow">{sub.title}</h4>
                           <p className="text-stone-400 text-[10px]">{sub.content}</p>
@@ -1314,7 +840,7 @@ function TabButton({ active, onClick, icon, label }: { active: boolean; onClick:
       {active && (
         <motion.div 
           layoutId="activeTab"
-          className="absolute bottom-0 left-0 right-0 h-0.5 bg-red-500"
+          className="absolute bottom-0 left-0 right-0 h-0.5 bg-red-600 shadow-[0_0_8px_rgba(220,38,38,0.4)]"
         />
       )}
     </button>

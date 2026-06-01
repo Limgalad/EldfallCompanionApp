@@ -1,7 +1,7 @@
-import React, { useEffect, useMemo, useState } from 'react';
+import React, { useEffect, useMemo } from 'react';
 import { motion } from 'motion/react';
 import { useParams, useNavigate, useSearchParams } from 'react-router-dom';
-import { ArrowLeft, Wand2, Search, Sparkles, Menu, X, ExternalLink } from 'lucide-react';
+import { ArrowLeft, Wand2, Search, Sparkles, X, ExternalLink } from 'lucide-react';
 import { spellSchools, Spell, SpellSchool } from '../data/spells';
 import { normalizeText, prepareFuzzySearchEntries, rankPreparedFuzzyResults, slugify } from '../utils/search';
 import MetaTags from './MetaTags';
@@ -36,7 +36,6 @@ export default function SpellBook({ onBack }: SpellBookProps) {
   const [searchParams, setSearchParams] = useSearchParams();
 
   const searchQuery = searchParams.get("q") || "";
-  const [isFilterMenuOpen, setIsFilterMenuOpen] = useState(false);
 
   const updateSearchQuery = (query: string) => {
     if (query) {
@@ -139,19 +138,8 @@ export default function SpellBook({ onBack }: SpellBookProps) {
               placeholder="Search spells by name, effect, or element..."
               value={searchQuery}
               onChange={(e) => updateSearchQuery(e.target.value)}
-              className="eldfall-input eldfall-input-with-icon pr-24"
+              className="eldfall-input eldfall-input-with-icon pr-12"
             />
-            <button
-              type="button"
-              aria-label="Open spell school filters"
-              aria-expanded={isFilterMenuOpen}
-              onClick={() => setIsFilterMenuOpen((current) => !current)}
-              className={`btn-icon-circle absolute right-10 top-1/2 -translate-y-1/2 border-transparent bg-transparent shadow-none hover:bg-stone-800 ${
-                selectedSchool !== null ? 'text-red-400' : ''
-              }`}
-            >
-              <Menu className="w-5 h-5" />
-            </button>
             {searchQuery && (
               <button
                 type="button"
@@ -161,50 +149,6 @@ export default function SpellBook({ onBack }: SpellBookProps) {
               >
                 <X className="w-5 h-5" />
               </button>
-            )}
-
-            {isFilterMenuOpen && (
-              <div className="absolute right-0 top-[calc(100%+0.75rem)] z-20 w-56 rounded-xl border border-stone-800 bg-stone-900/95 p-2 shadow-2xl backdrop-blur-sm">
-                <div className="px-3 py-2 text-[10px] uppercase tracking-eyebrow text-stone-500">
-                  Spell School
-                </div>
-                <div className="space-y-1">
-                  <button
-                    type="button"
-                    onClick={() => {
-                      handleSchoolTabChange(null);
-                      setIsFilterMenuOpen(false);
-                    }}
-                    className={`flex w-full items-center justify-between rounded-lg px-3 py-2 text-left text-xs font-bold uppercase tracking-eyebrow transition-colors ${
-                      selectedSchool === null
-                        ? 'bg-red-900/20 text-red-400'
-                        : 'text-stone-400 hover:bg-stone-800 hover:text-stone-200'
-                    }`}
-                  >
-                    <span>All Schools</span>
-                    {selectedSchool === null && <span className="text-[10px]">Active</span>}
-                  </button>
-
-                  {spellSchools.map((school) => (
-                    <button
-                      key={school.name}
-                      type="button"
-                      onClick={() => {
-                        handleSchoolTabChange(school.name);
-                        setIsFilterMenuOpen(false);
-                      }}
-                      className={`flex w-full items-center justify-between rounded-lg px-3 py-2 text-left text-xs font-bold uppercase tracking-eyebrow transition-colors ${
-                        selectedSchool === school.name
-                          ? 'bg-red-900/20 text-red-400'
-                          : 'text-stone-400 hover:bg-stone-800 hover:text-stone-200'
-                      }`}
-                    >
-                      <span>{school.name}</span>
-                      {selectedSchool === school.name && <span className="text-[10px]">Active</span>}
-                    </button>
-                  ))}
-                </div>
-              </div>
             )}
           </div>
 
