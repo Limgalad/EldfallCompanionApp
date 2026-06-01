@@ -1,8 +1,8 @@
 import React, { useMemo, useState, useEffect } from "react";
 import { motion, AnimatePresence } from "motion/react";
-import { useParams, useNavigate } from "react-router-dom";
+import { useParams, useNavigate, useSearchParams } from "react-router-dom";
 import { rules, traits, skills, classes, combatArtCategories, states, RuleSection, CombatArtCategory, Trait, Skill, State, ClassInfo, CombatArt } from "../data/rules";
-import { ArrowLeft, Search, BookOpen, Shield, Zap, Sparkles, Users, Sword, Activity, Info, X, Menu, Target } from "lucide-react";
+import { ArrowLeft, Search, BookOpen, Shield, Zap, Sparkles, Users, Sword, Activity, Info, X, Menu, Target, ExternalLink } from "lucide-react";
 import { prepareFuzzySearchEntries, rankPreparedFuzzyResults, slugify } from "../utils/search";
 import MetaTags from "./MetaTags";
 
@@ -436,10 +436,19 @@ const RichText = ({ text, onKeywordClick, highlightQuery = "" }: { text: string;
 export default function RulesWiki({ onBack }: { onBack: () => void }) {
   const { category: urlCategory, id: urlId } = useParams<{ category: SearchCategory; id: string }>();
   const navigate = useNavigate();
+  const [searchParams, setSearchParams] = useSearchParams();
 
-  const [searchQuery, setSearchQuery] = useState("");
+  const searchQuery = searchParams.get("q") || "";
   const [searchCategory, setSearchCategory] = useState<SearchCategory>("all");
   const [isFilterMenuOpen, setIsFilterMenuOpen] = useState(false);
+
+  const updateSearchQuery = (query: string) => {
+    if (query) {
+      setSearchParams({ q: query }, { replace: true });
+    } else {
+      setSearchParams({}, { replace: true });
+    }
+  };
   
   // Tabs and selection are now driven by URL or internal fallback for smooth transitions
   const activeTab: SearchCategory = urlCategory || "mechanics";
@@ -680,7 +689,7 @@ export default function RulesWiki({ onBack }: { onBack: () => void }) {
               type="text"
               placeholder="Search rules, traits, skills, or combat arts..."
               value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
+              onChange={(e) => updateSearchQuery(e.target.value)}
               className="eldfall-input eldfall-input-with-icon pr-24"
             />
             <button
@@ -698,7 +707,7 @@ export default function RulesWiki({ onBack }: { onBack: () => void }) {
               <button
                 type="button"
                 aria-label="Clear rules search"
-                onClick={() => setSearchQuery("")}
+                onClick={() => updateSearchQuery("")}
                 className="btn-icon-circle absolute right-2 top-1/2 -translate-y-1/2 border-transparent bg-transparent shadow-none hover:bg-stone-800"
               >
                 <X className="w-5 h-5" />
@@ -745,7 +754,7 @@ export default function RulesWiki({ onBack }: { onBack: () => void }) {
                     key={`suggestion-${entry.id}`}
                     type="button"
                     onClick={() => {
-                      setSearchQuery(entry.title);
+                      updateSearchQuery(entry.title);
                       setSearchCategory(entry.category);
                       handleSelectItem(entry.selectedItem);
                     }}
@@ -770,7 +779,7 @@ export default function RulesWiki({ onBack }: { onBack: () => void }) {
         </div>
 
         {/* Tabs */}
-        <div id="rules-wiki-tabs" className="flex space-x-2 md:space-x-4 mb-8 border-b border-[#844f2b] overflow-x-auto custom-scrollbar">
+        <div id="rules-wiki-tabs" className="flex space-x-2 md:space-x-4 mb-8 border-b border-stone-900 overflow-x-auto custom-scrollbar">
           <TabButton 
             active={activeTab === "mechanics"} 
             onClick={() => handleTabChange("mechanics")}
@@ -849,11 +858,24 @@ export default function RulesWiki({ onBack }: { onBack: () => void }) {
                 ))}
               </div>
             ) : (
-              <div className="eldfall-card card-p-lg text-center">
+            <div className="eldfall-card card-p-lg text-center">
                 <h2 className="text-xl font-bold text-white mb-2">No Results Found</h2>
-                <p className="body-sm">
+                <p className="body-sm mb-6">
                   Try a different search term, use a broader category, or pick one of the autocomplete suggestions above.
                 </p>
+                <div className="flex flex-col items-center gap-4">
+                  <div className="h-px w-24 bg-stone-800" />
+                  <p className="text-xs uppercase tracking-eyebrow text-stone-500">Still looking for something?</p>
+                  <a 
+                    href={`https://www.google.com/search?q=site%3Aeldfallchronicles.com+${encodeURIComponent(searchQuery)}`}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="btn-secondary"
+                  >
+                    <ExternalLink className="w-4 h-4 mr-2" />
+                    Search Google for "{searchQuery}"
+                  </a>
+                </div>
               </div>
             )
           ) : (

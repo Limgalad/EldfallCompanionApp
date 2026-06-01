@@ -43,7 +43,10 @@ export default function MetaTags({
     ...type === 'website' ? {
       "potentialAction": {
         "@type": "SearchAction",
-        "target": `${baseUrl}/rules?q={search_term_string}`,
+        "target": {
+          "@type": "EntryPoint",
+          "urlTemplate": `${baseUrl}/rules?q={search_term_string}`
+        },
         "query-input": "required name=search_term_string"
       }
     } : {}

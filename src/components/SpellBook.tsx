@@ -1,7 +1,7 @@
 import React, { useEffect, useMemo, useState } from 'react';
 import { motion } from 'motion/react';
-import { useParams, useNavigate } from 'react-router-dom';
-import { ArrowLeft, Wand2, Search, Sparkles, Menu, X } from 'lucide-react';
+import { useParams, useNavigate, useSearchParams } from 'react-router-dom';
+import { ArrowLeft, Wand2, Search, Sparkles, Menu, X, ExternalLink } from 'lucide-react';
 import { spellSchools, Spell, SpellSchool } from '../data/spells';
 import { normalizeText, prepareFuzzySearchEntries, rankPreparedFuzzyResults, slugify } from '../utils/search';
 import MetaTags from './MetaTags';
@@ -33,9 +33,18 @@ const spellSearchEntries = prepareFuzzySearchEntries(
 export default function SpellBook({ onBack }: SpellBookProps) {
   const { school: urlSchool, spellId: urlSpellId } = useParams();
   const navigate = useNavigate();
+  const [searchParams, setSearchParams] = useSearchParams();
 
-  const [searchQuery, setSearchQuery] = useState('');
+  const searchQuery = searchParams.get("q") || "";
   const [isFilterMenuOpen, setIsFilterMenuOpen] = useState(false);
+
+  const updateSearchQuery = (query: string) => {
+    if (query) {
+      setSearchParams({ q: query }, { replace: true });
+    } else {
+      setSearchParams({}, { replace: true });
+    }
+  };
 
   const selectedSchool = urlSchool ? spellSchools.find(s => slugify(s.name) === urlSchool)?.name || null : null;
   const highlightedSpellId = urlSpellId || null;
@@ -71,7 +80,7 @@ export default function SpellBook({ onBack }: SpellBookProps) {
   }, [highlightedSpellId, selectedSchool]);
 
   const navigateToSpell = (result: SpellSearchResult) => {
-    setSearchQuery('');
+    updateSearchQuery('');
     navigate(`/spellbook/${slugify(result.schoolName)}/${result.id}`);
   };
 
@@ -129,7 +138,7 @@ export default function SpellBook({ onBack }: SpellBookProps) {
               type="text"
               placeholder="Search spells by name, effect, or element..."
               value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
+              onChange={(e) => updateSearchQuery(e.target.value)}
               className="eldfall-input eldfall-input-with-icon pr-24"
             />
             <button
@@ -147,7 +156,7 @@ export default function SpellBook({ onBack }: SpellBookProps) {
               <button
                 type="button"
                 aria-label="Clear spell search"
-                onClick={() => setSearchQuery('')}
+                onClick={() => updateSearchQuery('')}
                 className="btn-icon-circle absolute right-2 top-1/2 -translate-y-1/2 border-transparent bg-transparent shadow-none hover:bg-stone-800"
               >
                 <X className="w-5 h-5" />
@@ -277,9 +286,24 @@ export default function SpellBook({ onBack }: SpellBookProps) {
                 </div>
               </section>
             ) : (
-              <div className="text-center py-20 text-stone-500">
+              <div className="eldfall-card card-p-lg text-center max-w-2xl mx-auto">
                 <Sparkles className="w-12 h-12 mx-auto mb-4 opacity-20" />
-                <p>No spells found matching your criteria.</p>
+                <h2 className="text-xl font-bold text-white mb-2">No Spells Found</h2>
+                <p className="body-sm mb-6">Try a different search term or use a broader school category.</p>
+                
+                <div className="flex flex-col items-center gap-4">
+                  <div className="h-px w-24 bg-stone-800" />
+                  <p className="text-xs uppercase tracking-eyebrow text-stone-500">Still looking for something?</p>
+                  <a 
+                    href={`https://www.google.com/search?q=site%3Aeldfallchronicles.com+${encodeURIComponent(searchQuery)}`}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="btn-secondary"
+                  >
+                    <ExternalLink className="w-4 h-4 mr-2" />
+                    Search Google for "{searchQuery}"
+                  </a>
+                </div>
               </div>
             )
           ) : visibleSchools.length === 0 ? (

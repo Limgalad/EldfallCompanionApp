@@ -104,10 +104,21 @@
   <!-- ... omitting some for brevity as I need to be careful with file size but will include major ones -->
 
   <!-- Spell schools -->
+  <url><loc>https://eldfallcompanion.tabletophub.nl/spellbook</loc><priority>0.9</priority></url>
   <url><loc>https://eldfallcompanion.tabletophub.nl/spellbook/armamancy</loc><priority>0.8</priority></url>
   <url><loc>https://eldfallcompanion.tabletophub.nl/spellbook/conjuration</loc><priority>0.8</priority></url>
-  <url><loc>https://eldfallcompanion.tabletophub.nl/spellbook/mysticism</loc><priority>0.8</priority></url>
+  <url><loc>https://eldfallcompanion.tabletophub.nl/spellbook/cryomancy</loc><priority>0.8</priority></url>
+  <url><loc>https://eldfallcompanion.tabletophub.nl/spellbook/electromancy</loc><priority>0.8</priority></url>
+  <url><loc>https://eldfallcompanion.tabletophub.nl/spellbook/enchanting</loc><priority>0.8</priority></url>
+  <url><loc>https://eldfallcompanion.tabletophub.nl/spellbook/everlasting-rain-invocations</loc><priority>0.8</priority></url>
+  <url><loc>https://eldfallcompanion.tabletophub.nl/spellbook/hieromancy</loc><priority>0.8</priority></url>
+  <url><loc>https://eldfallcompanion.tabletophub.nl/spellbook/incantation-shamanism</loc><priority>0.8</priority></url>
+  <url><loc>https://eldfallcompanion.tabletophub.nl/spellbook/invocation</loc><priority>0.8</priority></url>
+  <url><loc>https://eldfallcompanion.tabletophub.nl/spellbook/kitsune-no-mai</loc><priority>0.8</priority></url>
   <url><loc>https://eldfallcompanion.tabletophub.nl/spellbook/necromancy</loc><priority>0.8</priority></url>
+  <url><loc>https://eldfallcompanion.tabletophub.nl/spellbook/purification-rites</loc><priority>0.8</priority></url>
   <url><loc>https://eldfallcompanion.tabletophub.nl/spellbook/sorcery</loc><priority>0.8</priority></url>
-  <url><loc>https://eldfallcompanion.tabletophub.nl/spellbook/primordialism</loc><priority>0.8</priority></url>
+  <url><loc>https://eldfallcompanion.tabletophub.nl/spellbook/succubi-magic</loc><priority>0.8</priority></url>
+  <url><loc>https://eldfallcompanion.tabletophub.nl/spellbook/wizardry</loc><priority>0.8</priority></url>
+  <url><loc>https://eldfallcompanion.tabletophub.nl/spellbook/other-spells</loc><priority>0.8</priority></url>
 </urlset>
