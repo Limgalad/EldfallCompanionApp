@@ -1,4 +1,5 @@
 import { motion, AnimatePresence } from "motion/react";
+import { useParams, useNavigate } from "react-router-dom";
 import { missions, Mission } from "../data/missions";
 import { questSchemes, Faction } from "../data/schemes";
 import { creatureCategories, Creature } from "../data/creatures";
@@ -6,13 +7,18 @@ import { skills as allSkills, traits as allTraits } from "../data/rules";
 import { spellSchools } from "../data/spells";
 import { ArrowLeft, Map as MapIcon, Target, ScrollText, Trophy, BookOpen, X, Ghost, ChevronDown, Info, AlertCircle } from "lucide-react";
 import { useState, useEffect, ReactNode } from "react";
+import MetaTags from "./MetaTags";
 
 export default function MissionOverview({ onBack }: { onBack: () => void }) {
-  const [selectedMission, setSelectedMission] = useState<Mission | null>(null);
-  const [showSchemes, setShowSchemes] = useState(false);
+  const { missionId, view } = useParams();
+  const navigate = useNavigate();
+
   const [selectedFaction, setSelectedFaction] = useState<Faction>("Neutral");
-  const [showCreatures, setShowCreatures] = useState(false);
   const [activeTooltip, setActiveTooltip] = useState<{ title: string, content: string } | null>(null);
+
+  const selectedMission = missionId ? missions.find(m => m.id === missionId) || null : null;
+  const showSchemes = view === "schemes";
+  const showCreatures = view === "creatures";
 
   const getInfo = (name: string, type: 'skill' | 'trait' | 'spell') => {
     const baseName = name.split(' ')[0];
@@ -44,12 +50,17 @@ export default function MissionOverview({ onBack }: { onBack: () => void }) {
 
   return (
     <div className="min-h-screen bg-stone-950">
+      <MetaTags 
+        title={selectedMission ? `${selectedMission.title} - Quest Overview` : showSchemes ? "Quest Schemes - Quest Overview" : showCreatures ? "Creatures Database - Quest Overview" : "Quest Overview"}
+        description={selectedMission ? selectedMission.description : "Explore Eldfall Chronicles Season 1 missions, objective markers, and quest schemes."}
+        image={selectedMission?.mapImage ? `https://eldfallcompanion.tabletophub.nl${selectedMission.mapImage}` : undefined}
+      />
       {selectedMission ? (
-        <MissionDetail 
-          mission={selectedMission} 
-          onBack={() => setSelectedMission(null)} 
-          onShowTooltip={handleShowTooltip}
-        />
+          <MissionDetail 
+            mission={selectedMission} 
+            onBack={() => navigate("/missions")} 
+            onShowTooltip={handleShowTooltip}
+          />
       ) : (
         <>
           <header className="page-header">
@@ -68,14 +79,14 @@ export default function MissionOverview({ onBack }: { onBack: () => void }) {
               </div>
               <div className="hidden sm:flex items-center gap-3">
                 <button 
-                  onClick={() => setShowSchemes(true)}
+                  onClick={() => navigate("/missions/schemes")}
                   className="btn-action"
                 >
                   <BookOpen className="w-4 h-4 mr-2" />
                   Schemes
                 </button>
                 <button 
-                  onClick={() => setShowCreatures(true)}
+                  onClick={() => navigate("/missions/creatures")}
                   className="btn-action"
                 >
                   <Ghost className="w-4 h-4 mr-2" />
@@ -92,14 +103,14 @@ export default function MissionOverview({ onBack }: { onBack: () => void }) {
               </div>
               <div className="flex sm:hidden flex-col gap-3">
                 <button 
-                  onClick={() => setShowSchemes(true)}
+                  onClick={() => navigate("/missions/schemes")}
                   className="btn-action w-full"
                 >
                   <BookOpen className="w-4 h-4 mr-2" />
                   Quest Schemes
                 </button>
                 <button 
-                  onClick={() => setShowCreatures(true)}
+                  onClick={() => navigate("/missions/creatures")}
                   className="btn-action w-full"
                 >
                   <Ghost className="w-4 h-4 mr-2" />
@@ -115,7 +126,7 @@ export default function MissionOverview({ onBack }: { onBack: () => void }) {
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.4, delay: index * 0.1 }}
-              onClick={() => setSelectedMission(mission)}
+              onClick={() => navigate(`/missions/${mission.id}`)}
               className="eldfall-card eldfall-card-interactive p-4 group"
             >
               <div className="aspect-video mb-4 overflow-hidden rounded-xl border border-stone-800 bg-stone-900/50 flex items-center justify-center">
@@ -163,7 +174,7 @@ export default function MissionOverview({ onBack }: { onBack: () => void }) {
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm"
-            onClick={() => setShowSchemes(false)}
+            onClick={() => navigate("/missions")}
           >
             <motion.div 
               initial={{ scale: 0.95, opacity: 0 }}
@@ -178,7 +189,7 @@ export default function MissionOverview({ onBack }: { onBack: () => void }) {
                   <h2 className="text-xl font-bold uppercase tracking-eyebrow">Quest Schemes</h2>
                 </div>
                 <button 
-                  onClick={() => setShowSchemes(false)}
+                  onClick={() => navigate("/missions")}
                   className="btn-icon-circle border-transparent bg-transparent shadow-none hover:bg-stone-800"
                 >
                   <X className="w-5 h-5" />
@@ -235,7 +246,7 @@ export default function MissionOverview({ onBack }: { onBack: () => void }) {
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm"
-            onClick={() => setShowCreatures(false)}
+            onClick={() => navigate("/missions")}
           >
             <motion.div 
               initial={{ scale: 0.95, opacity: 0 }}
@@ -250,7 +261,7 @@ export default function MissionOverview({ onBack }: { onBack: () => void }) {
                   <h2 className="text-lg font-bold uppercase tracking-eyebrow">Creatures</h2>
                 </div>
                 <button 
-                  onClick={() => setShowCreatures(false)}
+                  onClick={() => navigate("/missions")}
                   className="btn-icon-circle border-transparent bg-transparent shadow-none hover:bg-stone-800"
                 >
                   <X className="w-5 h-5" />

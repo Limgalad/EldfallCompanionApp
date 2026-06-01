@@ -1,10 +1,12 @@
 import React, { useMemo, useState, useEffect } from "react";
 import { motion, AnimatePresence } from "motion/react";
+import { useParams, useNavigate } from "react-router-dom";
 import { rules, traits, skills, classes, combatArtCategories, states, RuleSection, CombatArtCategory, Trait, Skill, State, ClassInfo, CombatArt } from "../data/rules";
 import { ArrowLeft, Search, BookOpen, Shield, Zap, Sparkles, Users, Sword, Activity, Info, X, Menu } from "lucide-react";
-import { prepareFuzzySearchEntries, rankPreparedFuzzyResults } from "../utils/search";
+import { prepareFuzzySearchEntries, rankPreparedFuzzyResults, slugify } from "../utils/search";
+import MetaTags from "./MetaTags";
 
-const LINKABLE_KEYWORDS: { name: string; type: "states" | "traits" | "skills" }[] = [
+const LINKABLE_KEYWORDS: { name: string; type: "states" | "traits" | "skills" | "mechanics" }[] = [
   { name: "Blinded", type: "states" },
   { name: "Engaged", type: "states" },
   { name: "Flying", type: "states" },
@@ -24,12 +26,66 @@ const LINKABLE_KEYWORDS: { name: string; type: "states" | "traits" | "skills" }[
   { name: "Stagger", type: "traits" },
   { name: "Mindgame", type: "traits" },
   { name: "Knockdown", type: "traits" },
+  { name: "Models", type: "mechanics" },
+  { name: "Class", type: "mechanics" },
+  { name: "Stamina", type: "mechanics" },
+  { name: "Speed", type: "mechanics" },
+  { name: "Armor", type: "mechanics" },
+  { name: "HP", type: "mechanics" },
+  { name: "Offense", type: "mechanics" },
+  { name: "Defense", type: "mechanics" },
+  { name: "Accuracy", type: "mechanics" },
+  { name: "Intellect", type: "mechanics" },
+  { name: "Agility", type: "mechanics" },
+  { name: "Toughness", type: "mechanics" },
+  { name: "Morale", type: "mechanics" },
+  { name: "Size", type: "mechanics" },
+  { name: "Hitbox", type: "mechanics" },
+  { name: "Recruitment Cost", type: "mechanics" },
+  { name: "Limit", type: "mechanics" },
+  { name: "Traits", type: "mechanics" },
+  { name: "Skills", type: "mechanics" },
+  { name: "Combat Arts", type: "mechanics" },
+  { name: "Spellcraft", type: "mechanics" },
+  { name: "Special", type: "mechanics" },
+  { name: "Stratagems", type: "mechanics" },
+  { name: "Dice Rolls", type: "mechanics" },
+  { name: "Modifiers", type: "mechanics" },
+  { name: "Distance", type: "mechanics" },
+  { name: "Movement", type: "mechanics" },
+  { name: "Line of Sight", type: "mechanics" },
+  { name: "Awareness", type: "mechanics" },
+  { name: "Actions", type: "mechanics" },
+  { name: "Activation Points", type: "mechanics" },
+  { name: "Active Role", type: "mechanics" },
+  { name: "Reactive Role", type: "mechanics" },
+  { name: "Reach", type: "mechanics" },
+  { name: "Casting Aura", type: "mechanics" },
+  { name: "Templates", type: "mechanics" },
+  { name: "AoE", type: "mechanics" },
+  { name: "Strike", type: "mechanics" },
+  { name: "Hit", type: "mechanics" },
+  { name: "Critical Hit", type: "mechanics" },
+  { name: "Confrontation", type: "mechanics" },
+  { name: "Damage", type: "mechanics" },
+  { name: "Wound", type: "mechanics" },
+  { name: "Incapped", type: "mechanics" },
+  { name: "Fall Damage", type: "mechanics" },
+  { name: "Magic", type: "mechanics" },
+  { name: "Mana Counter", type: "mechanics" },
+  { name: "Inventory", type: "mechanics" },
+  { name: "Items", type: "mechanics" },
+  { name: "Weapons", type: "mechanics" },
+  { name: "Shields", type: "mechanics" },
+  { name: "Accessory", type: "mechanics" },
+  { name: "Consumables", type: "mechanics" },
 ];
 
 type KeywordItem = 
   | { type: "states"; data: State }
   | { type: "traits"; data: Trait }
-  | { type: "skills"; data: Skill };
+  | { type: "skills"; data: Skill }
+  | { type: "mechanics"; data: RuleSection };
 
 type SearchCategory = "all" | "mechanics" | "states" | "traits" | "skills" | "classes" | "combatArts";
 
@@ -52,7 +108,7 @@ type SearchResultEntry = {
 
 const SEARCH_CATEGORY_LABELS: Record<SearchCategory, string> = {
   all: "All",
-  mechanics: "Mechanics",
+  mechanics: "CORE GAME ELEMENTS",
   states: "States",
   traits: "Traits",
   skills: "Skills",
@@ -84,6 +140,98 @@ const getSelectedItemBody = (item: SelectedItem) => {
   return item.data.description;
 };
 
+const rulesLookup = new Map(rules.map((r) => [r.title.toLowerCase(), r]));
+// Special handling for keywords that might map to specific rule IDs
+const keywordToRuleId = new Map([
+  ["stamina", "attributes"],
+  ["speed", "attributes"],
+  ["armor", "attributes"],
+  ["offense", "attributes"],
+  ["defense", "attributes"],
+  ["accuracy", "attributes"],
+  ["intellect", "attributes"],
+  ["agility", "attributes"],
+  ["toughness", "attributes"],
+  ["morale", "attributes"],
+  ["hp", "attributes"],
+  ["inventory", "inventory"],
+  ["items", "items"],
+  ["weapons", "items"],
+  ["shields", "items"],
+  ["accessory", "items"],
+  ["consumables", "items"],
+  ["recruitment cost", "recruitment-cost"],
+  ["limit", "limit"],
+  ["models", "models"],
+  ["class", "class"],
+  ["traits", "traits"],
+  ["skills", "skills"],
+  ["combat arts", "combat-arts"],
+  ["spellcraft", "spellcraft"],
+  ["special", "special"],
+  ["stratagems", "stratagems"],
+  ["hitbox", "size"],
+  ["size", "size"],
+  ["dice rolls", "dice-rolls"],
+  ["attribute roll", "dice-rolls"],
+  ["attack roll", "dice-rolls"],
+  ["damage roll", "dice-rolls"],
+  ["reroll", "dice-rolls"],
+  ["modifiers", "modifiers"],
+  ["distance", "distance-measurement"],
+  ["measurement", "distance-measurement"],
+  ["base contact", "distance-measurement"],
+  ["movement", "movement"],
+  ["ladder", "movement"],
+  ["line of sight", "los"],
+  ["los", "los"],
+  ["awareness", "awareness"],
+  ["actions", "actions"],
+  ["activation points", "activation-points"],
+  ["active role", "active-reactive-role"],
+  ["reactive role", "active-reactive-role"],
+  ["game sequence", "game-sequence-overview"],
+  ["turn phases", "turn-phases"],
+  ["strategic phase", "turn-phases"],
+  ["upkeep phase", "turn-phases"],
+  ["tactical phase", "turn-phases"],
+  ["end phase", "turn-phases"],
+  ["activation sequence", "activation-sequence"],
+  ["activation step", "activation-sequence"],
+  ["movement step", "activation-sequence"],
+  ["reaction step", "activation-sequence"],
+  ["action step", "activation-sequence"],
+  ["resolution step", "activation-sequence"],
+  ["reaction rules", "reaction-rules"],
+  ["attack of opportunity", "reaction-rules"],
+  ["reach", "reach"],
+  ["rch", "reach"],
+  ["casting aura", "casting-aura"],
+  ["template", "templates-aoe"],
+  ["templates", "templates-aoe"],
+  ["aoe", "templates-aoe"],
+  ["strike", "strikes-hits"],
+  ["stk", "strikes-hits"],
+  ["hit", "strikes-hits"],
+  ["critical hit", "strikes-hits"],
+  ["confrontation", "confrontation"],
+  ["damage", "damage-wounds"],
+  ["wound", "damage-wounds"],
+  ["incapacitated", "damage-wounds"],
+  ["incapped", "damage-wounds"],
+  ["fall damage", "damage-wounds"],
+  ["magic", "spells-magic"],
+  ["spell", "spells-magic"],
+  ["spells", "spells-magic"],
+  ["mana counter", "spells-magic"],
+  ["mana counters", "spells-magic"],
+  ["sorcery", "spells-magic"],
+  ["healing", "spells-magic"],
+  ["enchantment", "spells-magic"],
+  ["transmutation", "spells-magic"],
+  ["conjuration", "spells-magic"],
+]);
+
 const getKeywordData = (keyword: (typeof LINKABLE_KEYWORDS)[number]) => {
   const normalizedName = keyword.name.toLowerCase();
 
@@ -95,7 +243,19 @@ const getKeywordData = (keyword: (typeof LINKABLE_KEYWORDS)[number]) => {
     return traitLookup.get(normalizedName);
   }
 
-  return skillLookup.get(normalizedName);
+  if (keyword.type === "skills") {
+    return skillLookup.get(normalizedName);
+  }
+
+  if (keyword.type === "mechanics") {
+    const ruleId = keywordToRuleId.get(normalizedName);
+    if (ruleId) {
+      return rules.find(r => r.id === ruleId);
+    }
+    return rulesLookup.get(normalizedName);
+  }
+
+  return null;
 };
 
 function HighlightedText({ text, query }: { text: string; query: string }) {
@@ -144,7 +304,7 @@ const RichText = ({ text, onKeywordClick, highlightQuery = "" }: { text: string;
                 type="button"
                 onClick={(e) => {
                   e.stopPropagation();
-                  onKeywordClick({ type: keyword.type, data });
+                  onKeywordClick({ type: keyword.type, data } as KeywordItem);
                 }}
                 className="text-red-500 hover:text-red-400 font-bold underline decoration-red-900/50 underline-offset-2 transition-colors inline"
               >
@@ -164,22 +324,45 @@ const RichText = ({ text, onKeywordClick, highlightQuery = "" }: { text: string;
 };
 
 export default function RulesWiki({ onBack }: { onBack: () => void }) {
+  const { category: urlCategory, id: urlId } = useParams<{ category: SearchCategory; id: string }>();
+  const navigate = useNavigate();
+
   const [searchQuery, setSearchQuery] = useState("");
   const [searchCategory, setSearchCategory] = useState<SearchCategory>("all");
   const [isFilterMenuOpen, setIsFilterMenuOpen] = useState(false);
-  const [activeTab, setActiveTab] = useState<"mechanics" | "states" | "traits" | "skills" | "classes" | "combatArts">("mechanics");
-  const [selectedItem, setSelectedItem] = useState<SelectedItem | null>(null);
+  
+  // Tabs and selection are now driven by URL or internal fallback for smooth transitions
+  const activeTab: SearchCategory = urlCategory || "mechanics";
 
-  const [nestedItem, setNestedItem] = useState<
-    | { type: "states"; data: State }
-    | { type: "traits"; data: Trait }
-    | { type: "skills"; data: Skill }
-    | null
-  >(null);
+  const handleCloseItem = React.useCallback(() => {
+    navigate(`/rules/${activeTab}`);
+  }, [navigate, activeTab]);
+
+  const getSubItem = (type: string, id: string) => {
+    const slug = id.toLowerCase();
+    if (type === "mechanics") return rules.find(r => r.id === slug);
+    if (type === "states") return states.find(s => slugify(s.name) === slug);
+    if (type === "traits") return traits.find(t => slugify(t.name) === slug);
+    if (type === "skills") return skills.find(s => slugify(s.name) === slug);
+    if (type === "classes") return classes.find(c => slugify(c.name) === slug);
+    if (type === "combatArts") return combatArtCategories.find(c => slugify(c.name) === slug);
+    return null;
+  };
+
+  const selectedItem: SelectedItem | null = useMemo(() => {
+    if (!urlCategory || !urlId) return null;
+    const data = getSubItem(urlCategory, urlId);
+    if (!data) return null;
+    return { type: urlCategory, data: data } as SelectedItem;
+  }, [urlCategory, urlId]);
+
+  const [nestedItem, setNestedItem] = useState<KeywordItem | null>(null);
 
   useEffect(() => {
-    window.scrollTo(0, 0);
-  }, [activeTab]);
+    if (!selectedItem) {
+      window.scrollTo(0, 0);
+    }
+  }, [activeTab, selectedItem]);
 
   useEffect(() => {
     const handleKeyDown = (event: KeyboardEvent) => {
@@ -192,12 +375,24 @@ export default function RulesWiki({ onBack }: { onBack: () => void }) {
         return;
       }
 
-      setSelectedItem(null);
+      if (selectedItem) {
+        handleCloseItem();
+      }
     };
 
     window.addEventListener("keydown", handleKeyDown);
     return () => window.removeEventListener("keydown", handleKeyDown);
-  }, [nestedItem]);
+  }, [nestedItem, selectedItem, handleCloseItem]);
+
+  const handleSelectItem = (item: SelectedItem) => {
+    const id = item.type === "mechanics" ? item.data.id : slugify(getSelectedItemTitle(item));
+    navigate(`/rules/${item.type}/${id}`);
+  };
+
+  const handleTabChange = (tab: SearchCategory) => {
+    if (tab === "all") return;
+    navigate(`/rules/${tab}`);
+  };
 
   const searchEntries = useMemo(
     () => prepareFuzzySearchEntries<SearchResultEntry>(
@@ -309,8 +504,7 @@ export default function RulesWiki({ onBack }: { onBack: () => void }) {
       type="button"
       className="eldfall-card eldfall-card-interactive card-p group text-left"
       onClick={() => {
-        setActiveTab(entry.category);
-        setSelectedItem(entry.selectedItem);
+        handleSelectItem(entry.selectedItem);
       }}
     >
       <div className="flex justify-between items-start mb-3">
@@ -330,6 +524,10 @@ export default function RulesWiki({ onBack }: { onBack: () => void }) {
 
   return (
     <div className="min-h-screen bg-stone-950">
+      <MetaTags 
+        title={selectedItem ? `${getSelectedItemTitle(selectedItem)} - Rules Wiki` : "Rules Wiki"}
+        description={selectedItem ? getSelectedItemBody(selectedItem).substring(0, 160) : "Searchable rules wiki for Eldfall Chronicles. Explore mechanics, states, traits, skills, and combat arts."}
+      />
       <header className="page-header">
         <div className="header-content">
           <div className="flex items-center gap-4">
@@ -422,7 +620,7 @@ export default function RulesWiki({ onBack }: { onBack: () => void }) {
                     onClick={() => {
                       setSearchQuery(entry.title);
                       setSearchCategory(entry.category);
-                      setActiveTab(entry.category);
+                      handleSelectItem(entry.selectedItem);
                     }}
                     className="w-full px-4 py-3 text-left hover:bg-stone-800 transition-colors"
                   >
@@ -448,37 +646,37 @@ export default function RulesWiki({ onBack }: { onBack: () => void }) {
         <div id="rules-wiki-tabs" className="flex space-x-2 md:space-x-4 mb-8 border-b border-stone-900 overflow-x-auto custom-scrollbar">
           <TabButton 
             active={activeTab === "mechanics"} 
-            onClick={() => setActiveTab("mechanics")}
+            onClick={() => handleTabChange("mechanics")}
             icon={<BookOpen className="w-4 h-4" />}
-            label="Mechanics"
+            label="CORE GAME ELEMENTS"
           />
           <TabButton 
             active={activeTab === "states"} 
-            onClick={() => setActiveTab("states")}
+            onClick={() => handleTabChange("states")}
             icon={<Activity className="w-4 h-4" />}
             label="States"
           />
           <TabButton 
             active={activeTab === "traits"} 
-            onClick={() => setActiveTab("traits")}
+            onClick={() => handleTabChange("traits")}
             icon={<Shield className="w-4 h-4" />}
             label="Traits"
           />
           <TabButton 
             active={activeTab === "skills"} 
-            onClick={() => setActiveTab("skills")}
+            onClick={() => handleTabChange("skills")}
             icon={<Zap className="w-4 h-4" />}
             label="Skills"
           />
           <TabButton 
             active={activeTab === "combatArts"} 
-            onClick={() => setActiveTab("combatArts")}
+            onClick={() => handleTabChange("combatArts")}
             icon={<Sword className="w-4 h-4" />}
             label="Combat Arts"
           />
           <TabButton 
             active={activeTab === "classes"} 
-            onClick={() => setActiveTab("classes")}
+            onClick={() => handleTabChange("classes")}
             icon={<Users className="w-4 h-4" />}
             label="Classes"
           />
@@ -528,14 +726,14 @@ export default function RulesWiki({ onBack }: { onBack: () => void }) {
                     key={section.id}
                     type="button"
                     className="eldfall-card eldfall-card-interactive card-p group text-left"
-                    onClick={() => setSelectedItem({ type: "mechanics", data: section })}
+                    onClick={() => handleSelectItem({ type: "mechanics", data: section })}
                   >
                     <div className="flex justify-between items-start mb-3">
                       <span className="text-xs font-display uppercase tracking-eyebrow text-red-500/70">{section.category}</span>
                       <Sparkles className="w-4 h-4 text-stone-700 group-hover:text-red-500 transition-colors" />
                     </div>
                     <h2 className="text-lg font-bold text-white mb-2 group-hover:text-red-500 transition-colors">{section.title}</h2>
-                    <p className="body-sm line-clamp-3">{section.content}</p>
+                    <p className="body-sm line-clamp-3 text-stone-400">{section.content}</p>
                   </button>
                 ))}
               </motion.div>
@@ -554,7 +752,7 @@ export default function RulesWiki({ onBack }: { onBack: () => void }) {
                     key={state.name}
                     type="button"
                     className="eldfall-card eldfall-card-interactive card-p group text-left"
-                    onClick={() => setSelectedItem({ type: "states", data: state })}
+                    onClick={() => handleSelectItem({ type: "states", data: state })}
                   >
                     <div className="flex justify-between items-start mb-2">
                       <h3 className="text-base font-bold text-white group-hover:text-red-500 transition-colors">{state.name}</h3>
@@ -579,7 +777,7 @@ export default function RulesWiki({ onBack }: { onBack: () => void }) {
                     key={trait.name}
                     type="button"
                     className="eldfall-card eldfall-card-interactive card-p group text-left"
-                    onClick={() => setSelectedItem({ type: "traits", data: trait })}
+                    onClick={() => handleSelectItem({ type: "traits", data: trait })}
                   >
                     <div className="flex justify-between items-start mb-2">
                       <h3 className="text-base font-bold text-white group-hover:text-red-500 transition-colors">{trait.name}</h3>
@@ -604,7 +802,7 @@ export default function RulesWiki({ onBack }: { onBack: () => void }) {
                     key={skill.name}
                     type="button"
                     className="eldfall-card eldfall-card-interactive card-p group text-left"
-                    onClick={() => setSelectedItem({ type: "skills", data: skill })}
+                    onClick={() => handleSelectItem({ type: "skills", data: skill })}
                   >
                     <div className="flex justify-between items-start mb-2">
                       <h3 className="text-base font-bold text-white group-hover:text-red-500 transition-colors">{skill.name}</h3>
@@ -629,7 +827,7 @@ export default function RulesWiki({ onBack }: { onBack: () => void }) {
                     key={cac.name}
                     type="button"
                     className="eldfall-card eldfall-card-interactive card-p group text-left"
-                    onClick={() => setSelectedItem({ type: "combatArts", data: cac })}
+                    onClick={() => handleSelectItem({ type: "combatArts", data: cac })}
                   >
                     <div className="flex justify-between items-start mb-3">
                       <span className="text-xs font-display uppercase tracking-eyebrow text-red-500/70">Combat Art</span>
@@ -661,7 +859,7 @@ export default function RulesWiki({ onBack }: { onBack: () => void }) {
                     key={cls.name}
                     type="button"
                     className="eldfall-card eldfall-card-interactive card-p group text-left"
-                    onClick={() => setSelectedItem({ type: "classes", data: cls })}
+                    onClick={() => handleSelectItem({ type: "classes", data: cls })}
                   >
                     <h3 className="text-lg font-bold text-white mb-2 group-hover:text-red-500 transition-colors">{cls.name}</h3>
                     <p className="body-xs mb-4 italic line-clamp-2">{cls.description}</p>
@@ -692,7 +890,7 @@ export default function RulesWiki({ onBack }: { onBack: () => void }) {
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
                 exit={{ opacity: 0 }}
-                onClick={() => setSelectedItem(null)}
+                onClick={handleCloseItem}
                 className="absolute inset-0 bg-stone-950/80 backdrop-blur-sm"
               />
               <motion.div
@@ -714,7 +912,7 @@ export default function RulesWiki({ onBack }: { onBack: () => void }) {
                   <button 
                     type="button"
                     aria-label="Close rules detail"
-                    onClick={() => setSelectedItem(null)}
+                    onClick={handleCloseItem}
                     className="btn-icon-circle border-transparent bg-transparent shadow-none hover:bg-stone-800"
                   >
                     <ArrowLeft className="w-5 h-5 rotate-90" />
@@ -808,7 +1006,9 @@ export default function RulesWiki({ onBack }: { onBack: () => void }) {
                 <div className="p-4 border-b border-stone-800 flex justify-between items-center bg-surface-1/50">
                   <div className="flex items-center space-x-2">
                     <Info className="w-4 h-4 text-red-500" />
-                    <h3 id="rules-reference-title" className="text-sm font-bold text-white uppercase tracking-eyebrow">{nestedItem.data.name}</h3>
+                    <h3 id="rules-reference-title" className="text-sm font-bold text-white uppercase tracking-eyebrow">
+                      {nestedItem.type === "mechanics" ? nestedItem.data.title : nestedItem.data.name}
+                    </h3>
                   </div>
                   <button
                     type="button"
@@ -821,8 +1021,18 @@ export default function RulesWiki({ onBack }: { onBack: () => void }) {
                 </div>
                 <div className="card-p stack-compact">
                   <p className="text-stone-300 text-xs leading-relaxed whitespace-pre-wrap font-sans">
-                    {nestedItem.data.description}
+                    {nestedItem.type === "mechanics" ? nestedItem.data.content : (nestedItem.data as State | Trait | Skill).description}
                   </p>
+                  {nestedItem.type === "mechanics" && nestedItem.data.subsections && (
+                    <div className="mt-4 space-y-3">
+                      {nestedItem.data.subsections.slice(0, 3).map((sub: { title: string; content: string }, i: number) => (
+                        <div key={i} className="border-l border-red-900/30 pl-3">
+                          <h4 className="text-white font-bold text-[10px] uppercase tracking-eyebrow">{sub.title}</h4>
+                          <p className="text-stone-400 text-[10px]">{sub.content}</p>
+                        </div>
+                      ))}
+                    </div>
+                  )}
                 </div>
                 <div className="p-3 bg-surface-1/50 border-t border-stone-800 text-center">
                    <button 

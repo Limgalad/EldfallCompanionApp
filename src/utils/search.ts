@@ -13,6 +13,13 @@ export const normalizeText = (value: string) =>
     .replace(/\s+/g, ' ')
     .trim();
 
+export const slugify = (value: string) =>
+  value
+    .toLowerCase()
+    .replace(/[^\p{L}\p{N}]/gu, '-')
+    .replace(/-+/g, '-')
+    .replace(/^-|-$/g, '');
+
 const getFuzzyScoreFromNormalized = (normalizedQuery: string, normalizedText: string) => {
   if (!normalizedQuery) {
     return 1;

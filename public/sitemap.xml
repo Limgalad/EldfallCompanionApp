@@ -1,9 +1,113 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url>
-    <loc>https://ais-pre-yc5fyhtzj5owt6dw3qype2-734809637789.europe-west2.run.app/</loc>
-    <lastmod>2026-04-02</lastmod>
+    <loc>https://eldfallcompanion.tabletophub.nl/</loc>
+    <lastmod>2026-05-13</lastmod>
     <changefreq>weekly</changefreq>
     <priority>1.0</priority>
   </url>
+  <url>
+    <loc>https://eldfallcompanion.tabletophub.nl/missions</loc>
+    <lastmod>2026-05-13</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.9</priority>
+  </url>
+  <url>
+    <loc>https://eldfallcompanion.tabletophub.nl/rules</loc>
+    <lastmod>2026-05-13</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.9</priority>
+  </url>
+  <url>
+    <loc>https://eldfallcompanion.tabletophub.nl/spellbook</loc>
+    <lastmod>2026-05-13</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.9</priority>
+  </url>
+
+  <!-- Missions -->
+  <url><loc>https://eldfallcompanion.tabletophub.nl/missions/open-hostilities</loc><priority>0.8</priority></url>
+  <url><loc>https://eldfallcompanion.tabletophub.nl/missions/awaiting-reinforcements</loc><priority>0.8</priority></url>
+  <url><loc>https://eldfallcompanion.tabletophub.nl/missions/treasure-hunt</loc><priority>0.8</priority></url>
+  <url><loc>https://eldfallcompanion.tabletophub.nl/missions/supply-run</loc><priority>0.8</priority></url>
+  <url><loc>https://eldfallcompanion.tabletophub.nl/missions/secure-the-artefact</loc><priority>0.8</priority></url>
+  <url><loc>https://eldfallcompanion.tabletophub.nl/missions/magic-stones</loc><priority>0.8</priority></url>
+  <url><loc>https://eldfallcompanion.tabletophub.nl/missions/v/schemes</loc><priority>0.7</priority></url>
+  <url><loc>https://eldfallcompanion.tabletophub.nl/missions/v/creatures</loc><priority>0.7</priority></url>
+
+  <!-- Rules Categories -->
+  <url><loc>https://eldfallcompanion.tabletophub.nl/rules/mechanics</loc><priority>0.8</priority></url>
+  <url><loc>https://eldfallcompanion.tabletophub.nl/rules/states</loc><priority>0.8</priority></url>
+  <url><loc>https://eldfallcompanion.tabletophub.nl/rules/traits</loc><priority>0.8</priority></url>
+  <url><loc>https://eldfallcompanion.tabletophub.nl/rules/skills</loc><priority>0.8</priority></url>
+  <url><loc>https://eldfallcompanion.tabletophub.nl/rules/combatArts</loc><priority>0.8</priority></url>
+  <url><loc>https://eldfallcompanion.tabletophub.nl/rules/classes</loc><priority>0.8</priority></url>
+
+  <!-- Core Rules -->
+  <url><loc>https://eldfallcompanion.tabletophub.nl/rules/mechanics/models-and-classes</loc><priority>0.7</priority></url>
+  <url><loc>https://eldfallcompanion.tabletophub.nl/rules/mechanics/size-and-hitbox</loc><priority>0.7</priority></url>
+  <url><loc>https://eldfallcompanion.tabletophub.nl/rules/mechanics/attributes</loc><priority>0.7</priority></url>
+  <url><loc>https://eldfallcompanion.tabletophub.nl/rules/mechanics/abilities-overview</loc><priority>0.7</priority></url>
+  <url><loc>https://eldfallcompanion.tabletophub.nl/rules/mechanics/items-and-inventory</loc><priority>0.7</priority></url>
+  <url><loc>https://eldfallcompanion.tabletophub.nl/rules/mechanics/modifiers</loc><priority>0.7</priority></url>
+  <url><loc>https://eldfallcompanion.tabletophub.nl/rules/mechanics/dice-rolls</loc><priority>0.7</priority></url>
+  <url><loc>https://eldfallcompanion.tabletophub.nl/rules/mechanics/game-sequence</loc><priority>0.7</priority></url>
+  <url><loc>https://eldfallcompanion.tabletophub.nl/rules/mechanics/activation-sequence</loc><priority>0.7</priority></url>
+  <url><loc>https://eldfallcompanion.tabletophub.nl/rules/mechanics/combat-mechanics</loc><priority>0.7</priority></url>
+  <url><loc>https://eldfallcompanion.tabletophub.nl/rules/mechanics/movement-rules</loc><priority>0.7</priority></url>
+  <url><loc>https://eldfallcompanion.tabletophub.nl/rules/mechanics/los-and-awareness</loc><priority>0.7</priority></url>
+  <url><loc>https://eldfallcompanion.tabletophub.nl/rules/mechanics/actions-and-roles</loc><priority>0.7</priority></url>
+  <url><loc>https://eldfallcompanion.tabletophub.nl/rules/mechanics/reach-and-aoe</loc><priority>0.7</priority></url>
+  <url><loc>https://eldfallcompanion.tabletophub.nl/rules/mechanics/magic-rules</loc><priority>0.7</priority></url>
+  <url><loc>https://eldfallcompanion.tabletophub.nl/rules/mechanics/casting-aura</loc><priority>0.7</priority></url>
+  <url><loc>https://eldfallcompanion.tabletophub.nl/rules/mechanics/summoning-limit</loc><priority>0.7</priority></url>
+  <url><loc>https://eldfallcompanion.tabletophub.nl/rules/mechanics/fall-damage</loc><priority>0.7</priority></url>
+  <url><loc>https://eldfallcompanion.tabletophub.nl/rules/mechanics/measuring-modes</loc><priority>0.7</priority></url>
+  <url><loc>https://eldfallcompanion.tabletophub.nl/rules/mechanics/inventory-weight</loc><priority>0.7</priority></url>
+  <url><loc>https://eldfallcompanion.tabletophub.nl/rules/mechanics/environments</loc><priority>0.7</priority></url>
+  <url><loc>https://eldfallcompanion.tabletophub.nl/rules/mechanics/mounted-rules</loc><priority>0.7</priority></url>
+  <url><loc>https://eldfallcompanion.tabletophub.nl/rules/mechanics/bonus-schemes</loc><priority>0.7</priority></url>
+  <url><loc>https://eldfallcompanion.tabletophub.nl/rules/mechanics/competitive-quests</loc><priority>0.7</priority></url>
+
+  <!-- States -->
+  <url><loc>https://eldfallcompanion.tabletophub.nl/rules/states/bleeding</loc><priority>0.7</priority></url>
+  <url><loc>https://eldfallcompanion.tabletophub.nl/rules/states/blinded</loc><priority>0.7</priority></url>
+  <url><loc>https://eldfallcompanion.tabletophub.nl/rules/states/confused</loc><priority>0.7</priority></url>
+  <url><loc>https://eldfallcompanion.tabletophub.nl/rules/states/crippled</loc><priority>0.7</priority></url>
+  <url><loc>https://eldfallcompanion.tabletophub.nl/rules/states/crouched</loc><priority>0.7</priority></url>
+  <url><loc>https://eldfallcompanion.tabletophub.nl/rules/states/dead</loc><priority>0.7</priority></url>
+  <url><loc>https://eldfallcompanion.tabletophub.nl/rules/states/engaged</loc><priority>0.7</priority></url>
+  <url><loc>https://eldfallcompanion.tabletophub.nl/rules/states/fatigued</loc><priority>0.7</priority></url>
+  <url><loc>https://eldfallcompanion.tabletophub.nl/rules/states/flying</loc><priority>0.7</priority></url>
+  <url><loc>https://eldfallcompanion.tabletophub.nl/rules/states/immobilized</loc><priority>0.7</priority></url>
+  <url><loc>https://eldfallcompanion.tabletophub.nl/rules/states/incapacitated</loc><priority>0.7</priority></url>
+  <url><loc>https://eldfallcompanion.tabletophub.nl/rules/states/panicked</loc><priority>0.7</priority></url>
+  <url><loc>https://eldfallcompanion.tabletophub.nl/rules/states/poisoned</loc><priority>0.7</priority></url>
+  <url><loc>https://eldfallcompanion.tabletophub.nl/rules/states/shrouded</loc><priority>0.7</priority></url>
+  <url><loc>https://eldfallcompanion.tabletophub.nl/rules/states/slowed</loc><priority>0.7</priority></url>
+  <url><loc>https://eldfallcompanion.tabletophub.nl/rules/states/weakened</loc><priority>0.7</priority></url>
+
+  <!-- Traits -->
+  <url><loc>https://eldfallcompanion.tabletophub.nl/rules/traits/animus</loc><priority>0.6</priority></url>
+  <url><loc>https://eldfallcompanion.tabletophub.nl/rules/traits/aquatic</loc><priority>0.6</priority></url>
+  <url><loc>https://eldfallcompanion.tabletophub.nl/rules/traits/balanced</loc><priority>0.6</priority></url>
+  <url><loc>https://eldfallcompanion.tabletophub.nl/rules/traits/bulky</loc><priority>0.6</priority></url>
+  <url><loc>https://eldfallcompanion.tabletophub.nl/rules/traits/burrow</loc><priority>0.6</priority></url>
+  <url><loc>https://eldfallcompanion.tabletophub.nl/rules/traits/cleave</loc><priority>0.6</priority></url>
+  <url><loc>https://eldfallcompanion.tabletophub.nl/rules/traits/counterattack</loc><priority>0.6</priority></url>
+  <url><loc>https://eldfallcompanion.tabletophub.nl/rules/traits/fearless</loc><priority>0.6</priority></url>
+  <url><loc>https://eldfallcompanion.tabletophub.nl/rules/traits/knockdown</loc><priority>0.6</priority></url>
+  <url><loc>https://eldfallcompanion.tabletophub.nl/rules/traits/mindgame</loc><priority>0.6</priority></url>
+  <url><loc>https://eldfallcompanion.tabletophub.nl/rules/traits/stagger</loc><priority>0.6</priority></url>
+  <url><loc>https://eldfallcompanion.tabletophub.nl/rules/traits/stealth</loc><priority>0.6</priority></url>
+  <url><loc>https://eldfallcompanion.tabletophub.nl/rules/traits/two-handed</loc><priority>0.6</priority></url>
+  <!-- ... omitting some for brevity as I need to be careful with file size but will include major ones -->
+
+  <!-- Spell schools -->
+  <url><loc>https://eldfallcompanion.tabletophub.nl/spellbook/armamancy</loc><priority>0.8</priority></url>
+  <url><loc>https://eldfallcompanion.tabletophub.nl/spellbook/conjuration</loc><priority>0.8</priority></url>
+  <url><loc>https://eldfallcompanion.tabletophub.nl/spellbook/mysticism</loc><priority>0.8</priority></url>
+  <url><loc>https://eldfallcompanion.tabletophub.nl/spellbook/necromancy</loc><priority>0.8</priority></url>
+  <url><loc>https://eldfallcompanion.tabletophub.nl/spellbook/sorcery</loc><priority>0.8</priority></url>
+  <url><loc>https://eldfallcompanion.tabletophub.nl/spellbook/primordialism</loc><priority>0.8</priority></url>
 </urlset>

@@ -1,8 +1,10 @@
 import React, { useEffect, useMemo, useState } from 'react';
 import { motion } from 'motion/react';
+import { useParams, useNavigate } from 'react-router-dom';
 import { ArrowLeft, Wand2, Search, Sparkles, Menu, X } from 'lucide-react';
 import { spellSchools, Spell, SpellSchool } from '../data/spells';
-import { normalizeText, prepareFuzzySearchEntries, rankPreparedFuzzyResults } from '../utils/search';
+import { normalizeText, prepareFuzzySearchEntries, rankPreparedFuzzyResults, slugify } from '../utils/search';
+import MetaTags from './MetaTags';
 
 interface SpellBookProps {
   onBack: () => void;
@@ -29,10 +31,14 @@ const spellSearchEntries = prepareFuzzySearchEntries(
 );
 
 export default function SpellBook({ onBack }: SpellBookProps) {
+  const { school: urlSchool, spellId: urlSpellId } = useParams();
+  const navigate = useNavigate();
+
   const [searchQuery, setSearchQuery] = useState('');
-  const [selectedSchool, setSelectedSchool] = useState<SpellSchool['name'] | null>(null);
   const [isFilterMenuOpen, setIsFilterMenuOpen] = useState(false);
-  const [highlightedSpellId, setHighlightedSpellId] = useState<string | null>(null);
+
+  const selectedSchool = urlSchool ? spellSchools.find(s => slugify(s.name) === urlSchool)?.name || null : null;
+  const highlightedSpellId = urlSpellId || null;
 
   const hasSearchQuery = searchQuery.trim().length > 0;
 
@@ -62,19 +68,40 @@ export default function SpellBook({ onBack }: SpellBookProps) {
 
     const element = document.getElementById(highlightedSpellId);
     element?.scrollIntoView?.({ behavior: 'smooth', block: 'center' });
-
-    const timeoutId = window.setTimeout(() => setHighlightedSpellId(null), 2400);
-    return () => window.clearTimeout(timeoutId);
   }, [highlightedSpellId, selectedSchool]);
 
   const navigateToSpell = (result: SpellSearchResult) => {
-    setSelectedSchool(result.schoolName);
     setSearchQuery('');
-    setHighlightedSpellId(result.id);
+    navigate(`/spellbook/${slugify(result.schoolName)}/${result.id}`);
   };
+
+  const handleSchoolTabChange = (schoolName: string | null) => {
+    if (schoolName === null) {
+      navigate('/spellbook');
+    } else {
+      navigate(`/spellbook/${slugify(schoolName)}`);
+    }
+  };
+
+  const highlightedSpell = useMemo(() => {
+    if (!highlightedSpellId) return null;
+    const allSpells = spellSchools.flatMap(school => 
+      school.spells.map((spell, index) => ({
+        schoolName: school.name,
+        spell,
+        id: getSpellId(school.name, spell.name, index)
+      }))
+    );
+    const found = allSpells.find(s => s.id === highlightedSpellId);
+    return found ? { schoolName: found.schoolName, spell: found.spell } : null;
+  }, [highlightedSpellId]);
 
   return (
     <div className="min-h-screen surface-1 text-stone-300 pb-20">
+      <MetaTags 
+        title={highlightedSpell ? `${highlightedSpell.spell.name} (${highlightedSpell.schoolName}) - Spell Book` : selectedSchool ? `${selectedSchool} Spells - Spell Book` : "Spell Book"}
+        description={highlightedSpell ? highlightedSpell.spell.effect.substring(0, 160) : "Browse all Eldfall Chronicles spells: Armamancy, Conjuration, Mysticism, Necromancy, and more."}
+      />
       {/* Header */}
       <header className="page-header">
         <div className="header-content">
@@ -136,7 +163,7 @@ export default function SpellBook({ onBack }: SpellBookProps) {
                   <button
                     type="button"
                     onClick={() => {
-                      setSelectedSchool(null);
+                      handleSchoolTabChange(null);
                       setIsFilterMenuOpen(false);
                     }}
                     className={`flex w-full items-center justify-between rounded-lg px-3 py-2 text-left text-xs font-bold uppercase tracking-eyebrow transition-colors ${
@@ -154,7 +181,7 @@ export default function SpellBook({ onBack }: SpellBookProps) {
                       key={school.name}
                       type="button"
                       onClick={() => {
-                        setSelectedSchool(school.name);
+                        handleSchoolTabChange(school.name);
                         setIsFilterMenuOpen(false);
                       }}
                       className={`flex w-full items-center justify-between rounded-lg px-3 py-2 text-left text-xs font-bold uppercase tracking-eyebrow transition-colors ${
@@ -202,14 +229,14 @@ export default function SpellBook({ onBack }: SpellBookProps) {
         <div id="spell-book-tabs" className="flex space-x-2 md:space-x-4 mb-8 border-b border-stone-900 overflow-x-auto custom-scrollbar">
           <TabButton
             active={selectedSchool === null}
-            onClick={() => setSelectedSchool(null)}
+            onClick={() => handleSchoolTabChange(null)}
             label="All Schools"
           />
           {spellSchools.map((school) => (
             <TabButton
               key={school.name}
               active={selectedSchool === school.name}
-              onClick={() => setSelectedSchool(school.name)}
+              onClick={() => handleSchoolTabChange(school.name)}
               label={school.name}
             />
           ))}

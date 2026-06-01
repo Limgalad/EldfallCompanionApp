@@ -1,7 +1,7 @@
 export interface RuleSection {
   id: string;
   title: string;
-  category: "Core" | "Combat" | "Magic" | "Abilities" | "Reference";
+  category: "Core" | "Combat" | "Magic" | "Abilities" | "Reference" | "Model Profiles" | "Game play" | "Game Sequence";
   content: string;
   subsections?: {
     title: string;
@@ -11,195 +11,317 @@ export interface RuleSection {
 
 export const rules: RuleSection[] = [
   {
+    id: "models",
+    title: "Models",
+    category: "Model Profiles",
+    content: "A model is an individual entity which has its own profile and is represented by a miniature or a token on the field.\n\nModels act as representations of fictional individuals and adventurers that have roles or professions in the world of Eldfall Chronicles. Every model (miniature and its profile) has unique characteristics, pros and cons, skills, weapons, synergies with other party members, fighting styles etc. They are indispensable party members, bringing unique elements to the table; each one is suited to different tasks, excels in different situations and allows different approaches."
+  },
+  {
+    id: "class",
+    title: "Class",
+    category: "Model Profiles",
+    content: "Each model is assigned at least one Class, which, to an extent, defines its role on the field."
+  },
+  {
     id: "attributes",
-    title: "Attributes (Stats)",
-    category: "Core",
-    content: "The set parameters which display the degree of a certain model’s default capabilities, also referred to as 'Stats'.",
-    subsections: [
-      { title: "STA (Stamina)", content: "Indicates the default number of Activation Points a model receives at the beginning of its every turn and how swiftly it can wield certain Items." },
-      { title: "SPD (Speed)", content: "Indicates the default distance that a model can cross on the field when moving, indicating up to how many inches on the field the model can move." },
-      { title: "ARM (Armor)", content: "Indicates the default amount of natural or artificial protection the model has in order to cope with the received Power of a Hit." },
-      { title: "HP (Health points)", content: "Indicates the default health of a model, or in other words, how many Wounds it can withstand before becoming Incapacitated." },
-      { title: "OFF (Offense)", content: "Indicates a model’s default active melee capability used during its Active Role to conduct a Melee Attack." },
-      { title: "DEF (Defense)", content: "Indicates a model’s default reactive melee capability used during its Reactive Role to conduct a Melee Attack." },
-      { title: "ACC (Accuracy)", content: "Indicates a model’s default capability with ranged projectile weapons used when performing Ranged Attacks." },
-      { title: "INT (Intellect)", content: "Indicates a model’s default mental dexterity and often its capability of casting Spells and perceiving its surroundings." },
-      { title: "AG (Agility)", content: "Indicates the default physical nimbleness and kinesthetic capability of a model mainly used when avoiding incoming attacks (with dodge) and escaping certain dangers." },
-      { title: "T (Toughness)", content: "Indicates the default physical strength and endurance of a model." },
-      { title: "M (Morale)", content: "Indicates the default mental fortitude of a model." }
-    ]
+    title: "Attributes",
+    category: "Model Profiles",
+    content: "The set parameters which display the degree of a certain model's default capabilities, also referred to as \"Stats\". Likelihood of a dice roll success, used to simulate various Actions performed by the model, is primarily based on the model's attribute value.\n\nSTA (Stamina): The default number of Activation Points a model receives at the beginning of its every turn and how swiftly it can wield certain Items.\nSPD (Speed): The default distance that a model can cross on the field when moving, in inches.\nARM (Armor): The default amount of natural or artificial protection the model has to cope with the received Power of a Hit.\nHP (Health Points): How many Wounds a model can withstand before becoming Incapacitated.\nOFF (Offense): A model's default active melee capability used during its Active Role to conduct a Melee Attack.\nDEF (Defense): A model's default reactive melee capability used during its Reactive Role to conduct a Melee Attack.\nACC (Accuracy): A model's default capability with ranged projectile weapons when performing Ranged Attacks.\nINT (Intellect): A model's default mental dexterity and capability of casting Spells and perceiving surroundings.\nAG (Agility): The default physical nimbleness mainly used when avoiding incoming attacks (Dodge) and escaping certain dangers.\nT (Toughness): The default physical strength and endurance of a model.\nM (Morale): The default mental fortitude of a model."
   },
   {
-    id: "dice-rolls",
-    title: "Dice Rolls",
-    category: "Core",
-    content: "Whenever a model performs an Action that would require a roll, the player determines the success or fail of the Action by performing the corresponding dice rolls. Rolls are performed with 20-sided dice (D20).",
-    subsections: [
-      { title: "Attribute Roll", content: "In order to perform a successful Attribute Roll, the result of the dice roll should be equal to or lower than the modified attribute." },
-      { title: "Attack Roll", content: "Each die rolled as part of an Attack is an Attack Roll. A model rolls a number of Attack Rolls equal to its STK. Successful if result ≤ modified attribute and not cancelled during Confrontation." },
-      { title: "Damage Roll", content: "To perform a Damage Roll, roll a number of dice equal to the number of Hits. For each die result that is equal to or lower than the Power (PW) of the used Weapon minus the target’s Armor (ARM) value, the target suffers one Wound." },
-      { title: "Critical Hit", content: "A roll of 1 is a Critical Hit. It reduces target armor to 0 for that hit and beats all opponent's Confrontation roll results." },
-      { title: "Reroll", content: "After the dice are rolled, the player may reroll a selected number of dice (depending on the ability), completely negating their previous roll result." }
-    ]
+    id: "size",
+    title: "Size",
+    category: "Model Profiles",
+    content: "Indicates the model's volume on the field. Sizes are categorized from smallest to largest:\n\n- Small (S): 25mm × 25mm\n- Medium (M): 32mm × 45mm\n- Large (L): 40mm × 45mm\n- Huge (H): 50mm × 50mm\n- Gigantic (G): 60mm × 60mm\n- Colossal (C): 80mm × 80mm\n- Monstrous/Epic (E): 85+mm × 85+mm\n\nEvery model in the game has a Hitbox of a certain Size assigned to it. As miniatures come stylized in various forms and sizes, the Hitboxes are a standardized indicator used to determine the model's height and volume on the field. The Hitbox's volume is cylindrical and of the same width as the model's base.\n\nA model's size is important when determining where the model is — for example, determining if and how it can move across narrow spaces, elevation, etc. Most importantly, the Hitbox plays the biggest factor when drawing Line of Sight."
   },
   {
-    id: "game-sequence",
+    id: "recruitment-cost",
+    title: "Recruitment Cost",
+    category: "Model Profiles",
+    content: "The amount of Recruitment Points a player has to spend to recruit the model into their Party."
+  },
+  {
+    id: "limit",
+    title: "Limit",
+    category: "Model Profiles",
+    content: "Indicates how many models of the same profile can be recruited into a single Party."
+  },
+  {
+    id: "traits",
+    title: "Traits",
+    category: "Model Profiles",
+    content: "Traits are passive abilities that are always in effect while the model is present on the field.\n\n- A Trait is applied to the model, its Actions and Movement automatically at all times.\n- A Trait's Effect cannot be disregarded volitionally.\n- Some Traits can have more than one level, represented by roman numerals next to the name. The Effects of Traits with multiple levels stack.\n- If there is no roman numeral next to the Trait, it is considered level I.\n- Sometimes an Ability, Item or Spell will have a Trait. Any Hits or Wounds caused by such an Ability, Item or Spell will also have this Trait."
+  },
+  {
+    id: "skills",
+    title: "Skills",
+    category: "Model Profiles",
+    content: "Skills are optional abilities a model can use and benefit from in certain situations.\n\n- A model cannot use the same Skill more than once per Activation.\n- Some Skills can have more than one level, represented by roman numerals. The Effects of Skills with multiple levels stack.\n- If there is no roman numeral next to the Skill, it is considered level I."
+  },
+  {
+    id: "combat-arts",
+    title: "Combat Arts",
+    category: "Model Profiles",
+    content: "Combat Arts display a form of combat the model excels in and in which it developed a certain level of mastery.\n\n- Some models have access to a variety of combat abilities organized into Combat Arts charts.\n- Combat Arts consist of levels, where the model has access to all levels up to the model's listed level of that Combat Art.\n- If a model has access to several Combat Arts, it may select only one at a time.\n- A model can add the effect of only one Combat Art level to its Attack."
+  },
+  {
+    id: "spellcraft",
+    title: "Spellcraft",
+    category: "Model Profiles",
+    content: "Some models have access to a variety of individual Spells, or Spells organized into Spellcraft charts. Similarly to Combat Art charts, Spellcrafts consist of levels, where the model has access to all levels up to the model's listed level of that Spellcraft. However, it can only cast Spells of the same Element as it has access to.\n\nExample: A model with Art of Sorcery III and Affinity (Fire) can cast Spells of level III or lower from the Art of Sorcery chart, but only those of the Fire Element."
+  },
+  {
+    id: "special",
+    title: "Special",
+    category: "Model Profiles",
+    content: "Some models have unique Abilities displayed in this section."
+  },
+  {
+    id: "stratagems",
+    title: "Stratagems",
+    category: "Model Profiles",
+    content: "Stratagems are Abilities only the Leader of a Party may use during their Strategic Phase.\n\n- If the Leader becomes Incapacitated or Dead, that Party can no longer use Stratagems.\n- During their Strategic Phase, a player may select 1 Stratagem and apply its Effect.\n- Authority Stratagems affect models in your party.\n- Subterfuge Stratagems affect enemy models.\n- Unless specified otherwise, after a Stratagem is applied, its Effect lasts until the player's next Strategic Phase.\n- Stratagems have infinite Reach."
+  },
+  {
+    id: "inventory",
+    title: "Inventory (X)",
+    category: "Model Profiles",
+    content: "Represents the available space a model has for carrying Items. The value X is the total weight or number of Items a model can carry.\n\n- If the total Quantity or Weight of Items exceeds X, the model becomes over-encumbered and may not perform any Movement or Special Action.\n- If an Item has \"/\" marked as its Quantity and Weight, it fills no space in the Inventory.\n- When a model Activates, it may drop any number of Items (except default Items). Dropped Items are represented by a Cache/Loot token placed in Base Contact with the model.\n- A model may pick up Items by Interacting with the Cache/Loot token.\n\nQTY (Quantity): The amount of an Item a model has in its Inventory.\nWGT (Weight): The heaviness of a single Item. Weight is multiplied by Quantity when checking total Weight (unless Weight is 0, in which case only Quantity counts)."
+  },
+  {
+    id: "items",
+    title: "Items",
+    category: "Model Profiles",
+    content: "Items grant models various Abilities. A model can only have one Item from each Category equipped at a time. A model may equip or unequip Items once per Activation (or Reaction).\n\n- Weapons: Give an Attack the specified RCH, STK, PW and Effects when equipped.\n- Shields: Provide a passive effect when equipped. May be used to perform an Attack instead of a Weapon.\n- Accessory: Provide a passive effect when equipped. Does not require unequipping other Items.\n- Consumables: Must be discarded after use, whether the Action was successful or not. A model may use only one Consumable of the same name at a time."
+  },
+  {
+    id: "game-sequence-overview",
     title: "Game Sequence",
-    category: "Core",
-    content: "A game consists of a number of Rounds, each divided into Turns (one for each player).",
+    category: "Game Sequence",
+    content: "A game consists of a number of Rounds, each divided into a number of Turns (one for each player).\n\n- In the first turn of a round, the 1st Player assumes the Active Role and the 2nd Player assumes the Reactive Role.\n- Once all of the Active Player's models have been activated, the Roles are reversed and the next turn starts.\n- There is only one player that is Active at a time.\n- Once both/all turns are complete, the round ends and a new one begins."
+  },
+  {
+    id: "turn-phases",
+    title: "Turn Phases",
+    category: "Game Sequence",
+    content: "The Active Player carries out 4 Phases in their turn, while the Reactive Player carrying out Reactions.",
     subsections: [
-      { title: "I) Strategic Phase", content: "Models of the Active Player may declare the use of any applicable Abilities, Items, or Stratagems. Note that a Leader’s Stratagems can only be declared during this Phase." },
-      { title: "II) Upkeep Phase", content: "During the Upkeep Phase, all players allocate Activation Points to all of their models that can receive them. They allocate a number that is equal to their models’ Stamina values." },
-      { title: "III) Tactical Phase", content: "Consists of multiple Activation Sequences. The Active Player may activate each of their models by spending their available Activation Points. Reactive Player may spend AP to react." },
-      { title: "IV) End Phase", content: "Any applicable effects are resolved and both players discard any unspent Activation Points." }
+      {
+        title: "I) Strategic Phase",
+        content: "Models of the Active Player may declare the use of any applicable Abilities, Items, or Stratagems. A Leader's Stratagems can only be declared during this Phase."
+      },
+      {
+        title: "II) Upkeep Phase",
+        content: "All players allocate Activation Points to all of their models equal to their models' Stamina values."
+      },
+      {
+        title: "III) Tactical Phase",
+        content: "The Active Player may activate each of their models by spending Activation Points. The Reactive Player may spend Activation Points to react during the Reaction Step of each Activation Sequence. The Tactical Phase ends when the Active Player no longer has any eligible models to activate or decides to stop."
+      },
+      {
+        title: "IV) End Phase",
+        content: "Any applicable effects are resolved and both players discard any unspent Activation Points."
+      }
     ]
   },
   {
     id: "activation-sequence",
     title: "Activation Sequence",
-    category: "Combat",
-    content: "An Activation Sequence occurs with every Activation during the Tactical Phase.",
+    category: "Game Sequence",
+    content: "An Activation Sequence occurs with every Activation during the Tactical Phase and consists of five steps.",
     subsections: [
-      { title: "1) Activation Step", content: "The Active Player Activates a model by spending one of its available Activation Points." },
-      { title: "2) Movement Step", content: "An activated model may declare Normal Movement or Special Movement. During this Step, the activated model may either enter or cancel the Crouched State." },
-      { title: "3) Reaction Step", content: "The Reactive Player must now declare which of their models will react against the Activated model, if any. Reaction can only be a Normal Action." },
-      { title: "4) Action Step", content: "The activated model may declare a Normal Action or a Special Action in the Action Step." },
-      { title: "5) Resolution Step", content: "Players apply modifiers. All necessary rolls are performed. Damage, Effects, and abilities are applied and carried out simultaneously." }
+      {
+        title: "1. Activation Step",
+        content: "The Active Player Activates a model by spending one of its available Activation Points."
+      },
+      {
+        title: "2. Movement Step",
+        content: "An activated model may declare Normal Movement or Special Movement. The Active Player must declare all Skills relevant to its Movement. During this Step, the activated model may enter or cancel the Crouched State (at the start or end of the Movement)."
+      },
+      {
+        title: "3. Reaction Step",
+        content: "The Reactive Player must declare which of their models will react against the Activated model, if any, and which Normal Actions the reacting models will perform.\n\n- A model may target only an Activated model with a Reaction.\n- Reaction is performed by spending an Activation Point and must be a Normal Action.\n- Requires Line of Sight towards the Activated model at any point during its Movement (unless in Awareness)."
+      },
+      {
+        title: "4. Action Step",
+        content: "The activated model may declare a Normal Action or a Special Action. If the declared Action is Attack, the Active Player must declare its targets and means (Skills, Items, Combat Arts, etc.)."
+      },
+      {
+        title: "5. Resolution Step",
+        content: "Players apply modifiers and perform all necessary rolls (Confrontation, Damage, etc.). Damage, Effects, and abilities that happened during this Activation Sequence are applied simultaneously."
+      }
     ]
   },
   {
-    id: "combat-mechanics",
-    title: "Combat Mechanics",
-    category: "Combat",
-    content: "Key rules governing engagement and damage.",
+    id: "reaction-rules",
+    title: "Reaction Rules",
+    category: "Game Sequence",
+    content: "Detailed rules for how models can react during an opponent's activation.",
     subsections: [
-      { title: "Confrontation", content: "Occurs when two (or more) opposing models declare the Attack Action against one another. The model with one or more successful Confrontation rolls wins." },
-      { title: "Reach (RCH)", content: "Represents the distance at which an Item, Ability or a Spell can be used. Reach 0” can only be used in Base Contact with the target." },
-      { title: "Engaged in Melee", content: "If a model ends within the Melee Weapon’s Reach and LoS of an enemy model, it is considered Engaged (State)." },
-      { title: "Cover", content: "Scenery provides cover from Ranged Attacks. Heavy (-4 Modifier) if object is taller/wider than model. Light (-2 Modifier) if smaller/thinner." },
-      { title: "Higher Ground", content: "If a model is on elevated ground and partially obscured, it receives Light Cover. Behind a solid wall on elevation, it receives Heavy Cover." }
+      {
+        title: "Reaction Requirements",
+        content: "- Reaction is performed by the Reactive Player by spending an Activation Point.\n- Reaction can only be a Normal Action.\n- Reaction requires Line of Sight towards the Activated model at any point during its Movement.\n- If the activated model moves within the reactive model's Awareness, the reacting model may declare Dodge even without Line of Sight."
+      },
+      {
+        title: "Attack of Opportunity",
+        content: "If an activated enemy model performs a Movement that the reactive player suspects might have come within Reach of their model's Weapon, the reactive model may declare Reaction at that point and declare an Attack of Opportunity. After the Reaction is declared, the reacting model must measure its Reach. If the activated model is within Reach, the reacting model may attempt an Attack against it."
+      },
+      {
+        title: "Reaction Against Shrouded or Flying Models",
+        content: "If a reacting model has declared Dodge or Perceive and has LoS towards an activated enemy model that has declared an Attack while in the Shrouded or Flying State, the reacting model may change its declaration to an Attack immediately after the activated enemy model's Action Step."
+      }
     ]
   },
   {
-    id: "magic-rules",
-    title: "Magic & Spellcasting",
-    category: "Magic",
-    content: "Wielders of magic channel raw mana from the elements or Items and shape it into Spells.",
+    id: "dice-rolls",
+    title: "Dice Rolls",
+    category: "Game play",
+    content: "All rolls use 20-sided dice (D20).",
     subsections: [
-      { title: "Casting", content: "Unless stated otherwise, the model uses the Intellect attribute. Requires an Affinity (Element) of the specified Element." },
-      { title: "Mana Counters", content: "Resource for Conjuration or powerful spells. Mages can convert AP to Mana. Mana counters are cumulative and do not disappear at the end of the turn." },
-      { title: "Sorcery", content: "Mainly short-lasting, destructive effects. Effect lasts until the end of the Activation Sequence." },
-      { title: "Healing", content: "Short-lasting, restorative effects." },
-      { title: "Enchantment", content: "Last for an extended period (until next Strategic Phase). Can only be cast in Active Role. Cannot be prevented with Dodge." },
-      { title: "Transmutation", content: "Permanent spells that affect the environment. Remain on field until removed or destroyed." },
-      { title: "Conjuration", content: "Summon a creature to the field. Can only be cast in Active Role by declaring a Ritual (Special Action)." }
+      { title: "Attribute Roll", content: "The result of the dice roll must be equal to or lower than the modified attribute." },
+      { title: "Attack Roll", content: "Each die rolled as part of an Attack is an Attack Roll. A model rolls a number of Attack Rolls equal to its STK. An Attack Roll is successful if its result is equal to or lower than the modified attribute used for the Attack and it was not cancelled during a Confrontation. Each successful Attack Roll generates one Hit, which requires the attacker to make a Damage Roll." },
+      { title: "Reroll", content: "After the dice are rolled, the player may reroll a selected number of dice (depending on the ability), completely negating their previous roll result." },
+      { title: "Damage Roll", content: "Roll a number of dice equal to the number of Hits. For each die result equal to or lower than the Power (PW) of the used Weapon minus the target's Armor (ARM), the target suffers a Wound." }
     ]
+  },
+  {
+    id: "modifiers",
+    title: "Modifiers",
+    category: "Game play",
+    content: "Modifiers alter a model's attribute and affect the outcome of dice roll results. They are numbers added to or subtracted from the model's default attribute value.\n\n- All applicable bonuses and penalties stack and are applied cumulatively.\n- Modifiers are applied after the Action has been declared and before rolls are performed.\n- If modifiers reduce an attribute to 0, the Action results in an automatic failure (except for Damage Rolls). An attribute cannot be modified below 0.\n- If an attribute is increased over 20, the roll result of 20 also becomes a Critical Hit.\n- When a halving or doubling modifier is applied, first apply other modifiers, then halve or double the result (rounding up)."
+  },
+  {
+    id: "distance-measurement",
+    title: "Distance & Measurement",
+    category: "Game play",
+    content: "All distances are measured in inches. The distance between models is measured in a straight line from the closest points of their Hitboxes. Movement distance is always measured from the same part of the model's base, along the exact route of movement.",
+    subsections: [
+      { 
+        title: "Modes of Measuring", 
+        content: "Before starting the game, players decide which mode of measuring to implement:\n\nAssisted Mode: Players can pre-measure any distance.\nStandard Mode: Pre-measuring limited to within the Awareness of models and the activated model's Movement distance.\nRealism Mode: Players are not allowed to pre-measure any distances." 
+      },
+      { title: "Base Contact", content: "Base Contact defines a situation where a model's Hitbox is in physical contact with another model's Hitbox, token, piece of scenery, etc. A model is always in Base Contact with itself." }
+    ]
+  },
+  {
+    id: "movement",
+    title: "Movement",
+    category: "Game play",
+    content: "There are two kinds of movement: Normal Movement and Special Movement.",
+    subsections: [
+      { 
+        title: "General Rules", 
+        content: "- A player may voluntarily move or place models only on non-vertical surfaces, unless stated otherwise.\n- When declaring a Movement, the player must clearly indicate the movement path.\n- While moving, a model can rotate and has 360° Line of Sight.\n- A model can move through allied models, but not through enemy models.\n- A model's Movement automatically ends if it enters Base Contact with an enemy model.\n- A model may not end its Movement with its Hitbox within another model's Hitbox.\n- A model which declared a Special Movement cannot perform any other Normal or Special Action during the same Activation Sequence (unless stated otherwise).\n- A model can move over any scenery piece or obstacle smaller than or equal in height to the model's Hitbox without spending additional Speed points." 
+      },
+      { title: "Ladder", content: "If a model is moving vertically up a Ladder or over a surface narrower than the model's base size, Movement costs double. Example: Moving up a 2\" ladder costs 4 SPD." }
+    ]
+  },
+  {
+    id: "los",
+    title: "Line of Sight",
+    category: "Game play",
+    content: "Line of Sight (LoS) is an imaginary straight line connecting the Hitboxes of two models, defining whether a model can see the other.\n\n- Unless specified otherwise, a model can draw Line of Sight only from its Front arc.\n- A model's Hitbox is divided from the top into the Front and Back sections, each representing an arc of 180°.\n- A model has Line of Sight to another model if it can draw an unobstructed straight line from a point on its Hitbox to a point on the target model's Hitbox.\n- Line of Sight can be obscured by another model or scenery (even allied models).\n- While moving, a model has 360° Line of Sight.\n- A model always has Line of Sight to itself."
+  },
+  {
+    id: "awareness",
+    title: "Awareness",
+    category: "Game play",
+    content: "Awareness represents the model's perception of its surroundings. It is an area surrounding the model with a radius (measured in inches) equal to the model's Agility value, measured from the edge of the miniature's base."
+  },
+  {
+    id: "actions",
+    title: "Actions",
+    category: "Game play",
+    content: "There are two kinds of Actions: Normal Actions and Special Actions.\n\n- Normal Actions can be declared both during the model's Active and Reactive Role.\n- In order to declare a Special Action, a model must first declare \"Idle\" during its Movement Phase.\n- Special Actions cannot be declared during the Reactive Role.\n\n| Role | Movement | Action |\n|------|----------|--------|\n| Active Role | Normal Movement | Normal Action |\n| Active Role | Idle | Special Action |\n| Active Role | Special Movement | Nothing |\n| Reactive Role | — | Normal Action |"
+  },
+  {
+    id: "activation-points",
+    title: "Activation Points",
+    category: "Game play",
+    content: "Activation Points are a resource generated from the model's Stamina value. Players spend these points when activating a model or reacting with it."
+  },
+  {
+    id: "active-reactive-role",
+    title: "Active & Reactive Role",
+    category: "Game play",
+    content: "- The Active Player's models perform the Active Role, conducting Activations.\n- The Reactive Player's models perform the Reactive Role, carrying out Reactions.\n- When the Active Player concludes their turn, the Roles exchange."
+  },
+  {
+    id: "reach",
+    title: "Reach (RCH)",
+    category: "Game play",
+    content: "Reach represents the distance (in inches) at which an Item, Ability, or Spell can be used, measured from anywhere on the model's Hitbox.\n\n- Items, Spells or Skills with Reach 0\" can only be used in Base Contact with the target.\n- If the target of an Action is outside the Item's Reach, the Action resolves as a failure.\n- Ranged Weapons display one or multiple intervals, indicating distances at which certain Modifiers apply to the user's Accuracy attribute."
   },
   {
     id: "casting-aura",
     title: "Casting Aura",
-    category: "Magic",
-    content: "Some Spells can only be cast in the proximity of their caster. Casting Aura is an area in size equal to the caster’s Awareness.",
+    category: "Game play",
+    content: "Casting Aura is an area where some Spells can be cast, equal in size to the caster's Awareness.\n\n- Spells with Casting Aura Reach can only target models within the Casting Aura.\n- In the Active Role, the caster can target models within the Casting Aura even without Line of Sight, but the casting attribute suffers a halving Modifier.\n- Targets of an Attack with this Reach cannot benefit from Cover."
+  },
+  {
+    id: "templates-aoe",
+    title: "Templates & AoE",
+    category: "Game play",
+    content: "Some Abilities, Spells or Items have an Area of Effect (AoE). A template is placed over the affected area and affects all models whose Hitboxes are at least partially covered or in contact with it. The main target must be fully covered by the template.\n\n- If a model is covered by multiple templates simultaneously, it suffers the effect of each separately.\n- A model affected by an Attack with a template may avoid receiving Hits with a successful Dodge Action.\n- If the target of an Attack with a template declares an Attack (as Action or Reaction) and wins the Confrontation, the template Attack is fully nullified.",
     subsections: [
-      { title: "Targeting", content: "In the Active Role, the caster can target models within the Casting Aura even without Line of Sight, but the casting attribute suffers a halving Modifier. Targets cannot benefit from Cover." }
+      { 
+        title: "Circular (Small / Large)", 
+        content: "The target of the Attack must be fully covered by the template. The AoE also affects models 3\" above and below the surface of the target. A model cannot be affected if there is no LoS between the center of the AoE and the model.\n\n- Large circular template: ⌀ 120mm\n- Small circular template: ⌀ 70mm" 
+      },
+      { 
+        title: "Spray (Small / Large)", 
+        content: "Spray templates are placed with the narrow end in Base Contact with the attacking model. The target must be fully covered by the template. The AoE may also affect models up to 5\" above or below the attacker's surface (attacker's choice).\n\n- Large Spray template length: 260mm\n- Small Spray template length: 213mm" 
+      }
     ]
   },
   {
-    id: "summoning-limit",
-    title: "Summoning Limit",
-    category: "Magic",
-    content: "A caster's ability to maintain summoned creatures is limited by their mental fortitude.",
+    id: "strikes-hits",
+    title: "Strikes & Hits",
+    category: "Game play",
+    content: "Strike value (STK) specifies the number of dice rolled when performing an Action with a certain Item, Spell, or Ability. In the Reactive Role, a model's default Strike value becomes 1 (unless stated otherwise). Strike value cannot be modified below 1.\n\nIn the Active Role, if the Active model has a Strike value greater than 1, it may Attack a number of different targets up to its Strike value.\n\nA successful Attack Roll is a Hit. If a Damage Roll is successful, it inflicts a Wound, causing the model to lose 1 HP. Suffering a Hit allows the hit model to rotate and adjust its Line of Sight.",
     subsections: [
-      { title: "Limit Calculation", content: "A caster cannot cast any more Conjuration Spells if the combined Summoning Limit (Tier) of their creatures on the field equals or exceeds their modified Stamina." },
-      { title: "Dismissal", content: "During the Strategic Phase, a caster can voluntarily dismiss a summoned creature, removing it from the field." }
+      { 
+        title: "Strikes & Templates", 
+        content: "When a model uses an ability that places templates and its Strike value is greater than 1, the player may place templates equal to the Strike value and distribute them among one or more targets." 
+      },
+      { 
+        title: "Critical Hit", 
+        content: "When the result of a dice roll is 1, it is a Critical Hit.\n\n- A Critical Hit reduces the target model's Armor to 0 for that particular Hit.\n- A Critical Hit beats all opponent's Confrontation roll results.\n- When both (or more) players score a Critical Hit, all models suffer the Hit and all additional effects." 
+      }
     ]
   },
   {
-    id: "fall-damage",
-    title: "Fall Damage",
-    category: "Combat",
-    content: "Models moving or moved from a higher to a lower surface may suffer damage.",
+    id: "confrontation",
+    title: "Confrontation",
+    category: "Game play",
+    content: "Confrontation occurs when two (or more) opposing models declare the Attack Action against one another. Both models fight simultaneously, each attempting to block incoming Strikes and hit their adversary.",
     subsections: [
-      { title: "Falling Distance", content: "If a model falls a distance greater than its halved Speed value, it must perform an Agility roll for each interval equal to its halved Speed." },
-      { title: "Damage", content: "The model suffers a Wound for every failed Agility roll." }
+      { 
+        title: "Confrontation Roll", 
+        content: "Confrontation rolls symbolize parrying, blocking, counter-attacking, and the quickness of strikes. They are performed simultaneously.\n\n- The model with one or more successful Confrontation rolls wins the Confrontation and is the only model that deals damage.\n- A Confrontation roll is successful if the result is equal to or lower than the model's modified attribute and higher than the enemy model's successful rolls.\n- Each successful Confrontation roll negates all enemy model rolls with equal or lower results.\n- After all rolls are made, the Reactive player first decides whether to reroll any dice using all available rerolls, then the Active player decides." 
+      }
     ]
   },
   {
-    id: "measuring-modes",
-    title: "Measuring Modes",
-    category: "Reference",
-    content: "Players should agree on a measuring mode before starting the game.",
+    id: "damage-wounds",
+    title: "Damage & Wounds",
+    category: "Game play",
+    content: "When a model hits another model, it must perform a Damage Roll for every Hit to damage it. A successful Damage Roll causes the target to suffer a Wound and lose 1 HP. A model cannot suffer more Wounds than it has HP.\n\nA model whose HP is reduced to 0 becomes Incapacitated at the end of the Activation Sequence. If an Incapacitated model suffers another Wound, it becomes Dead.",
     subsections: [
-      { title: "Assisted Mode", content: "Players can pre-measure any distance at any time." },
-      { title: "Standard Mode", content: "Pre-measuring is limited to Awareness and the activated model's Movement distance." },
-      { title: "Realism Mode", content: "No pre-measuring allowed. Measuring only occurs when an Action or Movement is performed." }
+      { 
+        title: "Fall Damage", 
+        content: "A model falls when it is somehow moved from a higher surface onto a lower surface (if Climb was not used). If a model falls a distance greater than its halved Speed value (measured vertically), it must perform an Agility roll for each interval of the fall equal to its halved Speed value. The model suffers a Wound for every failed Agility roll." 
+      }
     ]
   },
   {
-    id: "inventory-weight",
-    title: "Inventory & Weight",
-    category: "Reference",
-    content: "Models have limited capacity for carrying equipment.",
+    id: "spells-magic",
+    title: "Spells & Magic",
+    category: "Game play",
+    content: "Spells are a focused representation of magic. The model who uses a Spell is the Caster.\n\n- Unless stated otherwise, the model uses the Intellect attribute when casting Spells.\n- In order to cast Spells of a certain Element, the caster must have an Affinity (Element) of the specified Element.\n- In the Active Role, if a Spell has a Strike value greater than 1, the Caster may choose a number of targets up to the Strike value (not applicable to Conjuration Spells).\n- A model can cast only one Spell at a time.\n- A model cannot cast Spells if it has \"both hands full\" (e.g., Shield + Weapon equipped).",
     subsections: [
-      { title: "Inventory (X)", content: "X represents the total weight or number of Items a model can carry." },
-      { title: "Over-encumbered", content: "If Weight/Quantity exceeds X, the model cannot perform Movement or Special Actions." },
-      { title: "Dropping Items", content: "A model may drop Items during its Activation, represented by a Cache/Loot token in Base Contact." }
-    ]
-  },
-  {
-    id: "environments",
-    title: "Environments",
-    category: "Reference",
-    content: "Specific characteristics assigned to areas of the battlefield.",
-    subsections: [
-      { title: "Aquatic", content: "Shallow: Half SPD and halved AG. Deep: Cannot declare Jump, Attack, Assist, or Ritual; heavy armor models may drown." },
-      { title: "Dangerous", content: "Suffers 1 Wound on contact unless a successful Dodge (AG roll) is performed." },
-      { title: "Dark", content: "LoS limited to Awareness. Targeting outside half Awareness suffers -3 modifier." },
-      { title: "Difficult", content: "Half SPD (2 inches of Movement per 1 inch moved)." },
-      { title: "Forest", content: "Ranged Attacks through forest suffer -3 modifier. LoS blocked through two or more forest areas." },
-      { title: "Sacred Ground", content: "Strategic Phase: Recover 1 HP or remove one State. Undead/Profane models suffer damage instead." }
-    ]
-  },
-  {
-    id: "mounted-rules",
-    title: "Mounted Rules",
-    category: "Combat",
-    content: "Mounts are models with the special Class: Mount. A Rider can ride a Mount, linking their profile cards together to form a single mounted model.",
-    subsections: [
-      { title: "Mount (Class)", content: "This Class indicates that the model can be mounted." },
-      { title: "Rider Requirements", content: "Only a model whose Profile card lists the name of a specific Mount may ride that Mount." },
-      { title: "Mounting", content: "A model may mount during its Strategic Phase if no enemy model has LoS to it, or by declaring Assist (targeting itself) during its Active Role. When a model mounts, the Mount appears instantly on the field. A model cannot mount if it is in the Engaged State." },
-      { title: "Dismounting", content: "A model may dismount during its Strategic Phase, Movement Step, or by declaring Dodge. Upon dismounting, the Mount is instantly removed from the field." },
-      { title: "Profile Interaction", content: "When mounted, the Rider's profile is modified by the Mount's Attributes (+/− value modifies, flat number replaces). The Rider gains access to the Mount's Abilities and Inventory. The Mount and Rider are treated as a single model while mounted." },
-      { title: "HP Interaction", content: "If the Mount provides bonus HP, that HP is lost first when taking Wounds. When bonus HP is reduced to 0, further damage is applied to the Rider's HP. Bonus HP does not reset upon dismounting and remounting." },
-      { title: "Restrictions", content: "Mounted Riders cannot perform Attacks with Items with RCH 0, unless the Weapon Type is Natural. STK of Weapons cannot be increased by Abilities while mounted. If hit by an Attack with Knockdown, or if the Rider becomes Incapacitated or Dead, they are automatically dismounted." }
-    ]
-  },
-  {
-    id: "bonus-schemes",
-    title: "Bonus Schemes",
-    category: "Reference",
-    content: "Schemes are Classified objectives, known only to the player who receives them. At the end of the game, all the Schemes are revealed and the player receives a number of Victory Points as a reward for completing the objective listed on the Scheme card.",
-    subsections: [
-      { title: "Neutral Schemes", content: "Assassination Contract, Martial Valor, No Quarter, Opportunistic Manipulation, Stand Your Ground, Virtuous Commander." },
-      { title: "Empire of Soga", content: "Head Hunt, Open Aggression, Pursuit of Glory, Engetsu Formation, Fierce as Fire, Immovable as a Mountain, Stalwart Defender." },
-      { title: "Coalition of Thenion", content: "Unmatched Flanking, Leave Unnoticed, Cunning Tenacity, Breach Their Defenses, Assassination Contract, Blood for Blood." },
-      { title: "Helian League", content: "Decisive Victory, Virtuous Commander, Relentless Advance, Fierce as Fire, Immovable as a Mountain, Peacekeeping Paragon, Last Warning." },
-      { title: "Sand Kingdoms", content: "Stalwart Defender, Appear Weak When You Are Strong, Unhindered Expedition, Strength in Numbers, Steadfast Expansion, Stand Your Ground." }
-    ]
-  },
-  {
-    id: "competitive-quests",
-    title: "Competitive Quests",
-    category: "Reference",
-    content: "Competitive Quests: Season 1",
-    subsections: [
-      { title: "Quest 1: Open Hostilities", content: "Gain VP for rendering enemies Incapacitated or Dead based on their Recruitment Cost." },
-      { title: "Quest 2: Awaiting Reinforcements", content: "Gain VP for controlling the Obelisk at the center of the field." },
-      { title: "Quest 3: Treasure Hunt", content: "Gain VP for unlocking Caches and securing Treasures." },
-      { title: "Quest 4: Supply Run", content: "Gain VP for depositing Resources in your Cache." },
-      { title: "Quest 5: Secure the Artefact", content: "Gain VP for unlocking the Cache and securing the Arcane Artefact." },
-      { title: "Quest 6: Magic Stones", content: "Gain VP for controlling Objective Markers." }
+      { title: "Mana Counters", content: "Mana Counters represent the energy required for casting Spells. In the Active Role, a Mage can convert any number of Activation Points into Mana Counters. Mana Counters are cumulative and do not disappear at the end of the turn." },
+      { title: "The 5 Types of Spells", content: "Sorcery (short-lasting, destructive), Healing (restorative), Enchantments (extended effects), Transmutation (permanent changes to environment), Conjuration (summoning rituals)." }
     ]
   }
 ];
