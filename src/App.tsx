@@ -24,7 +24,12 @@ export default function App() {
   const [isChangelogOpen, setIsChangelogOpen] = useState(false);
 
   useEffect(() => {
-    window.scrollTo(0, 0);
+    // Only scroll to top on major route changes (e.g. going back home or switching main tools)
+    // Detailed item views managed within components should handle their own scrolling
+    const mainRoutes = ['/', '/missions', '/rules', '/spellbook'];
+    if (mainRoutes.includes(location.pathname)) {
+      window.scrollTo(0, 0);
+    }
   }, [location.pathname]);
 
   return (

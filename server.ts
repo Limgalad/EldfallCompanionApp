@@ -28,6 +28,11 @@ async function startServer() {
   const PORT = 3000;
 
   app.use(express.json());
+  
+  // Health check endpoint
+  app.get("/api/health", (req, res) => {
+    res.json({ status: "ok", timestamp: new Date().toISOString() });
+  });
 
   // API Route for Bug Reports
   app.post("/api/report-bug", async (req, res) => {

@@ -174,13 +174,18 @@ export function HighlightedText({ text, query }: { text: string; query: string }
 export const RichText = ({ text, onKeywordClick, highlightQuery = "" }: { text: string; onKeywordClick: (item: KeywordItem) => void; highlightQuery?: string }) => {
   if (!text) return null;
   const parts = text.split(linkableKeywordRegex);
+  const seenKeywords = new Set<string>();
+  
   return (
     <>
       {parts.map((part, i) => {
-        const keyword = keywordLookup.get(part.toLowerCase());
-        if (keyword) {
+        const lowerPart = part.toLowerCase();
+        const keyword = keywordLookup.get(lowerPart);
+        
+        if (keyword && !seenKeywords.has(lowerPart)) {
           const data = getKeywordData(keyword);
           if (data) {
+            seenKeywords.add(lowerPart);
             return (
               <button
                 key={i}

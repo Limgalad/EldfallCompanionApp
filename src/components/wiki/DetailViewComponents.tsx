@@ -9,6 +9,33 @@ interface DetailProps {
   searchQuery: string;
 }
 
+export const RuleTable: React.FC<{ table: { headers: string[]; rows: string[][] } }> = ({ table }) => (
+  <div className="overflow-x-auto my-4 rounded-xl border border-stone-800 bg-stone-900/50">
+    <table className="w-full text-left border-collapse min-w-[300px]">
+      <thead>
+        <tr className="bg-stone-800/50">
+          {table.headers.map((header, i) => (
+            <th key={i} className="px-4 py-3 text-[10px] font-bold text-stone-400 uppercase tracking-wider border-b border-stone-800">
+              {header}
+            </th>
+          ))}
+        </tr>
+      </thead>
+      <tbody className="divide-y divide-stone-800">
+        {table.rows.map((row, i) => (
+          <tr key={i} className="hover:bg-red-500/5 transition-colors">
+            {row.map((cell, j) => (
+              <td key={j} className="px-4 py-3 text-[10px] text-stone-300">
+                {cell}
+              </td>
+            ))}
+          </tr>
+        ))}
+      </tbody>
+    </table>
+  </div>
+);
+
 export const RuleSectionDetail: React.FC<DetailProps> = ({ item, onKeywordClick, searchQuery }) => {
   if (!isRuleSection(item)) return null;
   
@@ -21,6 +48,7 @@ export const RuleSectionDetail: React.FC<DetailProps> = ({ item, onKeywordClick,
           highlightQuery={searchQuery}
         />
       </div>
+      {item.data.table && <RuleTable table={item.data.table} />}
       {item.data.subsections && (
         <div className="space-y-4">
           {item.data.subsections.map((sub, i) => (

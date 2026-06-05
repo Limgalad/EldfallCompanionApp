@@ -292,8 +292,17 @@ export const rules: RuleSection[] = [
   {
     id: "actions",
     title: "Actions",
-    category: "Game play",
-    content: "There are two kinds of Actions: Normal Actions and Special Actions.\n\n- Normal Actions can be declared both during the model's Active and Reactive Role.\n- In order to declare a Special Action, a model must first declare \"Idle\" during its Movement Phase.\n- Special Actions cannot be declared during the Reactive Role.\n\n| Role | Movement | Action |\n|------|----------|--------|\n| Active Role | Normal Movement | Normal Action |\n| Active Role | Idle | Special Action |\n| Active Role | Special Movement | Nothing |\n| Reactive Role | — | Normal Action |"
+    category: "Normal Action",
+    content: "There are two kinds of Actions: Normal Actions and Special Actions.\n\n- Normal Actions can be declared both during the model's Active and Reactive Role.\n- In order to declare a Special Action, a model must first declare \"Idle\" during its Movement Phase.\n- Special Actions cannot be declared during the Reactive Role.",
+    table: {
+      headers: ["Role", "Movement", "Action"],
+      rows: [
+        ["Active Role", "Normal Movement", "Normal Action"],
+        ["Active Role", "Idle", "Special Action"],
+        ["Active Role", "Special Movement", "Nothing"],
+        ["Reactive Role", "—", "Normal Action"]
+      ]
+    }
   },
   {
     id: "activation-points",

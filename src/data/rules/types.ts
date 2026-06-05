@@ -7,6 +7,10 @@ export interface RuleSection {
     title: string;
     content: string;
   }[];
+  table?: {
+    headers: string[];
+    rows: string[][];
+  };
 }
 
 export interface State {

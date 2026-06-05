@@ -71,6 +71,7 @@ export default function SpellBook({ onBack }: SpellBookProps) {
 
   useEffect(() => {
     if (!highlightedSpellId) {
+      window.scrollTo(0, 0);
       return;
     }
 

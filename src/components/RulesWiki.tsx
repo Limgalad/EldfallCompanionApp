@@ -1,4 +1,4 @@
-import React, { useMemo, useState, useEffect } from "react";
+import React, { useMemo, useState, useEffect, useRef } from "react";
 import { motion, AnimatePresence } from "motion/react";
 import { useParams, useNavigate, useSearchParams } from "react-router-dom";
 import { rules, traits, skills, classes, combatArtCategories, states } from "../data/rules";
@@ -8,7 +8,7 @@ import MetaTags from "./MetaTags";
 import { SearchCategory, SelectedItem, KeywordItem } from "../types";
 import { isRuleSection, isClass, isCombatArtCategory, getSelectedItemTitle, getSelectedItemBody } from "../utils/rulesGuards";
 import { HighlightedText } from "./wiki/RichText";
-import { RuleSectionDetail, ClassDetail, CombatArtDetail, GenericDetail } from "./wiki/DetailViewComponents";
+import { RuleSectionDetail, ClassDetail, CombatArtDetail, GenericDetail, RuleTable } from "./wiki/DetailViewComponents";
 
 type SearchResultEntry = {
   id: string;
@@ -78,10 +78,13 @@ export default function RulesWiki({ onBack }: { onBack: () => void }) {
 
   const [nestedItem, setNestedItem] = useState<KeywordItem | null>(null);
 
+  const prevTabRef = useRef(activeTab);
   useEffect(() => {
-    if (!selectedItem) {
+    // Only scroll to top if the tab actually changed and we're not currently viewing a detail item
+    if (prevTabRef.current !== activeTab && !selectedItem) {
       window.scrollTo(0, 0);
     }
+    prevTabRef.current = activeTab;
   }, [activeTab, selectedItem]);
 
   useEffect(() => {
@@ -846,6 +849,9 @@ export default function RulesWiki({ onBack }: { onBack: () => void }) {
                   <p className="text-stone-300 text-xs leading-relaxed whitespace-pre-wrap font-sans">
                     {getSelectedItemBody(nestedItem)}
                   </p>
+                  {isRuleSection(nestedItem) && nestedItem.data.table && (
+                    <RuleTable table={nestedItem.data.table} />
+                  )}
                   {isRuleSection(nestedItem) && nestedItem.data.subsections && (
                     <div className="mt-4 space-y-3">
                       {nestedItem.data.subsections.slice(0, 3).map((sub, i) => (
