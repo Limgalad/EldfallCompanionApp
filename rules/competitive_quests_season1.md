@@ -5,9 +5,9 @@
 
 ## Schemes (General Rule)
 Before the Initiative Check, each player receives **1 Scheme Card**. When drawing Schemes:
-- If Leader has **INT 13 or less** — draw **1 card**.
-- If Leader has **INT 14 or 15** — draw **2 cards** and choose 1 to keep.
-- If Leader has **INT 16 or more** — draw **3 cards** and choose 1 to keep.
+- If Leader has **INT 13 or less** — draw **2 cards** and choose 1 to keep.
+- If Leader has **INT 14 or 15** — draw **3 cards** and choose 1 to keep.
+- If Leader has **INT 16 or more** — draw **4 cards** and choose 1 to keep.
 
 ---
 
@@ -74,7 +74,7 @@ Models **may not Interact** with Cache during **Round 1**. To access the Treasur
 
 A model in Base Contact with a Cache token may declare an **Interact Action** and, by performing a **successful AG roll**, unlock the Cache and take the Treasure into its Inventory. Once unlocked, it **cannot be unlocked again**. Summoned models may not interact with Cache Tokens.
 
-A model with a Treasure in its Inventory may **voluntarily leave the field** via its own Deployment Zone. A model carrying a Treasure **cannot be Shrouded or Flying**. Treasure is an Item with **Qty 1** and **Wgt 1**.
+From **Round 4 onward**, a model with a Treasure in its Inventory may **voluntarily leave the field** via its own Deployment Zone. A model carrying a Treasure **cannot be Shrouded or Flying**. Treasure is an Item with **Qty 1** and **Wgt 1**.
 
 *(If the model becomes Incapacitated or Dead, the Treasure is removed from its Inventory and placed in Base Contact with the model. Models that leave the field voluntarily are still considered present and alive for the purposes of Loss of Morale.)*
 
@@ -125,39 +125,7 @@ If a model is **carrying Resources**, it becomes the **Target Priority** for the
 
 ---
 
-## Quest 5: Secure the Artefact
-*Arcane artefacts are objects of great power, their crafting processes mostly lost to time. They are a rare commodity, one you cannot afford to let fall into another's hands.*
-
-### Setup
-- **Cache Tokens:** There is **1 Cache** in the center of the field containing the Arcane Artefact.
-- **Standard Deployment:** 8" Deployment Zones.
-
-### Results
-- Gain **3 VP** for unlocking the Cache.
-- Gain **2 VP** if your model has the **Arcane Artefact in its Inventory** at the end of the game.
-- Gain **2 VP** if your model **leaves the field** with the Arcane Artefact in its Inventory.
-
-### Special End Conditions
-- The Quest ends when a model carrying the Arcane Artefact **leaves the field** via its own Deployment Zone.
-
-### Quest Rules
-
-#### Arcane Artefact (Cache)
-Models **may not Interact** with Cache during **Round 1**. Summoned models **may not Interact** with Cache at any time. A model in Base Contact with the Cache may declare an **Interact Action** and, by performing a **successful AG or INT roll**, unlock the Cache and take the Arcane Artefact. Once unlocked, it **cannot be unlocked again**.
-
-While carrying the Arcane Artefact, a model may **voluntarily leave the field** via its own Deployment Zone. The carrier suffers **halved SPD** and **cannot be Shrouded**. The Arcane Artefact is an Item with **Qty 1** and **Wgt 1**.
-
-*(If the model becomes Incapacitated or Dead, the Arcane Artefact is removed from its Inventory and placed in Base Contact with the model. The owner chooses the exact placement. Models that leave the field voluntarily are still considered present and alive for the purposes of Loss of Morale.)*
-
-#### Class Bonus: Artificer, Enchanter, Wizard
-Models with the Artificer, Enchanter, or Wizard Class add **+3 to their roll** when interacting with the Cache.
-
-#### 1st Round Ceasefire
-Players **cannot score VP** during the first round. If a model targets an enemy model with an Attack or damages an enemy model with an Action during Round 1, that player's party receives a **−4 VP penalty**. Summoned models are an exception and can be targeted and damaged. *(A player's VP score may drop below 0 as a result.)*
-
----
-
-## Quest 6: Magic Stones
+## Quest 5: Magic Stones
 *Strange crystalline formations occasionally bloom in places steeped in mana. Move fast, draw deep — and leave richer than you came.*
 
 ### Setup
@@ -169,11 +137,14 @@ Players **cannot score VP** during the first round. If a model targets an enemy 
 - Gain **2 VP** at the end of **Round 4** for each Objective Marker under your control.
 
 ### ⚠ Important
-Reset control over **all Objective Markers to Neutral** at the end of Round 2 and Round 4.
+- Models **may not Interact** with Objective Markers during **Round 1**.
+- Reset control over **all Objective Markers to Neutral** at the end of Round 2 and Round 4.
 
 ### Quest Rules
 
 #### Magic Stones (Objective Markers)
+Models **may not Interact** with Objective Markers during **Round 1**.
+
 Objective Markers can be either **Neutral** or **Controlled**. At the start of the game, all Objective Markers are Neutral. A party may take control of a Neutral Objective Marker by having a model in **Base Contact** with it and performing an **Interact Action** — the marker then becomes **Controlled** by that model's party. If the Objective Marker is already Controlled, performing an Interact Action resets it to **Neutral**. Summoned models **may not Interact** with Objective Markers.
 
 ---

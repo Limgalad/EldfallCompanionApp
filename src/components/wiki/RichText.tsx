@@ -1,7 +1,8 @@
 import React from "react";
-import { LINKABLE_KEYWORDS } from "../../data/rules/keywords";
+import { LINKABLE_KEYWORDS, KEYWORD_TO_RULE_ID } from "../../data/rules/keywords";
 import { states, traits, skills, rules } from "../../data/rules";
 import { KeywordItem } from "../../types";
+import { buildRuleSectionKeywordItem } from "../../utils/rulesGuards";
 
 const escapeRegExp = (value: string) => value.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
 
@@ -15,140 +16,36 @@ const skillLookup = new Map(skills.map((skill) => [skill.name.toLowerCase(), ski
 const keywordLookup = new Map(sortedLinkableKeywords.map((keyword) => [keyword.name.toLowerCase(), keyword]));
 const rulesLookup = new Map(rules.map((r) => [r.title.toLowerCase(), r]));
 
-const keywordToRuleId = new Map([
-  ["stamina", "attributes"],
-  ["speed", "attributes"],
-  ["armor", "attributes"],
-  ["offense", "attributes"],
-  ["defense", "attributes"],
-  ["accuracy", "attributes"],
-  ["intellect", "attributes"],
-  ["agility", "attributes"],
-  ["toughness", "attributes"],
-  ["morale", "attributes"],
-  ["hp", "attributes"],
-  ["inventory", "inventory"],
-  ["items", "items"],
-  ["weapons", "items"],
-  ["shields", "items"],
-  ["accessory", "items"],
-  ["consumables", "items"],
-  ["recruitment cost", "recruitment-cost"],
-  ["limit", "limit"],
-  ["models", "models"],
-  ["class", "class"],
-  ["traits", "traits"],
-  ["skills", "skills"],
-  ["combat arts", "combat-arts"],
-  ["spellcraft", "spellcraft"],
-  ["special", "special"],
-  ["stratagems", "stratagems"],
-  ["hitbox", "size"],
-  ["size", "size"],
-  ["dice rolls", "dice-rolls"],
-  ["attribute roll", "dice-rolls"],
-  ["attack roll", "dice-rolls"],
-  ["damage roll", "dice-rolls"],
-  ["reroll", "dice-rolls"],
-  ["modifiers", "modifiers"],
-  ["distance", "distance-measurement"],
-  ["measurement", "distance-measurement"],
-  ["base contact", "distance-measurement"],
-  ["movement", "normal-movement"],
-  ["walk", "action-attack"],
-  ["idle", "action-attack"],
-  ["climb", "action-attack"],
-  ["jump", "action-attack"],
-  ["run", "action-attack"],
-  ["assist", "action-assist"],
-  ["attack", "action-attack"],
-  ["death blow", "action-death-blow"],
-  ["dodge", "action-dodge"],
-  ["interact", "action-interact"],
-  ["nothing", "action-nothing"],
-  ["perceive", "action-perceive"],
-  ["trade", "action-trade"],
-  ["duel", "action-duel"],
-  ["ritual", "action-ritual"],
-  ["uncover", "action-uncover"],
-  ["line of sight", "los"],
-  ["los", "los"],
-  ["awareness", "awareness"],
-  ["actions", "actions"],
-  ["activation points", "activation-points"],
-  ["active role", "active-reactive-role"],
-  ["reactive role", "active-reactive-role"],
-  ["game sequence", "game-sequence-overview"],
-  ["turn phases", "turn-phases"],
-  ["strategic phase", "turn-phases"],
-  ["upkeep phase", "turn-phases"],
-  ["tactical phase", "turn-phases"],
-  ["end phase", "turn-phases"],
-  ["activation sequence", "activation-sequence"],
-  ["activation step", "activation-sequence"],
-  ["movement step", "activation-sequence"],
-  ["reaction step", "activation-sequence"],
-  ["action step", "activation-sequence"],
-  ["resolution step", "activation-sequence"],
-  ["reaction rules", "reaction-rules"],
-  ["attack of opportunity", "reaction-rules"],
-  ["reach", "reach"],
-  ["rch", "reach"],
-  ["casting aura", "casting-aura"],
-  ["template", "templates-aoe"],
-  ["templates", "templates-aoe"],
-  ["aoe", "templates-aoe"],
-  ["strike", "strikes-hits"],
-  ["stk", "strikes-hits"],
-  ["hit", "strikes-hits"],
-  ["critical hit", "strikes-hits"],
-  ["confrontation", "confrontation"],
-  ["damage", "damage-wounds"],
-  ["wound", "damage-wounds"],
-  ["incapacitated", "damage-wounds"],
-  ["incapped", "damage-wounds"],
-  ["fall damage", "damage-wounds"],
-  ["magic", "spells-magic"],
-  ["spell", "spells-magic"],
-  ["spells", "spells-magic"],
-  ["mana counter", "spells-magic"],
-  ["mana counters", "spells-magic"],
-  ["sorcery", "spells-magic"],
-  ["healing", "spells-magic"],
-  ["enchantment", "spells-magic"],
-  ["transmutation", "spells-magic"],
-  ["conjuration", "spells-magic"],
-  ["hostiles", "hostiles-intro"],
-  ["ai", "hostiles-intro"],
-  ["hostile turn", "hostiles-activations"],
-  ["behavior", "hostiles-behaviors"],
-  ["target priority", "hostiles-behaviors"],
-  ["tiers", "hostiles-activations"],
-  ["broken morale", "broken-morale"],
-  ["friendly fire", "friendly-fire-general"],
-  ["priority over the core rules", "priority-over-core"],
-  ["end of the game", "end-of-game"],
-  ["recovery check", "recovery-check"],
-  ["characters", "characters-general"],
-  ["monster factions", "monster-factions"],
-]);
+// Derived from the single source of truth in `src/data/rules/keywords.ts`
+// rather than a hand-synced copy — see that file for the full list.
+const keywordToRuleId = new Map(KEYWORD_TO_RULE_ID);
 
-const getKeywordData = (keyword: (typeof LINKABLE_KEYWORDS)[number]) => {
+const getKeywordItem = (keyword: (typeof LINKABLE_KEYWORDS)[number]): KeywordItem | null => {
   const normalizedName = keyword.name.toLowerCase();
 
-  if (keyword.type === "states") return stateLookup.get(normalizedName);
-  if (keyword.type === "traits") return traitLookup.get(normalizedName);
-  if (keyword.type === "skills") return skillLookup.get(normalizedName);
-  
+  if (keyword.type === "states") {
+    const data = stateLookup.get(normalizedName);
+    return data ? { type: "states", data } : null;
+  }
+  if (keyword.type === "traits") {
+    const data = traitLookup.get(normalizedName);
+    return data ? { type: "traits", data } : null;
+  }
+  if (keyword.type === "skills") {
+    const data = skillLookup.get(normalizedName);
+    return data ? { type: "skills", data } : null;
+  }
+
   if (keyword.type === "hostiles" || keyword.type === "actions" || keyword.type === "mechanics") {
     const ruleId = keywordToRuleId.get(normalizedName);
-    if (ruleId) return rules.find(r => r.id === ruleId);
-    return rulesLookup.get(normalizedName);
+    const data = ruleId ? rules.find(r => r.id === ruleId) : rulesLookup.get(normalizedName);
+    return data ? buildRuleSectionKeywordItem(keyword.type, data) : null;
   }
 
   if (keyword.type === "environments") {
     const ruleId = keywordToRuleId.get(normalizedName) || `env-${normalizedName.toLowerCase().replace(/\s+/g, '-')}`;
-    return rules.find(r => r.id === ruleId) || rulesLookup.get(normalizedName);
+    const data = rules.find(r => r.id === ruleId) || rulesLookup.get(normalizedName);
+    return data ? buildRuleSectionKeywordItem("environments", data) : null;
   }
 
   return null;
@@ -183,8 +80,8 @@ export const RichText = ({ text, onKeywordClick, highlightQuery = "" }: { text: 
         const keyword = keywordLookup.get(lowerPart);
         
         if (keyword && !seenKeywords.has(lowerPart)) {
-          const data = getKeywordData(keyword);
-          if (data) {
+          const keywordItem = getKeywordItem(keyword);
+          if (keywordItem) {
             seenKeywords.add(lowerPart);
             return (
               <button
@@ -192,7 +89,7 @@ export const RichText = ({ text, onKeywordClick, highlightQuery = "" }: { text: 
                 type="button"
                 onClick={(e) => {
                   e.stopPropagation();
-                  onKeywordClick({ type: keyword.type, data } as KeywordItem);
+                  onKeywordClick(keywordItem);
                 }}
                 className="text-red-500 hover:text-red-400 font-bold underline decoration-red-900/50 underline-offset-2 transition-colors inline"
               >

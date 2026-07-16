@@ -1,4 +1,3 @@
-
 # Playing the Game
 
 ## Game Setup

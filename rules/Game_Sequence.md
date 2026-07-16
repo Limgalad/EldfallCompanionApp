@@ -1,4 +1,3 @@
-
 # Game Sequence
 
 A game consists of a number of Rounds, each divided into a number of Turns (one for each player).

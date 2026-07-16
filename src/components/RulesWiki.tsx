@@ -6,9 +6,10 @@ import { ArrowLeft, Search, BookOpen, Shield, Zap, Sparkles, Users, Sword, Activ
 import { prepareFuzzySearchEntries, rankPreparedFuzzyResults, slugify } from "../utils/search";
 import MetaTags from "./MetaTags";
 import { SearchCategory, SelectedItem, KeywordItem } from "../types";
-import { isRuleSection, isClass, isCombatArtCategory, getSelectedItemTitle, getSelectedItemBody } from "../utils/rulesGuards";
+import { isRuleSection, isClass, isCombatArtCategory, getSelectedItemTitle, getSelectedItemBody, buildRuleSectionSelectedItem } from "../utils/rulesGuards";
 import { HighlightedText } from "./wiki/RichText";
 import { RuleSectionDetail, ClassDetail, CombatArtDetail, GenericDetail, RuleTable } from "./wiki/DetailViewComponents";
+import { TabButton } from "./TabButton";
 
 type SearchResultEntry = {
   id: string;
@@ -55,25 +56,44 @@ export default function RulesWiki({ onBack }: { onBack: () => void }) {
     navigate(`/rules/${activeTab}`);
   }, [navigate, activeTab]);
 
-  const getSubItem = (type: string, id: string) => {
+  const getSelectedItemForParams = (type: SearchCategory, id: string): SelectedItem | null => {
     const slug = id.toLowerCase();
-    if (type === "mechanics") return rules.find(r => r.id === slug);
-    if (type === "hostiles") return rules.find(r => r.id === slug);
-    if (type === "actions") return rules.find(r => r.id === slug);
-    if (type === "environments") return rules.find(r => r.id === slug);
-    if (type === "states") return states.find(s => slugify(s.name) === slug);
-    if (type === "traits") return traits.find(t => slugify(t.name) === slug);
-    if (type === "skills") return skills.find(s => slugify(s.name) === slug);
-    if (type === "classes") return classes.find(c => slugify(c.name) === slug);
-    if (type === "combatArts") return combatArtCategories.find(c => slugify(c.name) === slug);
-    return null;
+    switch (type) {
+      case "mechanics":
+      case "hostiles":
+      case "actions":
+      case "environments": {
+        const data = rules.find(r => r.id === slug);
+        return data ? buildRuleSectionSelectedItem(type, data) : null;
+      }
+      case "states": {
+        const data = states.find(s => slugify(s.name) === slug);
+        return data ? { type, data } : null;
+      }
+      case "traits": {
+        const data = traits.find(t => slugify(t.name) === slug);
+        return data ? { type, data } : null;
+      }
+      case "skills": {
+        const data = skills.find(s => slugify(s.name) === slug);
+        return data ? { type, data } : null;
+      }
+      case "classes": {
+        const data = classes.find(c => slugify(c.name) === slug);
+        return data ? { type, data } : null;
+      }
+      case "combatArts": {
+        const data = combatArtCategories.find(c => slugify(c.name) === slug);
+        return data ? { type, data } : null;
+      }
+      default:
+        return null;
+    }
   };
 
   const selectedItem: SelectedItem | null = useMemo(() => {
     if (!urlCategory || !urlId) return null;
-    const data = getSubItem(urlCategory, urlId);
-    if (!data) return null;
-    return { type: urlCategory, data: data } as SelectedItem;
+    return getSelectedItemForParams(urlCategory, urlId);
   }, [urlCategory, urlId]);
 
   const [nestedItem, setNestedItem] = useState<KeywordItem | null>(null);
@@ -136,7 +156,7 @@ export default function RulesWiki({ onBack }: { onBack: () => void }) {
             title: section.title,
             preview: section.content,
             searchText: [section.title, section.content, ...(section.subsections?.flatMap((sub) => [sub.title, sub.content]) ?? [])].join(" "),
-            selectedItem: { type: category, data: section } as SelectedItem,
+            selectedItem: buildRuleSectionSelectedItem(category, section),
           };
         }),
         ...states.map((state) => ({
@@ -145,7 +165,7 @@ export default function RulesWiki({ onBack }: { onBack: () => void }) {
           title: state.name,
           preview: state.description,
           searchText: `${state.name} ${state.description}`,
-          selectedItem: { type: "states", data: state } as SelectedItem,
+          selectedItem: { type: "states", data: state } satisfies SelectedItem,
         })),
         ...traits.map((trait) => ({
           id: `traits-${trait.name}`,
@@ -153,7 +173,7 @@ export default function RulesWiki({ onBack }: { onBack: () => void }) {
           title: trait.name,
           preview: trait.description,
           searchText: `${trait.name} ${trait.description}`,
-          selectedItem: { type: "traits", data: trait } as SelectedItem,
+          selectedItem: { type: "traits", data: trait } satisfies SelectedItem,
         })),
         ...skills.map((skill) => ({
           id: `skills-${skill.name}`,
@@ -161,7 +181,7 @@ export default function RulesWiki({ onBack }: { onBack: () => void }) {
           title: skill.name,
           preview: skill.description,
           searchText: `${skill.name} ${skill.description}`,
-          selectedItem: { type: "skills", data: skill } as SelectedItem,
+          selectedItem: { type: "skills", data: skill } satisfies SelectedItem,
         })),
         ...classes.map((cls) => ({
           id: `classes-${cls.name}`,
@@ -169,7 +189,7 @@ export default function RulesWiki({ onBack }: { onBack: () => void }) {
           title: cls.name,
           preview: cls.description,
           searchText: `${cls.name} ${cls.description} ${cls.abilities.join(" ")}`,
-          selectedItem: { type: "classes", data: cls } as SelectedItem,
+          selectedItem: { type: "classes", data: cls } satisfies SelectedItem,
         })),
         ...combatArtCategories.map((combatArtCategory) => ({
           id: `combatArts-${combatArtCategory.name}`,
@@ -182,7 +202,7 @@ export default function RulesWiki({ onBack }: { onBack: () => void }) {
             combatArtCategory.flavorText,
             ...combatArtCategory.levels.flatMap((level) => [level.name, level.description]),
           ].join(" "),
-          selectedItem: { type: "combatArts", data: combatArtCategory } as SelectedItem,
+          selectedItem: { type: "combatArts", data: combatArtCategory } satisfies SelectedItem,
         })),
       ],
       (entry) => `${entry.title} ${entry.searchText}`,
@@ -305,6 +325,254 @@ export default function RulesWiki({ onBack }: { onBack: () => void }) {
     };
   }, [selectedItem, urlId]);
 
+  type TabConfig = {
+    id: Exclude<SearchCategory, "all">;
+    tabLabel: string;
+    tabIcon: React.ReactNode;
+    gridClassName: string;
+    render: () => React.ReactNode;
+  };
+
+  const tabConfigs: TabConfig[] = [
+    {
+      id: "mechanics",
+      tabLabel: "CORE RULES",
+      tabIcon: <BookOpen className="w-5 h-5" />,
+      gridClassName: "grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4",
+      render: () => (
+        <>
+          {rules.filter(r => r.category !== "Hostiles" && r.category !== "Normal Action" && r.category !== "Special Action" && r.category !== "Environment").map((section) => (
+            <button
+              key={section.id}
+              type="button"
+              className="eldfall-card eldfall-card-interactive card-p group text-left"
+              onClick={() => handleSelectItem({ type: "mechanics", data: section })}
+            >
+              <div className="flex justify-between items-start mb-3">
+                <span className="text-xs font-display uppercase tracking-eyebrow text-red-500/70">{section.category}</span>
+                <Sparkles className="w-4 h-4 text-stone-700 group-hover:text-red-500 transition-colors" />
+              </div>
+              <h2 className="text-lg font-bold text-white mb-2 group-hover:text-red-500 transition-colors">{section.title}</h2>
+              <p className="body-sm line-clamp-3 text-stone-400">{section.content}</p>
+            </button>
+          ))}
+        </>
+      ),
+    },
+    {
+      id: "states",
+      tabLabel: "States",
+      tabIcon: <Activity className="w-5 h-5" />,
+      gridClassName: "grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-4",
+      render: () => (
+        <>
+          {states.map((state) => (
+            <button
+              key={state.name}
+              type="button"
+              className="eldfall-card eldfall-card-interactive card-p group text-left"
+              onClick={() => handleSelectItem({ type: "states", data: state })}
+            >
+              <div className="flex justify-between items-start mb-2">
+                <h3 className="text-base font-bold text-white group-hover:text-red-500 transition-colors">{state.name}</h3>
+                <Info className="w-4 h-4 text-stone-700 group-hover:text-red-500 transition-colors" />
+              </div>
+              <p className="body-xs line-clamp-3">{state.description}</p>
+            </button>
+          ))}
+        </>
+      ),
+    },
+    {
+      id: "traits",
+      tabLabel: "Traits",
+      tabIcon: <Shield className="w-5 h-5" />,
+      gridClassName: "grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-4",
+      render: () => (
+        <>
+          {traits.map((trait) => (
+            <button
+              key={trait.name}
+              type="button"
+              className="eldfall-card eldfall-card-interactive card-p group text-left"
+              onClick={() => handleSelectItem({ type: "traits", data: trait })}
+            >
+              <div className="flex justify-between items-start mb-2">
+                <h3 className="text-base font-bold text-white group-hover:text-red-500 transition-colors">{trait.name}</h3>
+                <Info className="w-4 h-4 text-stone-700 group-hover:text-red-500 transition-colors" />
+              </div>
+              <p className="body-xs line-clamp-3">{trait.description}</p>
+            </button>
+          ))}
+        </>
+      ),
+    },
+    {
+      id: "skills",
+      tabLabel: "Skills",
+      tabIcon: <Zap className="w-5 h-5" />,
+      gridClassName: "grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-4",
+      render: () => (
+        <>
+          {skills.map((skill) => (
+            <button
+              key={skill.name}
+              type="button"
+              className="eldfall-card eldfall-card-interactive card-p group text-left"
+              onClick={() => handleSelectItem({ type: "skills", data: skill })}
+            >
+              <div className="flex justify-between items-start mb-2">
+                <h3 className="text-base font-bold text-white group-hover:text-red-500 transition-colors">{skill.name}</h3>
+                <Info className="w-4 h-4 text-stone-700 group-hover:text-red-500 transition-colors" />
+              </div>
+              <p className="body-xs line-clamp-3">{skill.description}</p>
+            </button>
+          ))}
+        </>
+      ),
+    },
+    {
+      id: "combatArts",
+      tabLabel: "Combat Arts",
+      tabIcon: <Sword className="w-5 h-5" />,
+      gridClassName: "grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4",
+      render: () => (
+        <>
+          {combatArtCategories.map((cac) => (
+            <button
+              key={cac.name}
+              type="button"
+              className="eldfall-card eldfall-card-interactive card-p group text-left"
+              onClick={() => handleSelectItem({ type: "combatArts", data: cac })}
+            >
+              <div className="flex justify-between items-start mb-3">
+                <span className="text-xs font-display uppercase tracking-eyebrow text-red-500/70">Combat Art</span>
+                <Sword className="w-4 h-4 text-stone-700 group-hover:text-red-500 transition-colors" />
+              </div>
+              <h3 className="text-lg font-bold text-white mb-2 group-hover:text-red-500 transition-colors">{cac.name}</h3>
+              <div className="space-y-2">
+                <p className="text-stone-300 body-sm line-clamp-2">{cac.ruleText}</p>
+                <p className="body-xs italic line-clamp-2">{cac.flavorText}</p>
+              </div>
+              <div className="mt-4 flex items-center text-xs text-stone-500 uppercase tracking-eyebrow">
+                <span className="text-red-500 mr-2">{cac.levels.length}</span> Levels Available
+              </div>
+            </button>
+          ))}
+        </>
+      ),
+    },
+    {
+      id: "classes",
+      tabLabel: "Classes",
+      tabIcon: <Users className="w-5 h-5" />,
+      gridClassName: "grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4",
+      render: () => (
+        <>
+          {classes.map((cls) => (
+            <button
+              key={cls.name}
+              type="button"
+              className="eldfall-card eldfall-card-interactive card-p group text-left"
+              onClick={() => handleSelectItem({ type: "classes", data: cls })}
+            >
+              <h3 className="text-lg font-bold text-white mb-2 group-hover:text-red-500 transition-colors">{cls.name}</h3>
+              <p className="body-xs mb-4 italic line-clamp-2">{cls.description}</p>
+              <div className="space-y-2">
+                {cls.abilities.slice(0, 2).map((ability, i) => (
+                  <div key={i} className="flex items-start text-xs">
+                    <span className="text-red-500 mr-2 mt-0.5">-</span>
+                    <span className="text-stone-300 line-clamp-1">{ability}</span>
+                  </div>
+                ))}
+                {cls.abilities.length > 2 && (
+                  <p className="text-stone-500 text-[10px] mt-2">+ {cls.abilities.length - 2} more abilities...</p>
+                )}
+              </div>
+            </button>
+          ))}
+        </>
+      ),
+    },
+    {
+      id: "actions",
+      tabLabel: "Actions",
+      tabIcon: <Activity className="w-5 h-5" />,
+      gridClassName: "grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4",
+      render: () => (
+        <>
+          {rules
+            .filter(r => r.category === "Normal Action" || r.category === "Special Action")
+            .map((section) => (
+              <button
+                key={section.id}
+                type="button"
+                className="eldfall-card eldfall-card-interactive card-p group text-left"
+                onClick={() => handleSelectItem({ type: "actions", data: section })}
+              >
+                <div className="flex justify-between items-start mb-3">
+                  <span className="text-[10px] font-display uppercase tracking-eyebrow text-red-500/70">{section.category}</span>
+                  <Activity className="w-4 h-4 text-stone-700 group-hover:text-red-500 transition-colors" />
+                </div>
+                <h2 className="text-lg font-bold text-white mb-2 group-hover:text-red-500 transition-colors">{section.title}</h2>
+                <p className="body-sm line-clamp-3 text-stone-400">{section.content}</p>
+              </button>
+            ))}
+        </>
+      ),
+    },
+    {
+      id: "hostiles",
+      tabLabel: "Hostiles",
+      tabIcon: <Target className="w-5 h-5" />,
+      gridClassName: "grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4",
+      render: () => (
+        <>
+          {rules.filter(r => r.category === "Hostiles").map((section) => (
+            <button
+              key={section.id}
+              type="button"
+              className="eldfall-card eldfall-card-interactive card-p group text-left"
+              onClick={() => handleSelectItem({ type: "hostiles", data: section })}
+            >
+              <div className="flex justify-between items-start mb-3">
+                <span className="text-xs font-display uppercase tracking-eyebrow text-red-500/70">{section.category}</span>
+                <Target className="w-4 h-4 text-stone-700 group-hover:text-red-500 transition-colors" />
+              </div>
+              <h2 className="text-lg font-bold text-white mb-2 group-hover:text-red-500 transition-colors">{section.title}</h2>
+              <p className="body-sm line-clamp-3 text-stone-400">{section.content}</p>
+            </button>
+          ))}
+        </>
+      ),
+    },
+    {
+      id: "environments",
+      tabLabel: "Environments",
+      tabIcon: <Sparkles className="w-5 h-5" />,
+      gridClassName: "grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4",
+      render: () => (
+        <>
+          {rules.filter(r => r.category === "Environment").map((section) => (
+            <button
+              key={section.id}
+              type="button"
+              className="eldfall-card eldfall-card-interactive card-p group text-left"
+              onClick={() => handleSelectItem({ type: "environments", data: section })}
+            >
+              <div className="flex justify-between items-start mb-3">
+                <span className="text-xs font-display uppercase tracking-eyebrow text-red-500/70">{section.category}</span>
+                <Sparkles className="w-4 h-4 text-stone-700 group-hover:text-red-500 transition-colors" />
+              </div>
+              <h2 className="text-lg font-bold text-white mb-2 group-hover:text-red-500 transition-colors">{section.title}</h2>
+              <p className="body-sm line-clamp-3 text-stone-400">{section.content}</p>
+            </button>
+          ))}
+        </>
+      ),
+    },
+  ];
+
   return (
     <div className="min-h-screen bg-stone-950">
       <MetaTags 
@@ -390,60 +658,18 @@ export default function RulesWiki({ onBack }: { onBack: () => void }) {
 
         {/* Tabs */}
         <div id="rules-wiki-tabs" className="flex space-x-2 md:space-x-4 mb-8 border-b border-stone-800 overflow-x-auto custom-scrollbar">
-          <TabButton 
-            active={activeTab === "mechanics"} 
-            onClick={() => handleTabChange("mechanics")}
-            icon={<BookOpen className="w-5 h-5" />}
-            label="CORE RULES"
-          />
-          <TabButton 
-            active={activeTab === "states"} 
-            onClick={() => handleTabChange("states")}
-            icon={<Activity className="w-5 h-5" />}
-            label="States"
-          />
-          <TabButton 
-            active={activeTab === "traits"} 
-            onClick={() => handleTabChange("traits")}
-            icon={<Shield className="w-5 h-5" />}
-            label="Traits"
-          />
-          <TabButton 
-            active={activeTab === "skills"} 
-            onClick={() => handleTabChange("skills")}
-            icon={<Zap className="w-5 h-5" />}
-            label="Skills"
-          />
-          <TabButton 
-            active={activeTab === "combatArts"} 
-            onClick={() => handleTabChange("combatArts")}
-            icon={<Sword className="w-5 h-5" />}
-            label="Combat Arts"
-          />
-          <TabButton 
-            active={activeTab === "classes"} 
-            onClick={() => handleTabChange("classes")}
-            icon={<Users className="w-5 h-5" />}
-            label="Classes"
-          />
-          <TabButton 
-            active={activeTab === "actions"} 
-            onClick={() => handleTabChange("actions")}
-            icon={<Activity className="w-5 h-5" />}
-            label="Actions"
-          />
-          <TabButton 
-            active={activeTab === "hostiles"} 
-            onClick={() => handleTabChange("hostiles")}
-            icon={<Target className="w-5 h-5" />}
-            label="Hostiles"
-          />
-          <TabButton 
-            active={activeTab === "environments"} 
-            onClick={() => handleTabChange("environments")}
-            icon={<Sparkles className="w-5 h-5" />}
-            label="Environments"
-          />
+          {tabConfigs.map((tab) => (
+            <TabButton
+              key={tab.id}
+              active={activeTab === tab.id}
+              onClick={() => handleTabChange(tab.id)}
+              icon={tab.tabIcon}
+              label={tab.tabLabel}
+              layoutId="activeTab"
+              indicatorClassName="bg-red-600 shadow-[0_0_8px_rgba(220,38,38,0.4)]"
+              className="shrink-0"
+            />
+          ))}
         </div>
 
         <div>
@@ -488,251 +714,17 @@ export default function RulesWiki({ onBack }: { onBack: () => void }) {
             )
           ) : (
           <AnimatePresence mode="wait">
-            {activeTab === "mechanics" && (
+            {tabConfigs.filter((tab) => tab.id === activeTab).map((tab) => (
               <motion.div
-                key="mechanics"
+                key={tab.id}
                 initial={{ opacity: 0, y: 10 }}
                 animate={{ opacity: 1, y: 0 }}
                 exit={{ opacity: 0, y: -10 }}
-                className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4"
+                className={tab.gridClassName}
               >
-                {rules.filter(r => r.category !== "Hostiles" && r.category !== "Normal Action" && r.category !== "Special Action" && r.category !== "Environment").map((section) => (
-                  <button
-                    key={section.id}
-                    type="button"
-                    className="eldfall-card eldfall-card-interactive card-p group text-left"
-                    onClick={() => handleSelectItem({ type: "mechanics", data: section })}
-                  >
-                    <div className="flex justify-between items-start mb-3">
-                      <span className="text-xs font-display uppercase tracking-eyebrow text-red-500/70">{section.category}</span>
-                      <Sparkles className="w-4 h-4 text-stone-700 group-hover:text-red-500 transition-colors" />
-                    </div>
-                    <h2 className="text-lg font-bold text-white mb-2 group-hover:text-red-500 transition-colors">{section.title}</h2>
-                    <p className="body-sm line-clamp-3 text-stone-400">{section.content}</p>
-                  </button>
-                ))}
+                {tab.render()}
               </motion.div>
-            )}
-
-            {activeTab === "environments" && (
-              <motion.div
-                key="environments"
-                initial={{ opacity: 0, y: 10 }}
-                animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0, y: -10 }}
-                className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4"
-              >
-                {rules.filter(r => r.category === "Environment").map((section) => (
-                  <button
-                    key={section.id}
-                    type="button"
-                    className="eldfall-card eldfall-card-interactive card-p group text-left"
-                    onClick={() => handleSelectItem({ type: "environments", data: section } as SelectedItem)}
-                  >
-                    <div className="flex justify-between items-start mb-3">
-                      <span className="text-xs font-display uppercase tracking-eyebrow text-red-500/70">{section.category}</span>
-                      <Sparkles className="w-4 h-4 text-stone-700 group-hover:text-red-500 transition-colors" />
-                    </div>
-                    <h2 className="text-lg font-bold text-white mb-2 group-hover:text-red-500 transition-colors">{section.title}</h2>
-                    <p className="body-sm line-clamp-3 text-stone-400">{section.content}</p>
-                  </button>
-                ))}
-              </motion.div>
-            )}
-
-            {activeTab === "actions" && (
-              <motion.div
-                key="actions"
-                initial={{ opacity: 0, y: 10 }}
-                animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0, y: -10 }}
-                className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4"
-              >
-                {rules
-                  .filter(r => r.category === "Normal Action" || r.category === "Special Action")
-                  .map((section) => (
-                    <button
-                      key={section.id}
-                      type="button"
-                      className="eldfall-card eldfall-card-interactive card-p group text-left"
-                      onClick={() => handleSelectItem({ type: "actions", data: section } as SelectedItem)}
-                    >
-                      <div className="flex justify-between items-start mb-3">
-                        <span className="text-[10px] font-display uppercase tracking-eyebrow text-red-500/70">{section.category}</span>
-                        <Activity className="w-4 h-4 text-stone-700 group-hover:text-red-500 transition-colors" />
-                      </div>
-                      <h2 className="text-lg font-bold text-white mb-2 group-hover:text-red-500 transition-colors">{section.title}</h2>
-                      <p className="body-sm line-clamp-3 text-stone-400">{section.content}</p>
-                    </button>
-                  ))}
-              </motion.div>
-            )}
-
-            {activeTab === "hostiles" && (
-              <motion.div
-                key="hostiles"
-                initial={{ opacity: 0, y: 10 }}
-                animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0, y: -10 }}
-                className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4"
-              >
-                {rules.filter(r => r.category === "Hostiles").map((section) => (
-                  <button
-                    key={section.id}
-                    type="button"
-                    className="eldfall-card eldfall-card-interactive card-p group text-left"
-                    onClick={() => handleSelectItem({ type: "hostiles", data: section } as SelectedItem)}
-                  >
-                    <div className="flex justify-between items-start mb-3">
-                      <span className="text-xs font-display uppercase tracking-eyebrow text-red-500/70">{section.category}</span>
-                      <Target className="w-4 h-4 text-stone-700 group-hover:text-red-500 transition-colors" />
-                    </div>
-                    <h2 className="text-lg font-bold text-white mb-2 group-hover:text-red-500 transition-colors">{section.title}</h2>
-                    <p className="body-sm line-clamp-3 text-stone-400">{section.content}</p>
-                  </button>
-                ))}
-              </motion.div>
-            )}
-
-            {activeTab === "states" && (
-              <motion.div
-                key="states"
-                initial={{ opacity: 0, y: 10 }}
-                animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0, y: -10 }}
-                className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-4"
-              >
-                {states.map((state) => (
-                  <button
-                    key={state.name}
-                    type="button"
-                    className="eldfall-card eldfall-card-interactive card-p group text-left"
-                    onClick={() => handleSelectItem({ type: "states", data: state })}
-                  >
-                    <div className="flex justify-between items-start mb-2">
-                      <h3 className="text-base font-bold text-white group-hover:text-red-500 transition-colors">{state.name}</h3>
-                      <Info className="w-4 h-4 text-stone-700 group-hover:text-red-500 transition-colors" />
-                    </div>
-                    <p className="body-xs line-clamp-3">{state.description}</p>
-                  </button>
-                ))}
-              </motion.div>
-            )}
-
-            {activeTab === "traits" && (
-              <motion.div
-                key="traits"
-                initial={{ opacity: 0, y: 10 }}
-                animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0, y: -10 }}
-                className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-4"
-              >
-                {traits.map((trait) => (
-                  <button
-                    key={trait.name}
-                    type="button"
-                    className="eldfall-card eldfall-card-interactive card-p group text-left"
-                    onClick={() => handleSelectItem({ type: "traits", data: trait })}
-                  >
-                    <div className="flex justify-between items-start mb-2">
-                      <h3 className="text-base font-bold text-white group-hover:text-red-500 transition-colors">{trait.name}</h3>
-                      <Info className="w-4 h-4 text-stone-700 group-hover:text-red-500 transition-colors" />
-                    </div>
-                    <p className="body-xs line-clamp-3">{trait.description}</p>
-                  </button>
-                ))}
-              </motion.div>
-            )}
-
-            {activeTab === "skills" && (
-              <motion.div
-                key="skills"
-                initial={{ opacity: 0, y: 10 }}
-                animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0, y: -10 }}
-                className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-4"
-              >
-                {skills.map((skill) => (
-                  <button
-                    key={skill.name}
-                    type="button"
-                    className="eldfall-card eldfall-card-interactive card-p group text-left"
-                    onClick={() => handleSelectItem({ type: "skills", data: skill })}
-                  >
-                    <div className="flex justify-between items-start mb-2">
-                      <h3 className="text-base font-bold text-white group-hover:text-red-500 transition-colors">{skill.name}</h3>
-                      <Info className="w-4 h-4 text-stone-700 group-hover:text-red-500 transition-colors" />
-                    </div>
-                    <p className="body-xs line-clamp-3">{skill.description}</p>
-                  </button>
-                ))}
-              </motion.div>
-            )}
-
-            {activeTab === "combatArts" && (
-              <motion.div
-                key="combatArts"
-                initial={{ opacity: 0, y: 10 }}
-                animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0, y: -10 }}
-                className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4"
-              >
-                {combatArtCategories.map((cac) => (
-                  <button
-                    key={cac.name}
-                    type="button"
-                    className="eldfall-card eldfall-card-interactive card-p group text-left"
-                    onClick={() => handleSelectItem({ type: "combatArts", data: cac })}
-                  >
-                    <div className="flex justify-between items-start mb-3">
-                      <span className="text-xs font-display uppercase tracking-eyebrow text-red-500/70">Combat Art</span>
-                      <Sword className="w-4 h-4 text-stone-700 group-hover:text-red-500 transition-colors" />
-                    </div>
-                    <h3 className="text-lg font-bold text-white mb-2 group-hover:text-red-500 transition-colors">{cac.name}</h3>
-                    <div className="space-y-2">
-                      <p className="text-stone-300 body-sm line-clamp-2">{cac.ruleText}</p>
-                      <p className="body-xs italic line-clamp-2">{cac.flavorText}</p>
-                    </div>
-                    <div className="mt-4 flex items-center text-xs text-stone-500 uppercase tracking-eyebrow">
-                      <span className="text-red-500 mr-2">{cac.levels.length}</span> Levels Available
-                    </div>
-                  </button>
-                ))}
-              </motion.div>
-            )}
-
-            {activeTab === "classes" && (
-              <motion.div
-                key="classes"
-                initial={{ opacity: 0, y: 10 }}
-                animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0, y: -10 }}
-                className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4"
-              >
-                {classes.map((cls) => (
-                  <button
-                    key={cls.name}
-                    type="button"
-                    className="eldfall-card eldfall-card-interactive card-p group text-left"
-                    onClick={() => handleSelectItem({ type: "classes", data: cls })}
-                  >
-                    <h3 className="text-lg font-bold text-white mb-2 group-hover:text-red-500 transition-colors">{cls.name}</h3>
-                    <p className="body-xs mb-4 italic line-clamp-2">{cls.description}</p>
-                    <div className="space-y-2">
-                      {cls.abilities.slice(0, 2).map((ability, i) => (
-                        <div key={i} className="flex items-start text-xs">
-                          <span className="text-red-500 mr-2 mt-0.5">-</span>
-                          <span className="text-stone-300 line-clamp-1">{ability}</span>
-                        </div>
-                      ))}
-                      {cls.abilities.length > 2 && (
-                        <p className="text-stone-500 text-[10px] mt-2">+ {cls.abilities.length - 2} more abilities...</p>
-                      )}
-                    </div>
-                  </button>
-                ))}
-              </motion.div>
-            )}
+            ))}
           </AnimatePresence>
           )}
         </div>
@@ -878,27 +870,5 @@ export default function RulesWiki({ onBack }: { onBack: () => void }) {
         </AnimatePresence>
       </main>
     </div>
-  );
-}
-
-function TabButton({ active, onClick, icon, label }: { active: boolean; onClick: () => void; icon: React.ReactNode; label: string }) {
-  return (
-    <button
-      onClick={onClick}
-      className={`flex items-center space-x-2 px-4 py-3 text-xs md:text-sm font-display uppercase tracking-eyebrow transition-all relative shrink-0 whitespace-nowrap ${
-        active ? "text-red-500" : "text-stone-500 hover:text-stone-300"
-      }`}
-    >
-      <div className="flex items-center justify-center min-w-[1.25rem] h-5">
-        {icon}
-      </div>
-      <span>{label}</span>
-      {active && (
-        <motion.div 
-          layoutId="activeTab"
-          className="absolute bottom-0 left-0 right-0 h-0.5 bg-red-600 shadow-[0_0_8px_rgba(220,38,38,0.4)]"
-        />
-      )}
-    </button>
   );
 }

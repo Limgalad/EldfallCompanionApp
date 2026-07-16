@@ -3,11 +3,12 @@ import { motion, AnimatePresence } from "motion/react";
 import { X, Ghost } from "lucide-react";
 import { creatureCategories } from "../../data/creatures";
 import { useSearchParams } from "react-router-dom";
+import { CreatureCard } from "./CreatureCard";
 
 interface CreaturesModalProps {
   isOpen: boolean;
   onClose: () => void;
-  onShowTooltip: (name: string, type: 'skill' | 'trait' | 'spell') => void;
+  onShowTooltip: (name: string, type: 'skill' | 'trait' | 'spell' | 'combatArt') => void;
 }
 
 export const CreaturesModal: React.FC<CreaturesModalProps> = ({ isOpen, onClose, onShowTooltip }) => {
@@ -74,127 +75,7 @@ export const CreaturesModal: React.FC<CreaturesModalProps> = ({ isOpen, onClose,
               <div className="flex-1 overflow-y-auto p-4 surface-1 custom-scrollbar">
                 <div className="space-y-6">
                   {currentCategory?.creatures.map((creature, idx) => (
-                    <div key={idx} className="p-4 rounded-lg border border-stone-800 bg-surface-2/20">
-                      <div className="flex justify-between items-start mb-3">
-                        <div>
-                          <h3 className="text-lg font-bold text-white mb-1 leading-tight">{creature.name}</h3>
-                          <div className="flex flex-wrap gap-2 mb-2">
-                            <span className="text-stone-500 text-[10px] uppercase font-bold tracking-meta">Size: {creature.size}</span>
-                            <span className="text-stone-500 text-[10px] uppercase font-bold tracking-meta">Type: {creature.type}</span>
-                            {creature.class && <span className="text-stone-500 text-[10px] uppercase font-bold tracking-meta">Class: {creature.class}</span>}
-                          </div>
-                          <p className="body-xs italic">{creature.description}</p>
-                        </div>
-                        <span className="eldfall-chip shrink-0">
-                          {creature.tier}
-                        </span>
-                      </div>
-
-                      {/* Stats Grid */}
-                      <div className="grid grid-cols-4 sm:grid-cols-6 md:grid-cols-11 gap-1 mb-4">
-                        {Object.entries(creature.stats).map(([key, value]) => (
-                          <div key={key} className="surface-1 border border-stone-800 rounded-lg p-1.5 text-center">
-                            <div className="text-[8px] text-stone-500 uppercase font-bold mb-0.5">{key}</div>
-                            <div className="text-white text-xs font-mono">{value}</div>
-                          </div>
-                        ))}
-                      </div>
-
-                      {/* Weapons */}
-                      <div className="mb-4">
-                        <h4 className="text-stone-300 font-bold uppercase text-[10px] tracking-eyebrow mb-2 border-b border-stone-800 pb-1">Weapons</h4>
-                        <div className="space-y-2">
-                          {creature.weapons.map((weapon, wIdx) => (
-                            <div key={wIdx} className="bg-stone-950/50 border border-stone-800/50 rounded-lg p-2 text-xs">
-                              <div className="flex flex-wrap items-center gap-3 mb-1">
-                                <span className="font-bold text-red-500">{weapon.name}</span>
-                                <span className="text-stone-500 text-[10px] uppercase">{weapon.type}</span>
-                                <div className="flex gap-2 text-stone-400 font-mono text-[10px]">
-                                  <span>PW: {weapon.pw}</span>
-                                  <span>RCH: {weapon.rch}</span>
-                                  <span>STK: {weapon.stk}</span>
-                                  {weapon.qty !== undefined && <span>QTY: {weapon.qty}</span>}
-                                  {weapon.wgt !== undefined && <span>WGT: {weapon.wgt}</span>}
-                                </div>
-                              </div>
-                              <p className="text-stone-400 italic text-[10px]">{weapon.effects}</p>
-                            </div>
-                          ))}
-                        </div>
-                      </div>
-
-                      {/* Traits, Skills, etc. */}
-                      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-                        <div>
-                          <h4 className="text-stone-300 font-bold uppercase text-[10px] tracking-eyebrow mb-2 border-b border-stone-800 pb-1">Skills</h4>
-                          <div className="flex flex-wrap gap-1.5">
-                            {creature.skills.map((skill, sIdx) => (
-                              <button 
-                                key={sIdx} 
-                                onClick={() => onShowTooltip(skill, 'skill')}
-                                className="px-1.5 py-0.5 bg-stone-900 border border-stone-800 text-red-400 text-[10px] rounded-lg hover:bg-stone-800 transition-colors"
-                              >
-                                {skill}
-                              </button>
-                            ))}
-                          </div>
-                        </div>
-                        <div>
-                          <h4 className="text-stone-300 font-bold uppercase text-[10px] tracking-eyebrow mb-2 border-b border-stone-800 pb-1">Traits</h4>
-                          <div className="flex flex-wrap gap-1.5">
-                            {creature.traits.map((trait, tIdx) => (
-                              <button 
-                                key={tIdx} 
-                                onClick={() => onShowTooltip(trait, 'trait')}
-                                className="px-1.5 py-0.5 bg-stone-900 border border-stone-800 text-stone-300 text-[10px] rounded-lg hover:bg-stone-800 transition-colors"
-                              >
-                                {trait}
-                              </button>
-                            ))}
-                          </div>
-                        </div>
-                        {(creature.spellcrafts || creature.combatArts) && (
-                          <div>
-                            {creature.spellcrafts && creature.spellcrafts.length > 0 && (
-                              <div className="mb-2">
-                                <h4 className="text-stone-300 font-bold uppercase text-[10px] tracking-eyebrow mb-2 border-b border-stone-800 pb-1">Spellcrafts</h4>
-                                <div className="flex flex-wrap gap-1.5">
-                                  {creature.spellcrafts.map((spell, sIdx) => (
-                                    <button 
-                                      key={sIdx} 
-                                      onClick={() => onShowTooltip(spell, 'spell')}
-                                      className="px-1.5 py-0.5 bg-stone-900 border border-stone-800 text-blue-400 text-[10px] rounded-lg hover:bg-stone-800 transition-colors"
-                                    >
-                                      {spell}
-                                    </button>
-                                  ))}
-                                </div>
-                              </div>
-                            )}
-                            {creature.combatArts && creature.combatArts.length > 0 && (
-                              <div>
-                                <h4 className="text-stone-300 font-bold uppercase text-[10px] tracking-eyebrow mb-2 border-b border-stone-800 pb-1">Combat Arts</h4>
-                                <div className="flex flex-wrap gap-1.5">
-                                  {creature.combatArts.map((art, aIdx) => (
-                                    <button 
-                                      key={aIdx} 
-                                      onClick={() => onShowTooltip(art, 'trait')}
-                                      className="px-1.5 py-0.5 bg-stone-900 border border-stone-800 text-amber-400 text-[10px] rounded-lg hover:bg-stone-800 transition-colors"
-                                    >
-                                      {art}
-                                    </button>
-                                  ))}
-                                </div>
-                              </div>
-                            )}
-                          </div>
-                        )}
-                        <div className={!(creature.spellcrafts || creature.combatArts) ? "lg:col-span-2" : ""}>
-                          <h4 className="text-stone-300 font-bold uppercase text-[10px] tracking-eyebrow mb-2 border-b border-stone-800 pb-1">Behavior</h4>
-                          <p className="text-stone-400 text-xs leading-relaxed whitespace-pre-wrap">{creature.behavior}</p>
-                        </div>
-                      </div>
-                    </div>
+                    <CreatureCard key={idx} creature={creature} variant="list" onShowTooltip={onShowTooltip} />
                   ))}
                 </div>
               </div>

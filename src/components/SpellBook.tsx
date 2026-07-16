@@ -5,6 +5,7 @@ import { ArrowLeft, Wand2, Search, Sparkles, X, ExternalLink } from 'lucide-reac
 import { spellSchools, Spell, SpellSchool } from '../data/spells';
 import { normalizeText, prepareFuzzySearchEntries, rankPreparedFuzzyResults, slugify } from '../utils/search';
 import MetaTags from './MetaTags';
+import { TabButton } from './TabButton';
 
 interface SpellBookProps {
   onBack: () => void;
@@ -184,14 +185,22 @@ export default function SpellBook({ onBack }: SpellBookProps) {
           <TabButton
             active={selectedSchool === null}
             onClick={() => handleSchoolTabChange(null)}
+            icon={<Wand2 className="w-4 h-4" />}
+            wrapIcon={false}
             label="All Schools"
+            layoutId="activeSpellSchoolTab"
+            indicatorClassName="bg-red-500"
           />
           {spellSchools.map((school) => (
             <TabButton
               key={school.name}
               active={selectedSchool === school.name}
               onClick={() => handleSchoolTabChange(school.name)}
+              icon={<Wand2 className="w-4 h-4" />}
+              wrapIcon={false}
               label={school.name}
+              layoutId="activeSpellSchoolTab"
+              indicatorClassName="bg-red-500"
             />
           ))}
         </div>
@@ -324,27 +333,6 @@ function SpellCard({ spell, isHighlighted = false }: { spell: Spell; isHighlight
         </p>
       </div>
     </div>
-  );
-}
-
-function TabButton({ active, onClick, label }: { active: boolean; onClick: () => void; label: string }) {
-  return (
-    <button
-      type="button"
-      onClick={onClick}
-      className={`flex items-center space-x-2 px-4 py-3 text-xs md:text-sm font-display uppercase tracking-eyebrow transition-all relative whitespace-nowrap ${
-        active ? 'text-red-500' : 'text-stone-500 hover:text-stone-300'
-      }`}
-    >
-      <Wand2 className="w-4 h-4" />
-      <span>{label}</span>
-      {active && (
-        <motion.div
-          layoutId="activeSpellSchoolTab"
-          className="absolute bottom-0 left-0 right-0 h-0.5 bg-red-500"
-        />
-      )}
-    </button>
   );
 }
 

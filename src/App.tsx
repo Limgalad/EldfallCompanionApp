@@ -298,7 +298,7 @@ function NavCard({
 function BugReportModal({ onClose }: { onClose: () => void }) {
   const [report, setReport] = useState("");
   const [captchaAnswer, setCaptchaAnswer] = useState("");
-  const [captchaChallenge, setCaptchaChallenge] = useState({ a: 0, b: 0 });
+  const [captchaChallenge, setCaptchaChallenge] = useState<{ a: number; b: number; token: string }>({ a: 0, b: 0, token: "" });
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [status, setStatus] = useState<{ type: 'success' | 'error', message: string } | null>(null);
 
@@ -306,18 +306,31 @@ function BugReportModal({ onClose }: { onClose: () => void }) {
     generateCaptcha();
   }, []);
 
-  const generateCaptcha = () => {
-    const a = Math.floor(Math.random() * 10) + 1;
-    const b = Math.floor(Math.random() * 10) + 1;
-    setCaptchaChallenge({ a, b });
+  const generateCaptcha = async () => {
     setCaptchaAnswer("");
+    try {
+      const response = await fetch("/api/captcha");
+      if (!response.ok) throw new Error("Failed to load security check.");
+      const data = await response.json();
+      setCaptchaChallenge({ a: data.a, b: data.b, token: data.token });
+    } catch (error) {
+      console.error("Error loading captcha:", error);
+      setCaptchaChallenge({ a: 0, b: 0, token: "" });
+      setStatus({ type: 'error', message: "Could not load the security check. Please try again later." });
+    }
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    
+
     if (report.trim().length < 10) {
       setStatus({ type: 'error', message: "Bug report must be at least 10 characters long." });
+      return;
+    }
+
+    if (!captchaChallenge.token) {
+      setStatus({ type: 'error', message: "Security check not loaded. Please try again." });
+      generateCaptcha();
       return;
     }
 
@@ -336,11 +349,10 @@ function BugReportModal({ onClose }: { onClose: () => void }) {
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({ 
+        body: JSON.stringify({
           report,
           captcha: {
-            a: captchaChallenge.a,
-            b: captchaChallenge.b,
+            token: captchaChallenge.token,
             answer: parseInt(captchaAnswer)
           }
         }),
@@ -355,6 +367,8 @@ function BugReportModal({ onClose }: { onClose: () => void }) {
         }, 2000);
       } else {
         setStatus({ type: 'error', message: data.message });
+        // The token is single-use per attempt on failure — fetch a fresh one.
+        generateCaptcha();
       }
     } catch (error) {
       console.error("Error submitting report:", error);
@@ -395,6 +409,7 @@ function BugReportModal({ onClose }: { onClose: () => void }) {
           </p>
           <textarea
             required
+            maxLength={5000}
             disabled={isSubmitting}
             value={report}
             onChange={(e) => setReport(e.target.value)}

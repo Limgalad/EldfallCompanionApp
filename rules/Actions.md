@@ -1,4 +1,3 @@
-
 # List of Actions
 
 ## Normal Actions

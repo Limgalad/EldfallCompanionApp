@@ -25,6 +25,7 @@ Only a model whose Profile card **lists the name of a specific Mount** may ride 
 - A model may dismount during its **Strategic Phase**, **Movement Step**, or by declaring **Dodge**.
 - Upon dismounting, the Mount is **instantly removed** from the field.
 - A model cannot mount if it is in the Engaged State.
+
 ---
 
 ## Profile and Attribute Interaction

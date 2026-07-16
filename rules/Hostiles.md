@@ -1,4 +1,3 @@
-
 # Hostiles
 
 Hostiles are models controlled by the game (AI). They function like any other model with their own Profile Cards, and behave according to Hostile Behavior cards.

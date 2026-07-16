@@ -4,11 +4,12 @@ import { ArrowLeft, Map as MapIcon, Target, ScrollText, Trophy, Info, X, Ghost, 
 import { Mission } from "../../data/missions";
 import { creatureCategories, Creature } from "../../data/creatures";
 import { CollapsibleSection } from "./CollapsibleSection";
+import { CreatureCard } from "./CreatureCard";
 
 interface MissionDetailProps {
   mission: Mission;
   onBack: () => void;
-  onShowTooltip: (name: string, type: 'skill' | 'trait' | 'spell') => void;
+  onShowTooltip: (name: string, type: 'skill' | 'trait' | 'spell' | 'combatArt') => void;
 }
 
 export const MissionDetailView: React.FC<MissionDetailProps> = ({ 
@@ -202,121 +203,7 @@ export const MissionDetailView: React.FC<MissionDetailProps> = ({
                 </button>
               </div>
               <div className="flex-1 overflow-y-auto card-p-lg custom-scrollbar">
-                <div className="mb-10">
-                  <div className="flex justify-between items-start mb-6">
-                    <div>
-                      <h3 className="text-2xl font-bold text-white mb-2 leading-tight">{quickCreature.name}</h3>
-                      <div className="flex flex-wrap gap-3">
-                        <span className="text-stone-500 text-[10px] uppercase font-bold tracking-meta">Size: {quickCreature.size}</span>
-                        <span className="text-stone-500 text-[10px] uppercase font-bold tracking-meta">Type: {quickCreature.type}</span>
-                        {quickCreature.class && <span className="text-stone-500 text-[10px] uppercase font-bold tracking-meta">Class: {quickCreature.class}</span>}
-                      </div>
-                    </div>
-                    <span className="eldfall-chip">
-                      {quickCreature.tier}
-                    </span>
-                  </div>
-                </div>
-
-                <div className="grid grid-cols-4 sm:grid-cols-6 md:grid-cols-11 gap-1 mb-8">
-                  {Object.entries(quickCreature.stats).map(([key, value]) => (
-                    <div key={key} className="surface-1 border border-stone-800 rounded-lg p-1.5 text-center">
-                      <div className="text-[8px] text-stone-500 uppercase font-bold mb-0.5">{key}</div>
-                      <div className="text-white text-xs font-mono">{value}</div>
-                    </div>
-                  ))}
-                </div>
-
-                <div className="mb-8">
-                  <h4 className="h3-standard mb-4 border-b border-stone-800 pb-2">Weapons</h4>
-                  <div className="stack-standard">
-                    {quickCreature.weapons.map((weapon, wIdx) => (
-                      <div key={wIdx} className="bg-stone-900/30 border border-stone-800 rounded-xl p-3">
-                        <div className="flex flex-wrap items-center gap-4 mb-2">
-                          <span className="font-bold text-red-500 text-sm leading-none">{weapon.name}</span>
-                          <span className="text-stone-500 text-[10px] uppercase">{weapon.type}</span>
-                          <div className="flex gap-3 text-stone-400 font-mono text-xs">
-                            <span>PW: {weapon.pw}</span>
-                            <span>RCH: {weapon.rch}</span>
-                            <span>STK: {weapon.stk}</span>
-                          </div>
-                        </div>
-                        <p className="body-xs italic">{weapon.effects}</p>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
-                  <div>
-                    <h4 className="h3-standard mb-4 border-b border-stone-800 pb-2">Skills</h4>
-                    <div className="flex flex-wrap gap-2">
-                      {quickCreature.skills.map((skill, sIdx) => (
-                        <button 
-                          key={sIdx} 
-                          onClick={() => onShowTooltip(skill, 'skill')}
-                          className="px-2 py-0.5 bg-stone-900 border border-stone-800 text-red-400 text-[10px] rounded-lg hover:bg-stone-800 transition-colors"
-                        >
-                          {skill}
-                        </button>
-                      ))}
-                    </div>
-                  </div>
-                  <div>
-                    <h4 className="h3-standard mb-4 border-b border-stone-800 pb-2">Traits</h4>
-                    <div className="flex flex-wrap gap-2">
-                      {quickCreature.traits.map((trait, tIdx) => (
-                        <button 
-                          key={tIdx} 
-                          onClick={() => onShowTooltip(trait, 'trait')}
-                          className="px-2 py-0.5 bg-stone-900 border border-stone-800 text-stone-300 text-[10px] rounded-lg hover:bg-stone-800 transition-colors"
-                        >
-                          {trait}
-                        </button>
-                      ))}
-                    </div>
-                  </div>
-                  {(quickCreature.spellcrafts || quickCreature.combatArts) && (
-                    <div className="stack-standard">
-                      {quickCreature.spellcrafts && quickCreature.spellcrafts.length > 0 && (
-                        <div>
-                          <h4 className="h3-standard mb-4 border-b border-stone-800 pb-2">Spellcrafts</h4>
-                          <div className="flex flex-wrap gap-2">
-                            {quickCreature.spellcrafts.map((spell, sIdx) => (
-                              <button 
-                                key={sIdx} 
-                                onClick={() => onShowTooltip(spell, 'spell')}
-                                className="px-2 py-0.5 bg-stone-900 border border-stone-800 text-blue-400 text-[10px] rounded-lg hover:bg-stone-800 transition-colors"
-                              >
-                                {spell}
-                              </button>
-                            ))}
-                          </div>
-                        </div>
-                      )}
-                      {quickCreature.combatArts && quickCreature.combatArts.length > 0 && (
-                        <div>
-                          <h4 className="h3-standard mb-4 border-b border-stone-800 pb-2">Combat Arts</h4>
-                          <div className="flex flex-wrap gap-2">
-                            {quickCreature.combatArts.map((art, aIdx) => (
-                              <button 
-                                key={aIdx} 
-                                onClick={() => onShowTooltip(art, 'trait')}
-                                className="px-2 py-0.5 bg-stone-900 border border-stone-800 text-amber-400 text-[10px] rounded-lg hover:bg-stone-800 transition-colors"
-                              >
-                                {art}
-                              </button>
-                            ))}
-                          </div>
-                        </div>
-                      )}
-                    </div>
-                  )}
-                  <div className={!(quickCreature.spellcrafts || quickCreature.combatArts) ? "lg:col-span-2" : ""}>
-                    <h4 className="h3-standard mb-4 border-b border-stone-800 pb-2">Behavior</h4>
-                    <p className="body-xs leading-relaxed whitespace-pre-wrap font-sans">{quickCreature.behavior}</p>
-                  </div>
-                </div>
+                <CreatureCard creature={quickCreature} variant="detail" onShowTooltip={onShowTooltip} />
               </div>
               
               <div className="card-p surface-1/50 border-t border-stone-800 text-center shrink-0">

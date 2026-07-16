@@ -207,6 +207,6 @@ export const traits: Trait[] = [
   },
   {
     name: "Weakening",
-    description: "If this model suffers a Wound with this Trait, it becomes Weakened."
+    description: "If a model suffers a Wound with this Trait, it becomes Weakened."
   }
 ];

@@ -7,7 +7,7 @@ interface MetaTagsProps {
   description?: string;
   image?: string;
   type?: 'website' | 'article' | 'factcheck' | 'howto';
-  structuredData?: Record<string, unknown>;
+  structuredData?: Record<string, unknown> | null;
   canonicalPath?: string;
 }
 
