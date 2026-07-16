@@ -16,6 +16,8 @@ Each die rolled as part of an Attack is an Attack Roll. A model rolls a number o
 
 After the dice are rolled, the player may reroll a selected number of dice (depending on the ability), completely negating their previous roll result.
 
+> **Note:** Reroll is granted by certain abilities.
+
 ### Damage Roll
 
 Roll a number of dice equal to the number of Hits. For each die result equal to or lower than the Power (PW) of the used Weapon minus the target's Armor (ARM), the target suffers a Wound.
@@ -32,11 +34,17 @@ Modifiers alter a model's attribute and affect the outcome of dice roll results.
 - If an attribute is increased over 20, the roll result of 20 also becomes a Critical Hit.
 - When a halving or doubling modifier is applied, first apply other modifiers, then halve or double the result (rounding up).
 
+> **Note:** If an attribute is halved or doubled multiple times, the player rounds up after each instance of halving or doubling. If a roll would be both halved and doubled, the two modifiers cancel each other out.
+
 ---
 
 ## Distance & Measurement
 
-All distances are measured in inches. The distance between models is measured in a straight line from the closest points of their Hitboxes. Movement distance is always measured from the same part of the model's base, along the exact route of movement.
+All distances are measured in inches. To check the validity of Actions, Reach, Movement, modifiers, and similar, distances are normally measured after the relevant Movement, Action, or Reaction has been declared. The distance between models is measured in a straight line from the closest points of their Hitboxes. Movement distance is always measured from the same part of the model's base, along the exact route of movement.
+
+### Pre-Measuring
+
+By agreement, players may pre-measure distances before declaring a Movement or Action/Reaction, depending on the chosen measuring mode.
 
 ### Modes of Measuring
 
@@ -47,6 +55,8 @@ Before starting the game, players decide which mode of measuring to implement:
 | **Assisted Mode** | Players can pre-measure any distance. |
 | **Standard Mode** | Pre-measuring limited to within the Awareness of models and the activated model's Movement distance. |
 | **Realism Mode** | Players are not allowed to pre-measure any distances. |
+
+> **Note:** When a model is moving, the player is not allowed to pre-measure distances other than the Movement distance. They can measure other distances before the model's Movement and after their model has completed the Movement. A player may not pre-measure the AoE effects by placing a template.
 
 ### Base Contact
 
@@ -71,6 +81,8 @@ There are two kinds of movement: Normal Movement and Special Movement.
 
 #### Ladder
 
+A Ladder is a predetermined vertical set of rungs, holds or steps that a model can use to move up a vertical surface. The model does not need to declare Climb Special Movement to use a Ladder.
+
 If a model is moving vertically up a Ladder or over a surface narrower than the model's base size, Movement costs double.
 
 > **Example:** Moving up a 2" ladder costs 4 SPD.
@@ -86,13 +98,15 @@ Line of Sight (LoS) is an imaginary straight line connecting the Hitboxes of two
 - A model has Line of Sight to another model if it can draw an unobstructed straight line from a point on its Hitbox to a point on the target model's Hitbox.
 - Line of Sight can be obscured by another model or scenery (even allied models).
 - While moving, a model has 360° Line of Sight.
-- A model always has Line of Sight to itself.
+- Line of Sight may be checked at any time, and a model always has Line of Sight to itself.
 
 ---
 
 ## Awareness
 
 Awareness represents the model's perception of its surroundings. It is an area surrounding the model with a radius (measured in inches) equal to the model's Agility value, measured from the edge of the miniature's base.
+
+A model is considered to be within another model's Awareness as long as its Hitbox is within or in contact with that model's Awareness.
 
 ---
 
@@ -110,6 +124,7 @@ A State represents certain conditions affecting a model. A token/marker represen
 There are two kinds of Actions: Normal Actions and Special Actions.
 
 - Normal Actions can be declared both during the model's Active and Reactive Role.
+- Unless specified otherwise, all Normal Actions can be declared as a Reaction.
 - In order to declare a Special Action, a model must first declare "Idle" during its Movement Phase.
 - Special Actions cannot be declared during the Reactive Role.
 
@@ -143,6 +158,11 @@ Reach represents the distance (in inches) at which an Item, Ability, or Spell ca
 - Items, Spells or Skills with Reach 0" can only be used in Base Contact with the target.
 - If the target of an Action is outside the Item's Reach, the Action resolves as a failure.
 - Ranged Weapons display one or multiple intervals, indicating distances at which certain Modifiers apply to the user's Accuracy attribute.
+- If the Reach distance of such Weapons would be modified, every interval becomes modified.
+
+> **Example:** A model using a Short Bow (Reach 0-20": 0; 21-40": -6) uses an ability that extends its Weapon's Reach by 2 inches on each interval. The modified Reach of the Short Bow becomes 0-22": 0; 23-42": -6.
+
+> **Note:** A model can hit targets at different elevations, provided it has sufficient Reach.
 
 ---
 
@@ -164,11 +184,19 @@ Some Abilities, Spells or Items have an Area of Effect (AoE). A template is plac
 - A model affected by an Attack with a template may avoid receiving Hits with a successful Dodge Action.
 - If the target of an Attack with a template declares an Attack (as Action or Reaction) and wins the Confrontation, the template Attack is fully nullified.
 
+> **Note:** The caster or user of the template does not suffer its own Attack.
+
 ### Template Kinds & Placement
 
 #### Circular (Small / Large)
 
 The target of the Attack must be fully covered by the template. The AoE also affects models 3" above and below the surface of the target. A model cannot be affected if there is no LoS between the center of the AoE and the model.
+
+If there is obstructing terrain between the center of the AoE and the target, the target may benefit from Cover.
+
+If the target's base is too large to be fully covered by the AoE, the model can still be targeted; place the entire AoE template over the target's base.
+
+> **Note:** You may also hit one additional model in Base Contact with the large-base target.
 
 - Large circular template: ⌀ 120mm
 - Small circular template: ⌀ 70mm
@@ -176,6 +204,10 @@ The target of the Attack must be fully covered by the template. The AoE also aff
 #### Spray (Small / Large)
 
 Spray templates are placed with the narrow end in Base Contact with the attacking model. The target must be fully covered by the template. The AoE may also affect models up to 5" above or below the attacker's surface (attacker's choice).
+
+A model cannot be affected by a Spray AoE if there is no LoS between the attacker and the affected model. If there is obstructing terrain between the attacker and the target, the target may benefit from Cover.
+
+If a model is too close to the attacker to be fully covered by the Spray template, it may still be targeted. In this case, both edges of the template must cover the target.
 
 - Large Spray template length: 260mm
 - Small Spray template length: 213mm
@@ -187,6 +219,8 @@ Spray templates are placed with the narrow end in Base Contact with the attackin
 Strike value (STK) specifies the number of dice rolled when performing an Action with a certain Item, Spell, or Ability. In the Reactive Role, a model's default Strike value becomes 1 (unless stated otherwise). Strike value cannot be modified below 1.
 
 In the Active Role, if the Active model has a Strike value greater than 1, it may Attack a number of different targets up to its Strike value.
+
+> **Note:** A player may choose to roll less dice than the number displayed in the Strike value.
 
 A successful Attack Roll is a Hit. If a Damage Roll is successful, it inflicts a Wound, causing the model to lose 1 HP. Suffering a Hit allows the hit model to rotate and adjust its Line of Sight.
 
@@ -202,11 +236,13 @@ When the result of a dice roll is **1**, it is a Critical Hit.
 - A Critical Hit beats all opponent's Confrontation roll results.
 - When both (or more) players score a Critical Hit, all models suffer the Hit and all additional effects.
 
+> **Note:** Some Items, Spells, etc. have effects that are triggered with a scored Critical Hit. Some Skills can increase or decrease the likelihood of a Critical Hit.
+
 ---
 
 ## Confrontation
 
-Confrontation occurs when two (or more) opposing models declare the Attack Action against one another. Both models fight simultaneously, each attempting to block incoming Strikes and hit their adversary.
+Confrontation occurs when two (or more) opposing models declare the Attack Action against one another. (This is the only instance when a Confrontation occurs!) Both models fight simultaneously, each attempting to block incoming Strikes and hit their adversary.
 
 ### Confrontation Roll
 
@@ -222,6 +258,8 @@ Confrontation rolls symbolize parrying, blocking, counter-attacking, and the qui
 ## Damage & Wounds
 
 When a model hits another model, it must perform a Damage Roll for every Hit to damage it. A successful Damage Roll causes the target to suffer a Wound and lose 1 HP. A model cannot suffer more Wounds than it has HP.
+
+> **Note:** Unless specified otherwise, the hit model suffers a number of Wounds equal to the amount of Hits not prevented. However, some abilities may modify the number of Wounds a model suffers when receiving damage.
 
 A model whose HP is reduced to 0 becomes **Incapacitated** at the end of the Activation Sequence. If an Incapacitated model suffers another Wound, it becomes **Dead**.
 
@@ -243,15 +281,19 @@ Spells are a focused representation of magic. The model who uses a Spell is the 
 - A model can cast only one Spell at a time.
 - A model cannot cast Spells if it has "both hands full" (e.g., Shield + Weapon equipped).
 
+> **Note:** Spell Attacks are affected by effects that interact with either the Melee or Ranged Trait. If a Spell has both Traits, the caster chooses which Trait is used when declaring the Attack, if both are valid.
+
+Some Spells have Traits listed under their effects. Depending on a particular Trait, some might dictate the Spell's usage, while others affect targets when the Spell is used.
+
 ### Mana Counters
 
-Mana Counters represent the energy required for casting Spells. In the Active Role, a Mage can convert any number of Activation Points into Mana Counters. Mana Counters are cumulative and do not disappear at the end of the turn.
+Mana Counters represent the energy required for casting Spells. Mana Counters can be spent for covering the price of Conjuration-type Spells or some other powerful Spells. In the Active Role, a Mage can convert any number of Activation Points into Mana Counters. Mana Counters are cumulative and do not disappear at the end of the turn.
 
 ### The 5 Types of Spells
 
 #### Sorcery
 
-Mainly short-lasting, destructive effects. Unless specified otherwise, the Effect of a Sorcery-Type Spell lasts until the end of the Activation Sequence.
+Mainly short-lasting, destructive effects. Unless specified otherwise, the Effect of a Sorcery-Type Spell lasts until the end of the Activation Sequence. Its effect is dealt to the target or affected models.
 
 #### Healing
 
@@ -272,12 +314,16 @@ Permanent Spells that affect the environment. Transmutation Spells remain on the
 
 #### Conjuration
 
-Allow the caster to summon a creature to the field under their command. Can only be cast in the caster's Active Role by declaring a Ritual (Special Action).
+Allow the caster to summon a creature to the field under their command. Can only be cast in the caster's Active Role by declaring a Ritual (Special Action). The creature immediately receives Activation Points equal to its Stamina.
 
 - Conjuration Spells have a Mana Cost of 1 or more.
 - **Mana Cost (X):** The caster must spend an amount of Mana Counters equal to the X value.
 - Summoned creatures are at the same time considered models and Conjuration-Type Spells.
 - Creatures have a **Summoning Limit** equal to the creature's Tier.
 - A caster cannot cast more Conjuration Spells if the combined Summoning Limit of currently present summoned creatures equals or exceeds the caster's modified Stamina.
+- A caster may cast a Conjuration Spell that would cause the combined Summoning Limit to exceed its modified Stamina, provided the Summoning Limit was below that value at the time the Spell was cast.
+- Any creature a model starts the game with due to the Summoner Class, counts toward that model's Summoning Limit.
 - During the Strategic Phase, a caster can voluntarily dismiss one of its summoned creatures, instantly removing it from the field.
 - When the caster becomes Incapacitated or Dead, summoned creatures are removed from the field at the end of the Activation Sequence.
+
+> **Example:** If the caster has a Stamina value of 2, and they have already summoned 2 creatures, each with a Summoning Limit of 1, the caster cannot summon any more creatures. The caster can summon new creatures once the combined Summoning Limit of the creatures on the field is lower than the caster's modified Stamina.

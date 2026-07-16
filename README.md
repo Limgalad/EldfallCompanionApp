@@ -10,7 +10,6 @@ used offline.
 - **Quest Overview** — explore missions/quests across seasons, with setup steps and tactical maps
 - **Rules Wiki** — searchable core rules, states, traits, skills, classes, and combat arts
 - **Spell Book** — browse spells by school, element, and level
-- **Bug Reporting** — in-app bug report form with optional SMTP email delivery
 - **PWA Support** — installable, with offline caching for previously visited content
 
 ---
@@ -38,7 +37,7 @@ used offline.
    npm install
    ```
 
-3. Create a `.env` file based on the template:
+3. (Optional) Create a `.env` file if you want to override the default port:
 
    ```bash
    cp .env.example .env
@@ -50,35 +49,13 @@ used offline.
 
 ## Environment Variables
 
-The app's only environment variables configure the bug-report emailer. All are optional in
-development.
+The app has a single, optional environment variable.
 
 | Variable | Description | Default |
 |---|---|---|
-| `BUG_REPORT_EMAIL` | Recipient address for bug reports. | `koendeurloo1987@gmail.com` |
-| `SMTP_HOST` | SMTP server host (e.g. `smtp.gmail.com`). If left blank and `SMTP_USER` is a `@gmail.com` address, Gmail's SMTP host is inferred automatically. | – |
-| `SMTP_PORT` | SMTP server port. | `587` |
-| `SMTP_USER` | Username for SMTP authentication. | – |
-| `SMTP_PASS` | Password or app-specific password for SMTP authentication. | – |
-| `SMTP_SECURE` | `true` for port `465` (SSL), `false` otherwise (TLS). | `false` |
+| `PORT` | Port the Express server listens on. | `3000` |
 
-**SMTP is optional in development.** If `SMTP_USER`/`SMTP_PASS` aren't set, submitted bug reports
-are simply logged to the server console instead of emailed — the app still works normally, and
-the user still sees a success message.
-
-### SMTP setup with Gmail (example)
-
-1. Enable 2-Step Verification on your Google Account.
-2. Go to **Security → App passwords** in your Google Account, choose "Mail" and a custom device
-   name (e.g. "Eldfall Companion"), and generate a 16-character app password.
-3. Set in `.env`:
-   ```env
-   SMTP_HOST=smtp.gmail.com
-   SMTP_PORT=587
-   SMTP_USER=your-email@gmail.com
-   SMTP_PASS=your-16-character-app-password
-   SMTP_SECURE=false
-   ```
+A `.env` file is not required — the app runs on the default port out of the box.
 
 ---
 
@@ -110,7 +87,7 @@ npm run build
 npm run start
 ```
 
-Serves the compiled frontend as static files and runs the bug-report API from the bundled server.
+Serves the compiled frontend as static files from the bundled Express server (which also exposes the `/api/health` check).
 
 ---
 

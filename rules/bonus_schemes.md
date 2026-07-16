@@ -8,19 +8,19 @@
 Receive **3 VP** for killing an enemy Leader (rendering it Dead).
 
 ### Martial Valor
-Reveal this when your model Incapacitates an enemy model that costs more Recruitment Points, to score 2 VPs.
+Reveal this when your model Incapacitates an enemy model that costs more Recruitment Points; receive **2 VP**. If another of your models Incapacitates a model that costs more RP, score an additional **1 VP**.
 
 ### No Quarter
-Receive **1 VP** for every Dead enemy model (to a maximum of **3 VP**).
+Receive **1 VP** for every Dead enemy model at the end of the game (to a maximum of **3 VP**).
 
 ### Opportunistic Manipulation
-ou may reveal this at the start of your Strategic Phase. Receive 1 VP for each of the following:
+You may reveal this at the start of your Strategic Phase. Receive 1 VP for each of the following:
   - There is an enemy not in the Dead State in the enemy Deployment Zone.
   - There is an enemy not in the Dead State on your half of the field.
   - There is an ally in the Incapacitated State on the enemy half of the field.
 
 ### Stand Your Ground
-Reveal this Scheme during your Strategic Phase and discard it at the start of your next Strategic Phase. Receive **1 VP** (to a maximum of **3 VP**) for each model that did not move this turn.
+Reveal this Scheme during your Strategic Phase and discard it at the start of your next Strategic Phase. Receive **1 VP** (to a maximum of **3 VP**) for each model that did not move this round.
 
 ### Virtuous Commander
 Receive **1 VP** (to a maximum of **3 VP**) for each of your models that is Alive at the end of the game.
@@ -120,7 +120,7 @@ Reveal this Scheme during your Strategic phase and discard it during the End pha
 Reveal this card when one of your models first Wounds an enemy model in Reaction. Place a token on this card. When your model Wounds an enemy model in Reaction, place another token on this card. Score **1 VP** for every token on this card (maximum of **3 VP**).
 
 ### Peacekeeping Paragon
-Receive 1 VP for every enemy not in Incapacitated or Dead state at the end of the game (to a maximum of 3 VP).
+Receive **1 VP** for each enemy model that is Alive at the end of the game (to a maximum of **3 VP**).
 
 ### Last Warning
 Reveal this Scheme during your Strategic Phase and discard it during the End Phase; if your models do not declare Attack until your next Strategic Phase, receive **3 VP**.
@@ -153,7 +153,7 @@ Receive **3 VP** if there are no enemy models in your Deployment Zone at the end
 Receive **1 VP** for every Wound you deal to enemy models with Melee Attack (to a maximum of **3 VP**).
 
 ### Unhindered Expedition
-Reveal this Scheme during your Strategic phase and discard it during the End phase. Receive 2 VP if you have 3 models outside your Deployment Zone (not counting summoned creatures) at the end of the turn.
+Reveal this Scheme during your Strategic Phase and discard it during the End Phase. Receive **2 VP** if you have 3 models outside your Deployment Zone (excluding summoned creatures) at the end of the turn, and an additional **1 VP** if at least 1 of those models is in the opponent's Deployment Zone.
 
 ### Strength in Numbers
 Receive **2 VP** if you have more alive models (including summoned creatures) than your opponent at the end of the game. Receive an additional **1 VP** if you have at least twice as many models alive as your opponent.
@@ -162,7 +162,7 @@ Receive **2 VP** if you have more alive models (including summoned creatures) th
 Receive **1 VP** (to a maximum of **3 VP**) for every party member beyond the middle of the field at the end of the game (not counting summoned creatures).
 
 ### Stand Your Ground
-Reveal this Scheme during your Strategic phase and discard it during the End phase; receive 1 VP (to a maximum of 2 VP) for every model that didn't move this turn.
+Reveal this Scheme during your Strategic Phase and discard it at the start of your next Strategic Phase. Receive **1 VP** (to a maximum of **3 VP**) for each model that did not move this round.
 
 ### Roll Result Table
 

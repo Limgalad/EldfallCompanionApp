@@ -9,7 +9,7 @@ import { CreatureCard } from "./CreatureCard";
 interface MissionDetailProps {
   mission: Mission;
   onBack: () => void;
-  onShowTooltip: (name: string, type: 'skill' | 'trait' | 'spell' | 'combatArt') => void;
+  onShowTooltip: (name: string, type: "skill" | "trait" | "spell" | "combatArt") => void;
 }
 
 export const MissionDetailView: React.FC<MissionDetailProps> = ({ 
@@ -88,7 +88,7 @@ export const MissionDetailView: React.FC<MissionDetailProps> = ({
                   {mission.results.map((item, i) => {
                     const isImportant = item.startsWith("IMPORTANT:");
                     return (
-                      <li key={i} className={`flex items-start ${isImportant ? 'text-amber-500 font-bold' : ''}`}>
+                      <li key={i} className={`flex items-start ${isImportant ? "text-amber-500 font-bold" : ""}`}>
                         {isImportant ? (
                           <AlertCircle className="w-4 h-4 mr-3 mt-1 flex-shrink-0 text-amber-600" />
                         ) : (
@@ -121,7 +121,7 @@ export const MissionDetailView: React.FC<MissionDetailProps> = ({
               )}
             </div>
 
-            <div className={`stack-standard ${!mission.mapImage ? 'lg:col-span-2' : ''}`}>
+            <div className={`stack-standard ${!mission.mapImage ? "lg:col-span-2" : ""}`}>
               {mission.mapImage && (
                 <section className="eldfall-card card-p-lg overflow-hidden">
                   <div className="flex items-center mb-6 text-red-500">

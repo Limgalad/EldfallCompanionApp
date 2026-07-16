@@ -34,7 +34,7 @@ const faqItems: FaqItem[] = [
   },
   {
     q: "Which Scheme cards were updated?",
-    a: "Seven schemes were reworded or capped: Relentless Advance, Peacekeeping Paragon, Appear Weak When You Are Strong, Unhindered Expedition, Stand Your Ground, Breach Their Defences, and Cunning Tenacity all received VP caps or revised trigger conditions. Opportunistic Manipulation was fully rewritten with three scoring conditions. Two new Monster Faction schemes — Spreading Infestation and Territorial Aggression — were also added."
+    a: "Seven schemes were reworded or capped: Relentless Advance, Peacekeeping Paragon, Appear Weak When You Are Strong, Unhindered Expedition, Stand Your Ground, Breach Their Defenses, and Cunning Tenacity all received VP caps or revised trigger conditions. Opportunistic Manipulation was fully rewritten with three scoring conditions. Two new Monster Faction schemes — Spreading Infestation and Territorial Aggression — were also added."
   },
   {
     q: "What changed with Upgrade cards?",

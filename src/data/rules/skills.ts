@@ -15,7 +15,7 @@ export const skills: Skill[] = [
   },
   {
     name: "Clairvoyance",
-    description: "When in the Reactive Role, this model may declare Reaction and target enemy models within its Awareness even without LoS. If it has access to Spells with the Casting Aura reach, it may cast them without LoS even in the Reactive Role. It may ignore the Blinded state if the enemy model is within its Awareness, as well as the Surprise Attack trait of enemy models within its Awareness. In the Active Role, the caster with this skill does not suffer halving modifiers when spellcasting without LoS."
+    description: "In the Reactive Role, this model may declare a Reaction using Casting Aura Spells to target enemy models within its Awareness without requiring LoS. It ignores LoS restrictions caused by Environments, as well as the Blinded State and the Surprise Attack Trait of enemy models within its Awareness. In the Active Role, it does not suffer halving modifiers when casting Spells without LoS."
   },
   {
     name: "Climbing",

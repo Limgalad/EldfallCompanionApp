@@ -33,24 +33,24 @@ export default function MissionOverview({ onBack }: { onBack: () => void }) {
 
   const romanToNumber: Record<string, number> = { I: 1, II: 2, III: 3, IV: 4, V: 5 };
 
-  const getInfo = (name: string, type: 'skill' | 'trait' | 'spell' | 'combatArt') => {
+  const getInfo = (name: string, type: "skill" | "trait" | "spell" | "combatArt") => {
     const key = normalizeKey(name);
 
-    if (type === 'skill') {
+    if (type === "skill") {
       const skill = allSkills.find(s => normalizeKey(s.name) === key);
       return skill ? { title: skill.name, content: skill.description } : null;
     }
-    if (type === 'trait') {
+    if (type === "trait") {
       const trait = allTraits.find(t => normalizeKey(t.name) === key);
       return trait ? { title: trait.name, content: trait.description } : null;
     }
-    if (type === 'spell') {
+    if (type === "spell") {
       for (const school of spellSchools) {
         const spell = school.spells.find(s => normalizeKey(s.name) === key);
         if (spell) return { title: spell.name, content: spell.effect };
       }
     }
-    if (type === 'combatArt') {
+    if (type === "combatArt") {
       // Combat arts are referenced as "<Category> <RomanLevel>", e.g. "Berserk III".
       const match = name.match(/^(.*?)\s+(I{1,3}|IV|V)$/);
       const categoryName = match ? match[1] : name;
@@ -69,7 +69,7 @@ export default function MissionOverview({ onBack }: { onBack: () => void }) {
     return null;
   };
 
-  const handleShowTooltip = (name: string, type: 'skill' | 'trait' | 'spell' | 'combatArt') => {
+  const handleShowTooltip = (name: string, type: "skill" | "trait" | "spell" | "combatArt") => {
     setActiveTooltip(getInfo(name, type));
   };
 

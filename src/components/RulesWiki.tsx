@@ -752,7 +752,7 @@ export default function RulesWiki({ onBack }: { onBack: () => void }) {
                 <div className="card-p-lg border-b border-stone-800 flex justify-between items-start shrink-0">
                   <div>
                     <span className="text-[10px] font-display uppercase tracking-eyebrow text-red-500 mb-1 block">
-                      {(selectedItem.type === "mechanics" || selectedItem.type === "hostiles" || selectedItem.type === "actions") ? selectedItem.data.category : selectedItem.type.replace(/([A-Z])/g, ' $1').trim()}
+                      {(selectedItem.type === "mechanics" || selectedItem.type === "hostiles" || selectedItem.type === "actions") ? selectedItem.data.category : selectedItem.type.replace(/([A-Z])/g, " $1").trim()}
                     </span>
                     <h2 id="rules-detail-title" className="text-2xl font-bold text-white leading-tight">{getSelectedItemTitle(selectedItem)}</h2>
                   </div>

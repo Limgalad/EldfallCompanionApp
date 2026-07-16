@@ -43,7 +43,7 @@ const getKeywordItem = (keyword: (typeof LINKABLE_KEYWORDS)[number]): KeywordIte
   }
 
   if (keyword.type === "environments") {
-    const ruleId = keywordToRuleId.get(normalizedName) || `env-${normalizedName.toLowerCase().replace(/\s+/g, '-')}`;
+    const ruleId = keywordToRuleId.get(normalizedName) || `env-${normalizedName.toLowerCase().replace(/\s+/g, "-")}`;
     const data = rules.find(r => r.id === ruleId) || rulesLookup.get(normalizedName);
     return data ? buildRuleSectionKeywordItem("environments", data) : null;
   }

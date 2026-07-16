@@ -7,7 +7,7 @@
 
 | Level | Name | Effect |
 |-------|------|--------|
-| I | **Overdraw** | When using a weapon with two RCH values, the first RCH value is increased by 3 spaces. |
+| I | **Overdraw** | When using a weapon with two RCH values, the first RCH value is increased by 6". |
 | II | **Impeding Momentum** | If hit, the target becomes **Slowed** until the end of the turn. |
 | III | **Staggering Precision** | User's Ranged Attack gains **Stagger**. |
 | IV | **Quickdraw** | User's Ranged Attack gains **+1 STK**. |

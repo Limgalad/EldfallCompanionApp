@@ -172,21 +172,21 @@ An Incapacitated model that has a Friendly model in **Base Contact**, and neithe
 #### First Aid
 - **Limit:** increased to **2**
 - **Price:** reduced to **2 rpts**
-- **Effect Change:** When a model (including this model) would perform a Recovery Check while within Awareness of the First Aid owner, you may **discard this Upgrade** — if you do, that model **automatically succeeds the T roll**. Alternatively, you may discard this Upgrade during the Strategic Phase to **remove all States** from an alive model within Awareness.
+- **Effect Change:** When a model (including this model) would perform a Recovery Check while within Awareness of the First Aid owner, you may **discard this Upgrade** — if you do, that model **automatically succeeds the T roll**. Alternatively, you may discard this Upgrade during the Strategic Phase to **remove all States** except Engaged, Crouched, Flying or Shrouded from an alive model within Awareness.
 
 ---
 
 ### Scheme Clarifications
 
 - **Fierce as Fire, Immovable as a Mountain:** Reveal this card when one of your models first Wounds an enemy model in Reaction. Place a token on this card. When your model Wounds an enemy model in Reaction, place another token on this card. Score **1 VP for every token** on this card (maximum of **3 VP**).
-- **Martial Valor:** Reveal this when your model Incapacitates an enemy model that costs more Recruitment Points, to score **2 VP**.
+- **Martial Valor:** Reveal this when your model Incapacitates an enemy model that costs more Recruitment Points, to score **2 VP**. If another of your models Incapacitates a model that costs more RP, score an additional **1 VP**.
 
 ### Scheme Balance Changes
 
 - **Relentless Advance:** Reveal this Scheme during your Strategic Phase and discard it during the End Phase; receive **1 VP** (to a maximum of **3 VP**) for every party member beyond the middle of the field at the end of this turn.
 - **Peacekeeping Paragon:** Receive **1 VP** for every enemy not in Incapacitated or Dead State at the end of the game (to a maximum of **3 VP**).
 - **Appear Weak When You Are Strong:** Add: *(to a maximum of 3 VP)*.
-- **Unhindered Expedition:** Reveal this Scheme during your Strategic Phase and discard it during the End Phase. Receive **2 VP** if you have 3 models outside your Deployment Zone (not counting summoned creatures) at the end of the turn.
-- **Stand Your Ground:** Reveal this Scheme during your Strategic Phase and discard it during the End Phase; receive **1 VP** (to a maximum of **2 VP**) for every model that didn't move this turn.
-- **Breach Their Defences:** Receive **2 VP** for every party member in the enemy Deployment Zone (up to a maximum of **3 VP**) at the end of the game.
+- **Unhindered Expedition:** Reveal this Scheme during your Strategic Phase and discard it during the End Phase. Receive **2 VP** if you have 3 models outside your Deployment Zone (not counting summoned creatures) at the end of the turn, and an additional **1 VP** if at least 1 of those models is in the opponent's Deployment Zone.
+- **Stand Your Ground:** Reveal this Scheme during your Strategic Phase and discard it at the start of your next Strategic Phase; receive **1 VP** (to a maximum of **3 VP**) for every model that didn't move this round.
+- **Breach Their Defenses:** Receive **2 VP** for every party member in the enemy Deployment Zone (up to a maximum of **3 VP**) at the end of the game.
 - **Cunning Tenacity:** Add: *(up to a maximum of 3 VP)*.

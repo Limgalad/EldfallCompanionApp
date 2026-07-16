@@ -4,7 +4,7 @@ Each Environment term gives specific characteristics to a defined area of the ba
 
 - Multiple Environments may be assigned to a single area.
 - A model is affected by an Environment if its base is in contact with or partially within the area.
-- Some Environments may also affect models outside their area; such effects will always be explicitly stated.
+- Some Environments may also affect models outside their area (e.g., targeting into or through them). Such effects will always be explicitly stated.
 
 ## Environment Types
 
@@ -19,7 +19,7 @@ Models in Aquatic Environments suffer movement restrictions and additional effec
 **Deep:**
 - All effects of Shallow Aquatic apply.
 - Models cannot declare Jump, Attack, Assist, or Ritual actions.
-- Models with ARM 2+ must roll AG (with a negative modifier equal to their ARM) at activation. On failure, they drown and are considered Dead.
+- Models with ARM greater than 2 must roll AG (with a negative modifier equal to their ARM) at activation. On failure, they drown and are considered Dead.
 
 ### Dangerous
 
@@ -69,7 +69,7 @@ Models with Affinity (Profane), Elemental Essence (Profane), or Undead cannot be
 
 ### Scorching
 
-During the Strategic Phase, models with ARM less than 1 must perform a Toughness roll with –ARM modifier. On fail, the model becomes Fatigued.
+During the Strategic Phase, models with ARM more than 1 must perform a Toughness roll with –ARM modifier. On fail, the model becomes Fatigued.
 
 ### Swamp
 

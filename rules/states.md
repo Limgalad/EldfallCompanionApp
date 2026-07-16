@@ -41,8 +41,8 @@ A Dead model's Hitbox becomes the size and volume of its base.
 A Dead model:
 - Cannot receive Activation Points
 - Cannot perform Activations nor Reactions
-- Cannot use or benefit from any Skills, Traits, Upgrades, Items, etc.
-- Is ignored for all impacts (scoring in Quests, Ranged Friendly Fire, etc.)
+- Unless stated otherwise, it cannot use or benefit from any Skills, Traits, Upgrades, Items etc.
+- Unless stated otherwise, it is ignored for all impacts like scoring in Quests, Ranged Friendly Fire, etc.
 - Does not obstruct Movement, but a model may not end their Movement on top of a Dead model
 
 When a model enters Dead State, it retains its other States. Unless specified otherwise, a Dead model **cannot regain HP**.
@@ -103,8 +103,7 @@ When a model's HP reaches 0, it becomes Incapacitated and immediately enters the
 An Incapacitated model:
 - Cannot receive Activation Points
 - Cannot perform Activations nor Reactions (retains remaining AP until End Phase of that turn)
-- Cannot use or benefit from any Skills, Traits, Upgrades, Items, etc.
-- Is ignored for scoring in Quests and Ranged Friendly Fire
+- Unless stated otherwise, it cannot use or benefit from any Skills, Traits, Upgrades, Items, etc., and is ignored for all impacts such as scoring in Quests and Ranged Friendly Fire
 - Is still hit by Attacks such as AoEs or Sweep Attacks
 
 An Incapacitated **Leader** cannot use Stratagems.

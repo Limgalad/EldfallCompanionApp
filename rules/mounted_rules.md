@@ -5,12 +5,12 @@ Mounts are models with the special **Class: Mount**. A Rider can ride a Mount, l
 ---
 
 ## Mount (Class)
-This Class indicates that the model can be mounted.
+This Class indicates that the model can be mounted by a Rider (Class).
 
 ---
 
-## Rider Requirements
-Only a model whose Profile card **lists the name of a specific Mount** may ride that Mount.
+## Rider (Class)
+Only a model with the Rider Class may use and ride a Mount.
 
 ---
 
@@ -24,7 +24,6 @@ Only a model whose Profile card **lists the name of a specific Mount** may ride 
 **Dismounting:**
 - A model may dismount during its **Strategic Phase**, **Movement Step**, or by declaring **Dodge**.
 - Upon dismounting, the Mount is **instantly removed** from the field.
-- A model cannot mount if it is in the Engaged State.
 
 ---
 
@@ -67,4 +66,4 @@ Only a model whose Profile card **lists the name of a specific Mount** may ride 
 
 ## Recruitment and Costs
 - When creating a Party, players must pay the **Mount's Recruitment Cost** to include it.
-- At the end of a Quest, the Mount's Recruitment Cost is **added to the Rider's** for the purposes of Rewards/Penalties.
+- The Mount's Recruitment Cost is **added to the Rider's**.

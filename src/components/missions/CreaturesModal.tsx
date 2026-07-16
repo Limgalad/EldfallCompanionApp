@@ -8,7 +8,7 @@ import { CreatureCard } from "./CreatureCard";
 interface CreaturesModalProps {
   isOpen: boolean;
   onClose: () => void;
-  onShowTooltip: (name: string, type: 'skill' | 'trait' | 'spell' | 'combatArt') => void;
+  onShowTooltip: (name: string, type: "skill" | "trait" | "spell" | "combatArt") => void;
 }
 
 export const CreaturesModal: React.FC<CreaturesModalProps> = ({ isOpen, onClose, onShowTooltip }) => {
@@ -63,8 +63,8 @@ export const CreaturesModal: React.FC<CreaturesModalProps> = ({ isOpen, onClose,
                     onClick={() => setCategory(cat.category)}
                     className={`w-full text-left px-3 py-2 text-sm rounded-lg transition-colors ${
                       selectedCategory === cat.category 
-                        ? 'bg-red-900/20 text-red-500 border border-red-900/50' 
-                        : 'text-stone-400 hover:bg-stone-800 hover:text-stone-200'
+                        ? "bg-red-900/20 text-red-500 border border-red-900/50" 
+                        : "text-stone-400 hover:bg-stone-800 hover:text-stone-200"
                     }`}
                   >
                     {cat.category}
