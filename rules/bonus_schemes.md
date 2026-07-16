@@ -11,16 +11,16 @@ Receive **3 VP** for killing an enemy Leader (rendering it Dead).
 Reveal this when your model Incapacitates an enemy model that costs more Recruitment Points; receive **2 VP**. If another of your models Incapacitates a model that costs more RP, score an additional **1 VP**.
 
 ### No Quarter
-Receive **1 VP** for every Dead enemy model (to a maximum of **3 VP**).
+Receive **1 VP** for every Dead enemy model at the end of the game (to a maximum of **3 VP**).
 
 ### Opportunistic Manipulation
-You may reveal this at the start of your Strategic Phase. Receive **1 VP** for each of the following:
-- There is an enemy not in the Dead State in the enemy Deployment Zone.
-- There is an enemy not in the Dead State on your half of the field.
-- There is an ally in the Incapacitated State on the enemy half of the field.
+You may reveal this at the start of your Strategic Phase. Receive 1 VP for each of the following:
+  - There is an enemy not in the Dead State in the enemy Deployment Zone.
+  - There is an enemy not in the Dead State on your half of the field.
+  - There is an ally in the Incapacitated State on the enemy half of the field.
 
 ### Stand Your Ground
-Reveal this Scheme during your Strategic Phase and discard it at the start of your next Strategic Phase. Receive **1 VP** (to a maximum of **3 VP**) for each model that did not move this turn.
+Reveal this Scheme during your Strategic Phase and discard it at the start of your next Strategic Phase. Receive **1 VP** (to a maximum of **3 VP**) for each model that did not move this round.
 
 ### Virtuous Commander
 Receive **1 VP** (to a maximum of **3 VP**) for each of your models that is Alive at the end of the game.
@@ -42,7 +42,7 @@ Reveal this Scheme during your Strategic Phase and discard it during the End Pha
 Receive **1 VP** (to a maximum of **3 VP**) for each party member in your Deployment Zone at the end of the game.
 
 ### Fierce as Fire, Immovable as a Mountain
-Reveal this card when one of your models first Wounds an enemy model in Reaction. Place a token on this card. When your model Wounds an enemy model in Reaction, place another token on this card. Score **1 VP** for every token on this card (maximum of **3 VP**).
+Reveal this card when one of your models first Wounds an enemy model in Reaction. Place a token on this card. When your model Wounds an enemy model in Reaction, place another token on this card. Score 1 VP for every token on this card (to a maximum of 3 VP).
 
 ### Stalwart Defender
 Receive **3 VP** if there are no enemy models in your Deployment Zone at the end of the game.
@@ -75,10 +75,10 @@ Reveal this Scheme during your Strategic Phase and discard it during the End Pha
 Receive **1 VP** (to a maximum of **3 VP**) for every party member outside enemy models' LoS at the end of the game.
 
 ### Cunning Tenacity
-Receive **2 VP** for every model that did not lose HP throughout the game (to a maximum of **3 VP**).
+Receive **2 VP** for every model that did not lose HP throughout the game (up to a maximum of 3 VP).
 
 ### Breach Their Defenses
-Receive **2 VP** for every party member in the enemy Deployment Zone (to a maximum of **3 VP**) at the end of the game.
+Receive 2 VP for every party member in the enemy Deployment Zone (up to a max of 3 VP) at the end of the game.
 
 ### Assassination Contract
 Receive **3 VP** for killing an enemy Leader (rendering it Dead).
@@ -114,7 +114,7 @@ Receive **3 VP** if all of your party members are alive at the end of the game.
 Receive **1 VP** (to a maximum of **3 VP**) for each of your models that is Alive at the end of the game.
 
 ### Relentless Advance
-Reveal this Scheme during your Strategic Phase and discard it during the End Phase; receive **1 VP** (to a maximum of **3 VP**) for every party member beyond the middle of the field at the end of this turn.
+Reveal this Scheme during your Strategic phase and discard it during the End phase; receive 1 VP (to a maximum of 3 VP) for every party member beyond the middle of the field at the end of this turn.
 
 ### Fierce as Fire, Immovable as a Mountain
 Reveal this card when one of your models first Wounds an enemy model in Reaction. Place a token on this card. When your model Wounds an enemy model in Reaction, place another token on this card. Score **1 VP** for every token on this card (maximum of **3 VP**).
@@ -162,7 +162,7 @@ Receive **2 VP** if you have more alive models (including summoned creatures) th
 Receive **1 VP** (to a maximum of **3 VP**) for every party member beyond the middle of the field at the end of the game (not counting summoned creatures).
 
 ### Stand Your Ground
-Reveal this Scheme during your Strategic Phase and discard it at the start of your next Strategic Phase. Receive **1 VP** (to a maximum of **3 VP**) for each model that did not move this turn.
+Reveal this Scheme during your Strategic Phase and discard it at the start of your next Strategic Phase. Receive **1 VP** (to a maximum of **3 VP**) for each model that did not move this round.
 
 ### Roll Result Table
 

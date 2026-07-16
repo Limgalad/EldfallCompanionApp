@@ -2,7 +2,7 @@ import React, { useState, useEffect, useMemo } from "react";
 import { motion, AnimatePresence } from "motion/react";
 import { useParams, useNavigate } from "react-router-dom";
 import { missions } from "../data/missions";
-import { skills as allSkills, traits as allTraits } from "../data/rules";
+import { skills as allSkills, traits as allTraits, combatArtCategories } from "../data/rules";
 import { spellSchools } from "../data/spells";
 import { ArrowLeft, Map as MapIcon, BookOpen, X, Ghost } from "lucide-react";
 import MetaTags from "./MetaTags";
@@ -20,27 +20,56 @@ export default function MissionOverview({ onBack }: { onBack: () => void }) {
   const showSchemes = view === "schemes" || missionId === "schemes";
   const showCreatures = view === "creatures" || missionId === "creatures";
 
-  const getInfo = (name: string, type: 'skill' | 'trait' | 'spell') => {
-    const baseName = name.split(' ')[0];
-    
-    if (type === 'skill') {
-      const skill = allSkills.find(s => s.name.split(' ')[0] === baseName);
+  // Normalizes a keyword reference for matching: drops the trailing level
+  // suffix (Roman numeral, e.g. "Construct I") and any parenthetical
+  // qualifier (e.g. "Survival (Scorching)"), then lowercases. Applied to both
+  // sides of the lookup so full multi-word names match without truncation.
+  const normalizeKey = (value: string) =>
+    value
+      .replace(/\s*\([^)]*\)/g, "")
+      .replace(/\s+(I{1,3}|IV|V)$/, "")
+      .trim()
+      .toLowerCase();
+
+  const romanToNumber: Record<string, number> = { I: 1, II: 2, III: 3, IV: 4, V: 5 };
+
+  const getInfo = (name: string, type: "skill" | "trait" | "spell" | "combatArt") => {
+    const key = normalizeKey(name);
+
+    if (type === "skill") {
+      const skill = allSkills.find(s => normalizeKey(s.name) === key);
       return skill ? { title: skill.name, content: skill.description } : null;
     }
-    if (type === 'trait') {
-      const trait = allTraits.find(t => t.name.split(' ')[0] === baseName);
+    if (type === "trait") {
+      const trait = allTraits.find(t => normalizeKey(t.name) === key);
       return trait ? { title: trait.name, content: trait.description } : null;
     }
-    if (type === 'spell') {
+    if (type === "spell") {
       for (const school of spellSchools) {
-        const spell = school.spells.find(s => s.name.split(' ')[0] === baseName);
+        const spell = school.spells.find(s => normalizeKey(s.name) === key);
         if (spell) return { title: spell.name, content: spell.effect };
+      }
+    }
+    if (type === "combatArt") {
+      // Combat arts are referenced as "<Category> <RomanLevel>", e.g. "Berserk III".
+      const match = name.match(/^(.*?)\s+(I{1,3}|IV|V)$/);
+      const categoryName = match ? match[1] : name;
+      const level = match ? romanToNumber[match[2]] : undefined;
+      const category = combatArtCategories.find(
+        c => c.name.toLowerCase() === categoryName.trim().toLowerCase()
+      );
+      if (category) {
+        const art = level != null ? category.levels.find(l => l.level === level) : undefined;
+        if (art) {
+          return { title: `${category.name} ${match![2]} — ${art.name}`, content: art.description };
+        }
+        return { title: category.name, content: category.ruleText };
       }
     }
     return null;
   };
 
-  const handleShowTooltip = (name: string, type: 'skill' | 'trait' | 'spell') => {
+  const handleShowTooltip = (name: string, type: "skill" | "trait" | "spell" | "combatArt") => {
     setActiveTooltip(getInfo(name, type));
   };
 
@@ -112,50 +141,32 @@ export default function MissionOverview({ onBack }: { onBack: () => void }) {
                   <h1 className="h1-standard">Quest Overview</h1>
                 </div>
               </div>
-              <div className="hidden sm:flex items-center gap-3">
-                <button 
-                  onClick={() => navigate("/missions/v/schemes")}
-                  className="btn-action"
-                >
-                  <BookOpen className="w-4 h-4 mr-2" />
-                  Schemes
-                </button>
-                <button 
-                  onClick={() => navigate("/missions/v/creatures")}
-                  className="btn-action"
-                >
-                  <Ghost className="w-4 h-4 mr-2" />
-                  Creatures
-                </button>
-              </div>
             </div>
           </header>
 
           <main className="max-w-7xl mx-auto px-4 py-8">
-            <div className="mb-8 flex flex-col md:flex-row md:items-end justify-between gap-4">
-              <div>
-                <p className="text-lg text-stone-400 font-light tracking-eyebrow uppercase">Season 1</p>
-              </div>
-              <div className="flex sm:hidden flex-col gap-3">
-                <button 
-                  onClick={() => navigate("/missions/v/schemes")}
-                  className="btn-action w-full"
-                >
-                  <BookOpen className="w-4 h-4 mr-2" />
-                  Quest Schemes
-                </button>
-                <button 
-                  onClick={() => navigate("/missions/v/creatures")}
-                  className="btn-action w-full"
-                >
-                  <Ghost className="w-4 h-4 mr-2" />
-                  Creatures Database
-                </button>
-              </div>
+            <div className="mb-4">
+              <p className="text-lg text-stone-400 font-light tracking-eyebrow uppercase">Season 2</p>
+            </div>
+            <div className="grid grid-cols-2 gap-3 mb-8">
+              <button
+                onClick={() => navigate("/missions/v/schemes")}
+                className="flex items-center gap-3 p-3 rounded-xl border border-stone-800 bg-stone-900/50 hover:border-red-500/50 hover:bg-stone-800/60 transition-all group"
+              >
+                <BookOpen className="w-5 h-5 text-red-500 flex-shrink-0" />
+                <span className="text-sm font-semibold text-stone-300 group-hover:text-white transition-colors">Schemes</span>
+              </button>
+              <button
+                onClick={() => navigate("/missions/v/creatures")}
+                className="flex items-center gap-3 p-3 rounded-xl border border-stone-800 bg-stone-900/50 hover:border-red-500/50 hover:bg-stone-800/60 transition-all group"
+              >
+                <Ghost className="w-5 h-5 text-red-500 flex-shrink-0" />
+                <span className="text-sm font-semibold text-stone-300 group-hover:text-white transition-colors">Creatures</span>
+              </button>
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-4">
-              {missions.map((mission, index) => (
+              {missions.filter(m => !m.archived).map((mission, index) => (
                 <motion.div
                   key={mission.id}
                   initial={{ opacity: 0, y: 20 }}
@@ -166,9 +177,9 @@ export default function MissionOverview({ onBack }: { onBack: () => void }) {
                 >
                   <div className="aspect-video mb-4 overflow-hidden rounded-xl border border-stone-800 bg-stone-900/50 flex items-center justify-center">
                     {mission.mapImage ? (
-                      <img 
-                        src={mission.mapImage} 
-                        alt={mission.title} 
+                      <img
+                        src={mission.mapImage}
+                        alt={mission.title}
                         className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
                         referrerPolicy="no-referrer"
                       />
@@ -192,9 +203,51 @@ export default function MissionOverview({ onBack }: { onBack: () => void }) {
               ))}
             </div>
 
-            <div className="mt-20 p-8 rounded-xl border border-stone-900 bg-surface-2/20 text-center">
-              <h3 className="text-stone-500 font-display uppercase tracking-eyebrow text-sm mb-2">Quest Archive</h3>
-              <p className="text-stone-600 italic text-sm">Previous seasons will be archived here.</p>
+            <div className="mt-20 rounded-xl border border-stone-900 bg-surface-2/20 overflow-hidden">
+              <div className="px-8 pt-8 pb-4">
+                <h3 className="text-stone-500 font-display uppercase tracking-eyebrow text-sm mb-1">Quest Archive</h3>
+                <p className="text-stone-600 italic text-sm">Quests retired from active competitive seasons.</p>
+              </div>
+              <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-4 px-8 pb-8">
+                {missions.filter(m => m.archived).map((mission, index) => (
+                  <motion.div
+                    key={mission.id}
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ duration: 0.4, delay: index * 0.1 }}
+                    onClick={() => navigate(`/missions/${mission.id}`)}
+                    className="eldfall-card eldfall-card-interactive p-4 group opacity-70 hover:opacity-100 transition-opacity"
+                  >
+                    <div className="aspect-video mb-4 overflow-hidden rounded-xl border border-stone-800 bg-stone-900/50 flex items-center justify-center">
+                      {mission.mapImage ? (
+                        <img
+                          src={mission.mapImage}
+                          alt={mission.title}
+                          className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                          referrerPolicy="no-referrer"
+                        />
+                      ) : (
+                        <div className="text-stone-600 flex flex-col items-center">
+                          <MapIcon className="w-6 h-6 mb-2 opacity-20" />
+                          <span className="text-[10px] uppercase tracking-eyebrow opacity-40">No Tactical Map</span>
+                        </div>
+                      )}
+                    </div>
+                    <div className="flex items-center gap-2 mb-2">
+                      <h2 className="text-lg font-bold group-hover:text-stone-300 transition-colors">
+                        {mission.title}
+                      </h2>
+                      <span className="text-[10px] uppercase tracking-eyebrow text-stone-600 border border-stone-800 rounded px-1 py-0.5">Archived</span>
+                    </div>
+                    <p className="body-xs line-clamp-3">
+                      {mission.description}
+                    </p>
+                    <div className="mt-4 flex items-center text-stone-500 text-xs font-medium">
+                      View Mission Details <ArrowLeft className="ml-2 w-3 h-3 rotate-180" />
+                    </div>
+                  </motion.div>
+                ))}
+              </div>
             </div>
           </main>
         </>

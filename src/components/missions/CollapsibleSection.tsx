@@ -12,7 +12,7 @@ export function CollapsibleSection({ title, children, defaultOpen = false }: { t
         className="w-full px-4 py-3 flex items-center justify-between bg-surface-2/50 hover:bg-stone-800 transition-colors text-left"
       >
         <span className="text-white font-bold uppercase text-sm tracking-eyebrow">{title}</span>
-        <ChevronDown className={`w-4 h-4 text-stone-400 transition-transform ${isOpen ? 'rotate-180' : ''}`} />
+        <ChevronDown className={`w-4 h-4 text-stone-400 transition-transform ${isOpen ? "rotate-180" : ""}`} />
       </button>
       <AnimatePresence initial={false}>
         {isOpen && (

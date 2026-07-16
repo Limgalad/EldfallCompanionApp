@@ -183,7 +183,7 @@ export const traits: Trait[] = [
   },
   {
     name: "Undead I",
-    description: "This model cannot be affected by the Poisoned, Weakened, Bleeding, or Panicked States. Spells with the Mindgame Trait cannot target or affect it. Healing-Type Spells of the Divine Element do not restore HP — instead, they deal 15 PW damage to it. If this model's HP reaches 0, it becomes Dead."
+    description: "This model cannot be affected by the Poisoned, Weakened, Bleeding, or Panicked States. Spells with the Mindgame Trait cannot target or affect it. Healing-type Spells of the Divine Element do not restore any HP but instead, deal PW 15 Hit to it. If this model's HP reaches 0, it becomes Dead."
   },
   {
     name: "Unkeen",
@@ -207,6 +207,6 @@ export const traits: Trait[] = [
   },
   {
     name: "Weakening",
-    description: "If this model suffers a Wound with this Trait, it becomes Weakened."
+    description: "If a model suffers a Wound with this Trait, it becomes Weakened."
   }
 ];

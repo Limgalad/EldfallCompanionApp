@@ -62,6 +62,11 @@ If a Marksman declares **Idle** during their Movement Step, it gains **+4 Accura
 
 ---
 
+## Mount
+This Class indicates that the model can be mounted by a Rider.
+
+---
+
 ## Mystic
 Mystics must use their **Morale** value instead of **Intellect** when casting Spells.
 
@@ -69,6 +74,11 @@ Mystics must use their **Morale** value instead of **Intellect** when casting Sp
 
 ## Ranger
 In the **End Phase** of the Active Role, Rangers may perform a **Normal Movement** (this does not provoke a Reaction from the Reactive Player).
+
+---
+
+## Rider
+A Rider can ride a Mount. When mounted, the profile card of the Mount and the Rider connect and influence each other. See **Mounted Rules**. (See page 77.)
 
 ---
 

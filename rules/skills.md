@@ -23,7 +23,7 @@ Once per Activation Sequence, if another allied model scores a Hit against an en
 ---
 
 ## Clairvoyance
--  When in the **Reactive Role**, this model may declare Reaction and target enemy models within its Awareness even without LoS. If it has access to Spells with the Casting Aura reach, it may cast them without LoS even in the Reactive Role. It may ignore the **Blinded state** if the enemy model is within its Awareness, as well as the **Surprise Attack trait** of enemy models within its Awareness. In the Active Role, the caster with this skill does not suffer halving modifiers when spellcasting without LoS.
+- In the **Reactive Role**, this model may declare a Reaction using Casting Aura Spells to target enemy models within its Awareness without requiring LoS. It ignores **LoS restrictions caused by Environments**, as well as the **Blinded State** and the **Surprise Attack Trait** of enemy models within its Awareness. In the Active Role, it does not suffer halving modifiers when casting Spells without LoS.
 
 ---
 
@@ -47,7 +47,7 @@ This model may replace a Shield with a second **(Melee) Weapon**, provided both 
 ---
 
 ## Finishing Strike
-When this model causes at least one Wound to a target, it may immediately make an **unmodified STK 1 Attack** against the same target using the same Item or Skill. If there are multiple targets, choose one.
+When this model causes at least one Wound to a target with this Skill, it may immediately make an **unmodified STK 1 Attack** against the same target using the same Item or Skill. If there are multiple targets, choose one.
 
 ---
 
@@ -89,7 +89,7 @@ This model may declare a **STK 1 Ranged Attack** with RCH and PW equal to its **
 ---
 
 ## Impede
-When this model declares an **Attack of Opportunity** with a Melee Attack against a non-Engaged model, that model's **Movement ends** at the point of the Attack. If the Attack was Melee, the target also becomes **Engaged** immediately.
+When this model declares an **Attack of Opportunity** with a Melee Attack against a non-Engaged model, that model's **Movement ends** at the point of the Attack and the target becomes **Engaged** immediately.
 
 ---
 
@@ -132,4 +132,4 @@ This Skill can only be used during **Movement**. All enemy models with LoS to th
 ---
 
 ## Tracking
-This model gains **+3** to **Perceive** and **Uncover** Actions. It does not suffer the INT penalty for Uncover and may **reroll one roll** when performing Perceive.
+This model gains **+3** to **Perceive** and **Uncover** Actions. It does not suffer the INT penalty for Uncover and may **reroll one die** when performing Perceive.

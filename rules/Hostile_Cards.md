@@ -24,7 +24,7 @@
 #### Movement Step
 1. **Engaged:** Walk into Base Contact.
 2. **LoS, within 6":** Use Taunt, then Walk (stop 1" away).
-3. **LoS, outside 6":** Use Taunt, then Run (adjust path to trample as many other models as possible). End in Base Contact if possible. *(Skip the Action Step.)*
+3. **LoS, outside 6":** Use Taunt, then Run (adjust path to trample as many of the enemy players' models as possible). End in Base Contact if possible. *(Skip the Action Step.)*
 4. **No LoS:** Rotate for 180°.
 
 #### Action Step

@@ -5,9 +5,9 @@
 
 ## Schemes (General Rule)
 Before the Initiative Check, each player receives **1 Scheme Card**. When drawing Schemes:
-- If Leader has **INT 13 or less** — draw **1 card**.
-- If Leader has **INT 14 or 15** — draw **2 cards** and choose 1 to keep.
-- If Leader has **INT 16 or more** — draw **3 cards** and choose 1 to keep.
+- If Leader has **INT 13 or less** — draw **2 cards** and choose 1 to keep.
+- If Leader has **INT 14 or 15** — draw **3 cards** and choose 1 to keep.
+- If Leader has **INT 16 or more** — draw **4 cards** and choose 1 to keep.
 
 ---
 
@@ -74,7 +74,7 @@ Models **may not Interact** with Cache during **Round 1**. To access the Treasur
 
 A model in Base Contact with a Cache token may declare an **Interact Action** and, by performing a **successful AG roll**, unlock the Cache and take the Treasure into its Inventory. Once unlocked, it **cannot be unlocked again**. Summoned models may not interact with Cache Tokens.
 
-A model with a Treasure in its Inventory may **voluntarily leave the field** via its own Deployment Zone. A model carrying a Treasure **cannot be Shrouded or Flying**. Treasure is an Item with **Qty 1** and **Wgt 1**.
+From **Round 4 onward**, a model with a Treasure in its Inventory may **voluntarily leave the field** via its own Deployment Zone. A model carrying a Treasure **cannot be Shrouded or Flying**. Treasure is an Item with **Qty 1** and **Wgt 1**.
 
 *(If the model becomes Incapacitated or Dead, the Treasure is removed from its Inventory and placed in Base Contact with the model. Models that leave the field voluntarily are still considered present and alive for the purposes of Loss of Morale.)*
 
@@ -125,39 +125,7 @@ If a model is **carrying Resources**, it becomes the **Target Priority** for the
 
 ---
 
-## Quest 5: Secure the Artefact
-*Arcane artefacts are objects of great power, their crafting processes mostly lost to time. They are a rare commodity, one you cannot afford to let fall into another's hands.*
-
-### Setup
-- **Cache Tokens:** There is **1 Cache** in the center of the field containing the Arcane Artefact.
-- **Standard Deployment:** 8" Deployment Zones.
-
-### Results
-- Gain **3 VP** for unlocking the Cache.
-- Gain **2 VP** if your model has the **Arcane Artefact in its Inventory** at the end of the game.
-- Gain **2 VP** if your model **leaves the field** with the Arcane Artefact in its Inventory.
-
-### Special End Conditions
-- The Quest ends when a model carrying the Arcane Artefact **leaves the field** via its own Deployment Zone.
-
-### Quest Rules
-
-#### Arcane Artefact (Cache)
-Models **may not Interact** with Cache during **Round 1**. Summoned models **may not Interact** with Cache at any time. A model in Base Contact with the Cache may declare an **Interact Action** and, by performing a **successful AG or INT roll**, unlock the Cache and take the Arcane Artefact. Once unlocked, it **cannot be unlocked again**.
-
-While carrying the Arcane Artefact, a model may **voluntarily leave the field** via its own Deployment Zone. The carrier suffers **halved SPD** and **cannot be Shrouded**. The Arcane Artefact is an Item with **Qty 1** and **Wgt 1**.
-
-*(If the model becomes Incapacitated or Dead, the Arcane Artefact is removed from its Inventory and placed in Base Contact with the model. The owner chooses the exact placement. Models that leave the field voluntarily are still considered present and alive for the purposes of Loss of Morale.)*
-
-#### Class Bonus: Artificer, Enchanter, Wizard
-Models with the Artificer, Enchanter, or Wizard Class add **+3 to their roll** when interacting with the Cache.
-
-#### 1st Round Ceasefire
-Players **cannot score VP** during the first round. If a model targets an enemy model with an Attack or damages an enemy model with an Action during Round 1, that player's party receives a **−4 VP penalty**. Summoned models are an exception and can be targeted and damaged. *(A player's VP score may drop below 0 as a result.)*
-
----
-
-## Quest 6: Magic Stones
+## Quest 5: Magic Stones
 *Strange crystalline formations occasionally bloom in places steeped in mana. Move fast, draw deep — and leave richer than you came.*
 
 ### Setup
@@ -169,11 +137,14 @@ Players **cannot score VP** during the first round. If a model targets an enemy 
 - Gain **2 VP** at the end of **Round 4** for each Objective Marker under your control.
 
 ### ⚠ Important
-Reset control over **all Objective Markers to Neutral** at the end of Round 2 and Round 4.
+- Models **may not Interact** with Objective Markers during **Round 1**.
+- Reset control over **all Objective Markers to Neutral** at the end of Round 2 and Round 4.
 
 ### Quest Rules
 
 #### Magic Stones (Objective Markers)
+Models **may not Interact** with Objective Markers during **Round 1**.
+
 Objective Markers can be either **Neutral** or **Controlled**. At the start of the game, all Objective Markers are Neutral. A party may take control of a Neutral Objective Marker by having a model in **Base Contact** with it and performing an **Interact Action** — the marker then becomes **Controlled** by that model's party. If the Objective Marker is already Controlled, performing an Interact Action resets it to **Neutral**. Summoned models **may not Interact** with Objective Markers.
 
 ---
@@ -201,21 +172,21 @@ An Incapacitated model that has a Friendly model in **Base Contact**, and neithe
 #### First Aid
 - **Limit:** increased to **2**
 - **Price:** reduced to **2 rpts**
-- **Effect Change:** When a model (including this model) would perform a Recovery Check while within Awareness of the First Aid owner, you may **discard this Upgrade** — if you do, that model **automatically succeeds the T roll**. Alternatively, you may discard this Upgrade during the Strategic Phase to **remove all States** from an alive model within Awareness.
+- **Effect Change:** When a model (including this model) would perform a Recovery Check while within Awareness of the First Aid owner, you may **discard this Upgrade** — if you do, that model **automatically succeeds the T roll**. Alternatively, you may discard this Upgrade during the Strategic Phase to **remove all States** except Engaged, Crouched, Flying or Shrouded from an alive model within Awareness.
 
 ---
 
 ### Scheme Clarifications
 
 - **Fierce as Fire, Immovable as a Mountain:** Reveal this card when one of your models first Wounds an enemy model in Reaction. Place a token on this card. When your model Wounds an enemy model in Reaction, place another token on this card. Score **1 VP for every token** on this card (maximum of **3 VP**).
-- **Martial Valor:** Reveal this when your model Incapacitates an enemy model that costs more Recruitment Points, to score **2 VP**.
+- **Martial Valor:** Reveal this when your model Incapacitates an enemy model that costs more Recruitment Points, to score **2 VP**. If another of your models Incapacitates a model that costs more RP, score an additional **1 VP**.
 
 ### Scheme Balance Changes
 
 - **Relentless Advance:** Reveal this Scheme during your Strategic Phase and discard it during the End Phase; receive **1 VP** (to a maximum of **3 VP**) for every party member beyond the middle of the field at the end of this turn.
 - **Peacekeeping Paragon:** Receive **1 VP** for every enemy not in Incapacitated or Dead State at the end of the game (to a maximum of **3 VP**).
 - **Appear Weak When You Are Strong:** Add: *(to a maximum of 3 VP)*.
-- **Unhindered Expedition:** Reveal this Scheme during your Strategic Phase and discard it during the End Phase. Receive **2 VP** if you have 3 models outside your Deployment Zone (not counting summoned creatures) at the end of the turn.
-- **Stand Your Ground:** Reveal this Scheme during your Strategic Phase and discard it during the End Phase; receive **1 VP** (to a maximum of **2 VP**) for every model that didn't move this turn.
-- **Breach Their Defences:** Receive **2 VP** for every party member in the enemy Deployment Zone (up to a maximum of **3 VP**) at the end of the game.
+- **Unhindered Expedition:** Reveal this Scheme during your Strategic Phase and discard it during the End Phase. Receive **2 VP** if you have 3 models outside your Deployment Zone (not counting summoned creatures) at the end of the turn, and an additional **1 VP** if at least 1 of those models is in the opponent's Deployment Zone.
+- **Stand Your Ground:** Reveal this Scheme during your Strategic Phase and discard it at the start of your next Strategic Phase; receive **1 VP** (to a maximum of **3 VP**) for every model that didn't move this round.
+- **Breach Their Defenses:** Receive **2 VP** for every party member in the enemy Deployment Zone (up to a maximum of **3 VP**) at the end of the game.
 - **Cunning Tenacity:** Add: *(up to a maximum of 3 VP)*.

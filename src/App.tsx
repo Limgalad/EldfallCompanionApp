@@ -4,7 +4,7 @@
  */
 
 import { motion } from "motion/react";
-import { Book, Map, Sword, ExternalLink, Heart, Bug, X, Wand2, History } from "lucide-react";
+import { Book, Map, Sword, ExternalLink, Heart, Wand2, History } from "lucide-react";
 import React, { useState, useEffect, Suspense, lazy } from "react";
 import { Routes, Route, useNavigate, useLocation } from "react-router-dom";
 import ScrollToTop from "./components/ScrollToTop";
@@ -20,13 +20,12 @@ const ChangelogModal = lazy(() => import("./components/ChangelogModal"));
 export default function App() {
   const navigate = useNavigate();
   const location = useLocation();
-  const [isBugModalOpen, setIsBugModalOpen] = useState(false);
   const [isChangelogOpen, setIsChangelogOpen] = useState(false);
 
   useEffect(() => {
     // Only scroll to top on major route changes (e.g. going back home or switching main tools)
     // Detailed item views managed within components should handle their own scrolling
-    const mainRoutes = ['/', '/missions', '/rules', '/spellbook'];
+    const mainRoutes = ["/", "/missions", "/rules", "/spellbook"];
     if (mainRoutes.includes(location.pathname)) {
       window.scrollTo(0, 0);
     }
@@ -49,7 +48,7 @@ export default function App() {
       <ScrollToTop />
       
       <Routes>
-        <Route path="/" element={<HomePage onNavigate={navigate} setIsBugModalOpen={setIsBugModalOpen} setIsChangelogOpen={setIsChangelogOpen} />} />
+        <Route path="/" element={<HomePage onNavigate={navigate} setIsChangelogOpen={setIsChangelogOpen} />} />
         
         <Route path="/missions" element={
           <Suspense fallback={<LoadingFallback />}>
@@ -100,10 +99,6 @@ export default function App() {
         } />
       </Routes>
 
-      {/* Bug Report Modal */}
-      {isBugModalOpen && (
-        <BugReportModal onClose={() => setIsBugModalOpen(false)} />
-      )}
       {/* Changelog Modal */}
       {isChangelogOpen && (
         <Suspense fallback={null}>
@@ -114,13 +109,11 @@ export default function App() {
   );
 }
 
-function HomePage({ 
-  onNavigate, 
-  setIsBugModalOpen, 
-  setIsChangelogOpen 
-}: { 
-  onNavigate: (path: string) => void, 
-  setIsBugModalOpen: (open: boolean) => void,
+function HomePage({
+  onNavigate,
+  setIsChangelogOpen
+}: {
+  onNavigate: (path: string) => void,
   setIsChangelogOpen: (open: boolean) => void
 }) {
   return (
@@ -208,12 +201,6 @@ function HomePage({
             <a href="https://ko-fi.com/tabletophub" target="_blank" rel="noopener noreferrer" className="btn-primary">
               Buy Me a Coffee
             </a>
-            <button 
-              onClick={() => setIsBugModalOpen(true)}
-              className="btn-secondary"
-            >
-              <Bug className="w-4 h-4 mr-2" /> Report Bug
-            </button>
           </div>
         </motion.div>
       </main>
@@ -293,162 +280,4 @@ function NavCard({
   }
 
   return <div className="h-full">{CardContent}</div>;
-}
-
-function BugReportModal({ onClose }: { onClose: () => void }) {
-  const [report, setReport] = useState("");
-  const [captchaAnswer, setCaptchaAnswer] = useState("");
-  const [captchaChallenge, setCaptchaChallenge] = useState({ a: 0, b: 0 });
-  const [isSubmitting, setIsSubmitting] = useState(false);
-  const [status, setStatus] = useState<{ type: 'success' | 'error', message: string } | null>(null);
-
-  useEffect(() => {
-    generateCaptcha();
-  }, []);
-
-  const generateCaptcha = () => {
-    const a = Math.floor(Math.random() * 10) + 1;
-    const b = Math.floor(Math.random() * 10) + 1;
-    setCaptchaChallenge({ a, b });
-    setCaptchaAnswer("");
-  };
-
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    
-    if (report.trim().length < 10) {
-      setStatus({ type: 'error', message: "Bug report must be at least 10 characters long." });
-      return;
-    }
-
-    if (parseInt(captchaAnswer) !== captchaChallenge.a + captchaChallenge.b) {
-      setStatus({ type: 'error', message: "Incorrect CAPTCHA answer. Please try again." });
-      generateCaptcha();
-      return;
-    }
-
-    setIsSubmitting(true);
-    setStatus(null);
-
-    try {
-      const response = await fetch("/api/report-bug", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ 
-          report,
-          captcha: {
-            a: captchaChallenge.a,
-            b: captchaChallenge.b,
-            answer: parseInt(captchaAnswer)
-          }
-        }),
-      });
-
-      const data = await response.json();
-
-      if (data.success) {
-        setStatus({ type: 'success', message: data.message });
-        setTimeout(() => {
-          onClose();
-        }, 2000);
-      } else {
-        setStatus({ type: 'error', message: data.message });
-      }
-    } catch (error) {
-      console.error("Error submitting report:", error);
-      setStatus({ type: 'error', message: "Failed to connect to the server. Please try again later." });
-    } finally {
-      setIsSubmitting(false);
-    }
-  };
-
-  return (
-    <div 
-      className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm"
-      role="dialog"
-      aria-modal="true"
-      aria-labelledby="bug-report-title"
-    >
-      <motion.div 
-        initial={{ opacity: 0, scale: 0.95 }}
-        animate={{ opacity: 1, scale: 1 }}
-        className="surface-overlay w-full max-w-lg"
-      >
-        <div className="card-p-lg border-b border-stone-800 flex items-center justify-between">
-          <div className="flex items-center text-red-500">
-            <Bug className="w-5 h-5 mr-2" />
-            <h3 id="bug-report-title" className="text-xl font-bold text-white">Report a Bug</h3>
-          </div>
-          <button 
-            onClick={onClose}
-            className="p-2 hover:bg-stone-800 rounded-full text-stone-400 transition-colors"
-            aria-label="Close modal"
-          >
-            <X className="w-5 h-5" />
-          </button>
-        </div>
-        <form onSubmit={handleSubmit} className="p-6">
-          <p className="text-stone-400 text-sm mb-4">
-            Please describe the issue you encountered. The report will be sent directly to the developer.
-          </p>
-          <textarea
-            required
-            disabled={isSubmitting}
-            value={report}
-            onChange={(e) => setReport(e.target.value)}
-            placeholder="Describe the bug here..."
-            className="eldfall-input h-40 bg-stone-950 p-4 resize-none mb-4 disabled:opacity-50"
-          />
-
-          <div className="mb-6">
-            <label className="block text-stone-400 text-sm mb-2">
-              Security Check: What is {captchaChallenge.a} + {captchaChallenge.b}?
-            </label>
-            <input
-              type="number"
-              required
-              disabled={isSubmitting}
-              value={captchaAnswer}
-              onChange={(e) => setCaptchaAnswer(e.target.value)}
-              placeholder="Enter result"
-              className="eldfall-input bg-stone-950 disabled:opacity-50"
-            />
-          </div>
-          
-          {status && (
-            <div className={`p-4 rounded-xl mb-6 text-sm ${
-              status.type === 'success' ? 'bg-green-900/20 text-green-400 border border-green-900/50' : 'bg-red-900/20 text-red-400 border border-red-900/50'
-            }`}>
-              {status.message}
-            </div>
-          )}
-
-          <div className="flex justify-end gap-3">
-            <button
-              type="button"
-              disabled={isSubmitting}
-              onClick={onClose}
-              className="px-6 py-2 text-stone-400 hover:text-white transition-all hover:scale-[1.02] active:scale-[0.98] disabled:opacity-50"
-            >
-              Cancel
-            </button>
-            <button
-              type="submit"
-              disabled={isSubmitting}
-              className="btn-primary"
-            >
-              {isSubmitting ? (
-                <>
-                  <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin mr-2" />
-                  Sending...
-                </>
-              ) : "Send Report"}
-            </button>
-          </div>
-        </form>
-      </motion.div>
-    </div>
-  );
 }

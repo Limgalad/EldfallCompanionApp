@@ -59,8 +59,8 @@ export const SchemesModal: React.FC<SchemesModalProps> = ({ isOpen, onClose }) =
                     onClick={() => setSelectedFaction(category.faction)}
                     className={`w-full text-left px-3 py-2 text-sm rounded-lg transition-colors ${
                       selectedFaction === category.faction 
-                        ? 'bg-red-900/20 text-red-500 border border-red-900/50' 
-                        : 'text-stone-400 hover:bg-stone-800 hover:text-stone-200'
+                        ? "bg-red-900/20 text-red-500 border border-red-900/50" 
+                        : "text-stone-400 hover:bg-stone-800 hover:text-stone-200"
                     }`}
                   >
                     {category.faction}

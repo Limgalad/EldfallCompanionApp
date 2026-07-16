@@ -148,7 +148,7 @@ export const spellSchools: SpellSchool[] = [
         "element": "Water",
         "level": "III",
         "name": "Deep Freeze",
-        "effect": "[Mana Cost: 1] While enchanted, the model suffers -3 ARM mod, and cannot declare Movements or Actions other than Idle and Nothing. Attacks against the model have Advantage. At the beginning of the next Strategic Phase (any), the enchanted model may perform a T roll. on success, the Enchantment is removed. During its Active Role, the enchanted model may declare Assist targeting itself and perform a T roll. on success, the Enchantment is removed.",
+        "effect": "[Mana Cost: 1] While enchanted, the model suffers -3 ARM mod, and cannot declare Movements or Actions other than Idle and Nothing. Attacks against the model have Advantage. At the beginning of the next Strategic Phase (any), the enchanted model may perform a T roll, on success, the Enchantment is removed. During its Active Role, the enchanted model may declare Assist targeting itself and perform a T roll, on success, the Enchantment is removed.",
         "pw": "—",
         "type": "Spell, Enchantment, Ranged/Melee",
         "rch": "10",
@@ -470,7 +470,7 @@ export const spellSchools: SpellSchool[] = [
         "name": "Anointment",
         "effect": "The enchanted model cannot be targeted by enemy Enchantments.",
         "pw": "—",
-        "type": "Spell, Healing, Ranged",
+        "type": "Spell, Enchantment, Ranged",
         "rch": "16",
         "stk": "1"
       }

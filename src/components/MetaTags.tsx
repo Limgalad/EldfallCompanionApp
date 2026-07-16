@@ -1,13 +1,13 @@
-import React from 'react';
-import { Helmet } from 'react-helmet-async';
-import { useLocation } from 'react-router-dom';
+import React from "react";
+import { Helmet } from "react-helmet-async";
+import { useLocation } from "react-router-dom";
 
 interface MetaTagsProps {
   title?: string;
   description?: string;
   image?: string;
-  type?: 'website' | 'article' | 'factcheck' | 'howto';
-  structuredData?: Record<string, unknown>;
+  type?: "website" | "article" | "factcheck" | "howto";
+  structuredData?: Record<string, unknown> | null;
   canonicalPath?: string;
 }
 
@@ -34,7 +34,7 @@ export default function MetaTags({
   // Generate structured data
   const baseJsonLd = structuredData || {
     "@context": "https://schema.org",
-    "@type": (type === 'article' || type === 'howto' || type === 'factcheck') ? "Article" : "WebSite",
+    "@type": (type === "article" || type === "howto" || type === "factcheck") ? "Article" : "WebSite",
     "name": fullTitle,
     "headline": title || "Eldfall Chronicles Companion",
     "description": fullDescription,
@@ -46,7 +46,7 @@ export default function MetaTags({
     }
   };
 
-  const jsonLd = (!structuredData && type === 'website') ? {
+  const jsonLd = (!structuredData && type === "website") ? {
     ...baseJsonLd,
     potentialAction: {
       "@type": "SearchAction",

@@ -1,10 +1,11 @@
-import React, { useEffect, useMemo } from 'react';
-import { motion } from 'motion/react';
-import { useParams, useNavigate, useSearchParams } from 'react-router-dom';
-import { ArrowLeft, Wand2, Search, Sparkles, X, ExternalLink } from 'lucide-react';
-import { spellSchools, Spell, SpellSchool } from '../data/spells';
-import { normalizeText, prepareFuzzySearchEntries, rankPreparedFuzzyResults, slugify } from '../utils/search';
-import MetaTags from './MetaTags';
+import React, { useEffect, useMemo } from "react";
+import { motion } from "motion/react";
+import { useParams, useNavigate, useSearchParams } from "react-router-dom";
+import { ArrowLeft, Wand2, Search, Sparkles, X, ExternalLink } from "lucide-react";
+import { spellSchools, Spell, SpellSchool } from "../data/spells";
+import { normalizeText, prepareFuzzySearchEntries, rankPreparedFuzzyResults, slugify } from "../utils/search";
+import MetaTags from "./MetaTags";
+import { TabButton } from "./TabButton";
 
 interface SpellBookProps {
   onBack: () => void;
@@ -12,12 +13,12 @@ interface SpellBookProps {
 
 type SpellSearchResult = {
   id: string;
-  schoolName: SpellSchool['name'];
+  schoolName: SpellSchool["name"];
   spell: Spell;
 };
 
 const getSpellId = (schoolName: string, spellName: string, spellIndex: number) =>
-  `spell-${normalizeText(`${schoolName} ${spellName} ${spellIndex}`).replace(/\s+/g, '-')}`;
+  `spell-${normalizeText(`${schoolName} ${spellName} ${spellIndex}`).replace(/\s+/g, "-")}`;
 
 const spellSearchEntries = prepareFuzzySearchEntries(
   spellSchools.flatMap((school) =>
@@ -76,17 +77,17 @@ export default function SpellBook({ onBack }: SpellBookProps) {
     }
 
     const element = document.getElementById(highlightedSpellId);
-    element?.scrollIntoView?.({ behavior: 'smooth', block: 'center' });
+    element?.scrollIntoView?.({ behavior: "smooth", block: "center" });
   }, [highlightedSpellId, selectedSchool]);
 
   const navigateToSpell = (result: SpellSearchResult) => {
-    updateSearchQuery('');
+    updateSearchQuery("");
     navigate(`/spellbook/${slugify(result.schoolName)}/${result.id}`);
   };
 
   const handleSchoolTabChange = (schoolName: string | null) => {
     if (schoolName === null) {
-      navigate('/spellbook');
+      navigate("/spellbook");
     } else {
       navigate(`/spellbook/${slugify(schoolName)}`);
     }
@@ -145,7 +146,7 @@ export default function SpellBook({ onBack }: SpellBookProps) {
               <button
                 type="button"
                 aria-label="Clear spell search"
-                onClick={() => updateSearchQuery('')}
+                onClick={() => updateSearchQuery("")}
                 className="btn-icon-circle absolute right-2 top-1/2 -translate-y-1/2 border-transparent bg-transparent shadow-none hover:bg-stone-800"
               >
                 <X className="w-5 h-5" />
@@ -184,14 +185,22 @@ export default function SpellBook({ onBack }: SpellBookProps) {
           <TabButton
             active={selectedSchool === null}
             onClick={() => handleSchoolTabChange(null)}
+            icon={<Wand2 className="w-4 h-4" />}
+            wrapIcon={false}
             label="All Schools"
+            layoutId="activeSpellSchoolTab"
+            indicatorClassName="bg-red-500"
           />
           {spellSchools.map((school) => (
             <TabButton
               key={school.name}
               active={selectedSchool === school.name}
               onClick={() => handleSchoolTabChange(school.name)}
+              icon={<Wand2 className="w-4 h-4" />}
+              wrapIcon={false}
               label={school.name}
+              layoutId="activeSpellSchoolTab"
+              indicatorClassName="bg-red-500"
             />
           ))}
         </div>
@@ -204,7 +213,7 @@ export default function SpellBook({ onBack }: SpellBookProps) {
                 <div className="flex items-center justify-between border-b border-stone-900 pb-3">
                   <h2 className="text-xl font-bold text-white">Search Results</h2>
                   <span className="text-xs uppercase tracking-eyebrow text-stone-500">
-                    {searchResults.length} match{searchResults.length === 1 ? '' : 'es'}
+                    {searchResults.length} match{searchResults.length === 1 ? "" : "es"}
                   </span>
                 </div>
 
@@ -297,7 +306,7 @@ function SpellCard({ spell, isHighlighted = false }: { spell: Spell; isHighlight
   return (
     <div
       className={`eldfall-card-solid eldfall-card-interactive card-p flex flex-col h-full transition-all ${
-        isHighlighted ? 'ring-2 ring-red-500 shadow-2xl shadow-red-950/40' : ''
+        isHighlighted ? "ring-2 ring-red-500 shadow-2xl shadow-red-950/40" : ""
       }`}
     >
       <div className="flex justify-between items-start mb-3">
@@ -324,27 +333,6 @@ function SpellCard({ spell, isHighlighted = false }: { spell: Spell; isHighlight
         </p>
       </div>
     </div>
-  );
-}
-
-function TabButton({ active, onClick, label }: { active: boolean; onClick: () => void; label: string }) {
-  return (
-    <button
-      type="button"
-      onClick={onClick}
-      className={`flex items-center space-x-2 px-4 py-3 text-xs md:text-sm font-display uppercase tracking-eyebrow transition-all relative whitespace-nowrap ${
-        active ? 'text-red-500' : 'text-stone-500 hover:text-stone-300'
-      }`}
-    >
-      <Wand2 className="w-4 h-4" />
-      <span>{label}</span>
-      {active && (
-        <motion.div
-          layoutId="activeSpellSchoolTab"
-          className="absolute bottom-0 left-0 right-0 h-0.5 bg-red-500"
-        />
-      )}
-    </button>
   );
 }
 

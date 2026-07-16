@@ -9,16 +9,16 @@ export type PreparedSearchEntry<T> = T & {
 export const normalizeText = (value: string) =>
   value
     .toLowerCase()
-    .replace(/[^\p{L}\p{N}\s]/gu, ' ')
-    .replace(/\s+/g, ' ')
+    .replace(/[^\p{L}\p{N}\s]/gu, " ")
+    .replace(/\s+/g, " ")
     .trim();
 
 export const slugify = (value: string) =>
   value
     .toLowerCase()
-    .replace(/[^\p{L}\p{N}]/gu, '-')
-    .replace(/-+/g, '-')
-    .replace(/^-|-$/g, '');
+    .replace(/[^\p{L}\p{N}]/gu, "-")
+    .replace(/-+/g, "-")
+    .replace(/^-|-$/g, "");
 
 const getFuzzyScoreFromNormalized = (normalizedQuery: string, normalizedText: string) => {
   if (!normalizedQuery) {

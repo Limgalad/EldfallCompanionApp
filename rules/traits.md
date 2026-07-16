@@ -18,7 +18,7 @@ This model can **cast (Element) Spells**. *(Example: Element = Fire, Water, Prof
 ---
 
 ## Armor-Piercing
-When making a DMG roll for a Hit with this Trait, add only **half the target's ARM value**.
+When making a DMG roll for a Hit with this Trait, subtract only **half the target's ARM value**.
 
 ---
 
@@ -33,7 +33,7 @@ This model gains **+1 STK** when using Items with the **Two-Handed** Trait and *
 ---
 
 ## Burn (X)
-If a model suffers at least one Wound with this Trait, the attacker may perform **X DMG rolls with ARM value 0**. Each successful roll causes a Wound. If this Wound causes the model to become Dead, it is removed from the field.
+If a model suffers at least one Wound with this Trait, the attacker may make **X DMG Rolls using the same PW as the initial Attack and an ARM value of 0**. Each successful roll causes a Wound. If this Wound causes the model to become Dead, it is removed from the field.
 
 ---
 
@@ -62,7 +62,7 @@ If a model suffers at least one Wound with this Trait, it must perform a **T rol
 ---
 
 ## Demon
-When this model deals a Wound, the target must perform an **M roll**. A failed roll causes the target to become **Panicked** until the end of the turn. A **Critical Hit** automatically Panics the target until the end of the turn. This model's Attack receives a **+4 modifier** against a Panicked target. This Trait does not affect models with the Demon Trait.
+When this model deals a Wound, the target must perform an **M roll**. A failed roll causes the target to become **Panicked** until the end of the turn. On a **Critical Hit**, the target becomes **Panicked** automatically. This model's Attack receives a **+4 modifier** against a Panicked target. This Trait does not affect models with the Demon Trait.
 
 ---
 
@@ -83,6 +83,8 @@ This model is unaffected by Effects from **(Element)** Attacks (it still suffers
 
 ## Familiar
 When a Creature with this Trait is summoned by a Conjuration Spell, the caster gains additional **Abilities and Stat Modifiers** listed on the creature's profile. If the caster would take damage and suffer Wounds, the familiar may be **removed instead** (if multiple, the player chooses which).
+
+Note: Familiars are not considered full models, but their miniatures may be used as visual elements. Some familiars have individual miniatures, while others are attached to the caster's.
 
 - Creatures with this Trait have **no Summoning Limit**, but the caster may control only **one of each named creature**
 - The caster gains the familiar's Abilities and modifiers only while the familiar is summoned, regardless of attached miniatures
@@ -239,7 +241,7 @@ A Weapon with this Trait **cannot be used** with an equipped Shield or another W
 ---
 
 ## Undead I
-This model cannot be affected by the **Poisoned**, **Weakened**, **Bleeding**, or **Panicked** States. Spells with the **Mindgame** Trait cannot target or affect it. **Healing-Type Spells of the Divine Element** do not restore HP — instead, they deal **15 PW damage** to it. If this model's HP reaches 0, it becomes **Dead**.
+This model cannot be affected by the **Poisoned**, **Weakened**, **Bleeding**, or **Panicked** States. Spells with the **Mindgame** Trait cannot target or affect it. **Healing-type Spells of the Divine Element** do not restore any HP but instead, deal **PW 15 Hit** to it. If this model's HP reaches 0, it becomes **Dead**.
 
 ---
 
@@ -249,7 +251,7 @@ If a model would suffer a Wound with this Trait, it must first perform a **T rol
 ---
 
 ## Unstoppable
-If the target of an Attack Action is **smaller**, Confrontation does not occur. Successful Attack rolls from either model do **not block** the other.
+If the target of an Attack with this Trait is **smaller**, Confrontation does not occur. Successful Attack rolls from either model do **not block** the other.
 
 ---
 

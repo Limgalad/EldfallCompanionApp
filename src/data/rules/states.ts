@@ -11,7 +11,7 @@ export const states: State[] = [
   },
   { 
     name: "Confused", 
-    description: "A model in this State has halved Intellect." 
+    description: "A model in this State has halved Offense, Defense, Accuracy, Intellect, Agility and Morale."
   },
   { 
     name: "Crouched", 

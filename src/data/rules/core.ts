@@ -626,7 +626,7 @@ export const rules: RuleSection[] = [
       },
       {
         title: "Deep",
-        content: "- All effects of Shallow Aquatic apply.\n- Models cannot declare Jump, Attack, Assist, or Ritual actions.\n- Models with ARM 2+ must roll AG (with a negative modifier equal to their ARM) at activation. On failure, they drown and are considered Dead."
+        content: "- All effects of Shallow Aquatic apply.\n- Models cannot declare Jump, Attack, Assist, or Ritual actions.\n- Models with ARM greater than 2 must roll AG (with a negative modifier equal to their ARM) at activation. On failure, they drown and are considered Dead."
       }
     ]
   },

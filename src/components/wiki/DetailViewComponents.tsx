@@ -50,13 +50,21 @@ export const RuleSectionDetail: React.FC<DetailProps> = ({ item, onKeywordClick,
       </div>
       {item.data.table && <RuleTable table={item.data.table} />}
       {item.data.subsections && (
-        <div className="space-y-4">
-          {item.data.subsections.map((sub, i) => (
-            <div key={i} className="border-l-2 border-red-900/30 pl-4">
-              <h4 className="text-white font-bold mb-1 uppercase text-xs tracking-eyebrow">{sub.title}</h4>
-              <p className="body-xs">{sub.content}</p>
-            </div>
-          ))}
+        <div className="overflow-x-auto rounded-xl border border-stone-800 bg-stone-900/50">
+          <table className="w-full text-left border-collapse">
+            <tbody className="divide-y divide-stone-800">
+              {item.data.subsections.map((sub, i) => (
+                <tr key={i} className="hover:bg-red-500/5 transition-colors">
+                  <td className="px-4 py-3 text-[10px] font-bold text-red-400 uppercase tracking-wider whitespace-nowrap align-top w-36 border-r border-stone-800">
+                    {sub.title}
+                  </td>
+                  <td className="px-4 py-3 text-[10px] text-stone-300 leading-relaxed align-top">
+                    {sub.content}
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
         </div>
       )}
     </div>
