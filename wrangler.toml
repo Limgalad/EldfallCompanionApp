@@ -1,0 +1,17 @@
+# Cloudflare Pages configuration.
+#
+# This file is OPTIONAL. It only matters if you deploy from the command line with
+# `npx wrangler pages deploy` (direct upload) or run `npx wrangler pages dev`.
+#
+# For the recommended Git-integration flow you don't need it at all — the same
+# settings are entered once in the Cloudflare Pages dashboard:
+#   Framework preset:        Vite
+#   Build command:           npm run build
+#   Build output directory:  dist
+#   Node version:            read from .nvmrc (22)
+#
+# See Docs/DEPLOY_CLOUDFLARE.md for the full walkthrough.
+
+name = "eldfall-companion-app"
+pages_build_output_dir = "dist"
+compatibility_date = "2026-07-16"

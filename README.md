@@ -2,7 +2,7 @@
 
 A companion web app for the **Eldfall Chronicles** tabletop skirmish game. It gives players a
 fast, searchable reference for missions/quests, rules, spells, creatures, and quest schemes,
-right at the table. Built as a full-stack Progressive Web App (PWA) so it can be installed and
+right at the table. Built as a static Progressive Web App (PWA) so it can be installed and
 used offline.
 
 ## Features
@@ -37,25 +37,12 @@ used offline.
    npm install
    ```
 
-3. (Optional) Create a `.env` file if you want to override the default port:
-
-   ```bash
-   cp .env.example .env
-   ```
-
-   (On Windows PowerShell: `Copy-Item .env.example .env`)
-
 ---
 
 ## Environment Variables
 
-The app has a single, optional environment variable.
-
-| Variable | Description | Default |
-|---|---|---|
-| `PORT` | Port the Express server listens on. | `3000` |
-
-A `.env` file is not required — the app runs on the default port out of the box.
+None — the app is a static site with no server-side configuration. (The local dev-server
+port is set in `vite.config.ts`, not via an env file.)
 
 ---
 
@@ -63,10 +50,9 @@ A `.env` file is not required — the app runs on the default port out of the bo
 
 | Command | What it does |
 |---|---|
-| `npm run dev` | Starts the dev server (Express + Vite middleware) at **http://localhost:3000** |
-| `npm run build` | Builds the frontend with Vite and bundles the server with esbuild into `dist/` |
-| `npm run start` | Runs the production build (`NODE_ENV=production node dist/server.js`) — run `npm run build` first |
-| `npm run preview` | Serves the built frontend locally via Vite's preview server (frontend only, no Express API) |
+| `npm run dev` | Starts the Vite dev server at **http://localhost:3000** |
+| `npm run build` | Builds the static site with Vite into `dist/` |
+| `npm run preview` | Serves the built `dist/` locally to preview the production build |
 | `npm run lint` | Runs ESLint and a TypeScript type check (`tsc --noEmit`) |
 | `npm run test` | Runs the test suite once via Vitest |
 | `npm run clean` | Removes the `dist/` build output |
@@ -77,17 +63,28 @@ A `.env` file is not required — the app runs on the default port out of the bo
 npm run dev
 ```
 
-Open **http://localhost:3000**. The Express server handles `/api/*` requests directly and hands
-everything else off to Vite's dev middleware.
+Open **http://localhost:3000**. This is a pure client-side SPA — there is no backend server.
 
-### Production
+### Preview a production build
 
 ```bash
 npm run build
-npm run start
+npm run preview
 ```
 
-Serves the compiled frontend as static files from the bundled Express server (which also exposes the `/api/health` check).
+`npm run build` emits the static site to `dist/`; `npm run preview` serves that output locally
+so you can check the production bundle (including the PWA service worker) before deploying.
+
+---
+
+## Deployment
+
+The app is a static site, deployed to **Cloudflare Pages** (free tier). Build command
+`npm run build`, output directory `dist/`. SPA routing (`public/_redirects`) and security
+headers (`public/_headers`) ship in the build output automatically.
+
+See **[Docs/DEPLOY_CLOUDFLARE.md](Docs/DEPLOY_CLOUDFLARE.md)** for the full walkthrough,
+including custom-domain setup.
 
 ---
 
@@ -98,9 +95,8 @@ npm run lint    # ESLint + TypeScript type check
 npm run test    # Vitest
 ```
 
-Note: at the time of writing there are no test files in the project and the Vitest setup file
-referenced in `vite.config.ts` (`src/setupTests.ts`) does not yet exist — it will need to be
-created before `npm run test` is meaningful.
+The suite currently has 35 tests across `src/utils/*.test.ts` and a component test, with the
+Vitest setup file at `src/setupTests.ts`.
 
 ---
 
@@ -110,7 +106,7 @@ created before `npm run test` is meaningful.
   visited pages/assets for offline use.
 - The service worker updates automatically and cleans up outdated caches on activation.
 - PWA behavior is **disabled during `npm run dev`** — to verify install/offline behavior, use a
-  production build (`npm run build` followed by `npm run start` or `npm run preview`).
+  production build (`npm run build` followed by `npm run preview`).
 
 ---
 
