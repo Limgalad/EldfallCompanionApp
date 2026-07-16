@@ -101,8 +101,10 @@ export default defineConfig(() => {
       },
     },
     server: {
-      hmr: false,
-      watch: null,
+      port: 3000,
+    },
+    preview: {
+      port: 3000,
     },
   };
 });

@@ -4,8 +4,9 @@
 
 A companion app for the **Eldfall Chronicles** tabletop skirmish game. Provides players with a
 searchable quick-reference for missions/quests, rules, spells, creatures, and quest schemes.
-Built as a PWA (Progressive Web App): an Express server serves the React SPA — the backend is
-now just static file serving plus a `/api/health` check (the bug-report feature was removed).
+Built as a **static** PWA (Progressive Web App): a client-side React SPA with no backend server
+(the Express server and its bug-report API were removed). Deployed to Cloudflare Pages — see
+`Docs/DEPLOY_CLOUDFLARE.md`.
 
 - **package.json version**: `1.1.0` (source of truth)
 - **Note**: the UI itself is inconsistent about its own version — the header button in
@@ -27,35 +28,28 @@ Use `.claude/agents/` when making changes, choosing the agent flow that fits the
 | Animations | Motion (`motion/react`, formerly Framer Motion) |
 | Icons | Lucide React |
 | SEO | `react-helmet-async` (`MetaTags.tsx`) |
-| Backend | Express 4 (`server.ts`) |
-| Build | Vite 6 (frontend), esbuild (server bundle) |
+| Build | Vite 6 (static site) |
+| Hosting | Cloudflare Pages (static; SPA `_redirects` + security `_headers`) |
 | PWA | vite-plugin-pwa v1 (`autoUpdate` strategy) |
 | Testing | Vitest, @testing-library/react, jsdom |
 | Linting | ESLint 10, typescript-eslint, `tsc --noEmit` |
-
-`@google/genai` is a listed dependency and `GEMINI_API_KEY` is wired into `vite.config.ts` via
-`define`, but **no code in `src/` currently imports or uses it** — treat any Gemini/AI feature
-as dead/unimplemented, not a working part of the app.
 
 ---
 
 ## Commands
 
 ```bash
-npm run dev       # Start dev server (tsx server.ts -> Express + Vite middleware, no HMR)
-npm run build     # Build frontend (Vite) + bundle server (esbuild -> dist/server.js)
-npm run start     # Run production server (NODE_ENV=production node dist/server.js)
-npm run preview   # Preview production Vite build
+npm run dev       # Start the Vite dev server (http://localhost:3000)
+npm run build     # Build the static site with Vite -> dist/
+npm run preview   # Preview the built dist/ locally
 npm run lint      # ESLint + TypeScript type check (tsc --noEmit)
-npm run test      # Vitest run (33 tests across src/utils/*.test.ts — see Testing section)
+npm run test      # Vitest run (35 tests — see Testing section)
 npm run clean     # Remove dist/
 ```
 
-Dev server runs at **http://localhost:3000** (hardcoded `PORT = 3000` in `server.ts`, not
-configurable via env). Express serves `/api/*` itself and delegates everything else to Vite's
-dev middleware (`appType: "spa"`). Both dev (`server.ts`) and Vite (`vite.config.ts`) explicitly
-disable HMR and file watching (`hmr: false, watch: null`) — changes may require a manual reload
-or server restart.
+The dev server runs at **http://localhost:3000** (port set in `vite.config.ts`). It's a pure
+client-side SPA served by Vite — there is no Express server or API. `npm run build` emits a
+fully static `dist/` (HTML + hashed assets + PWA service worker) suitable for any static host.
 
 ---
 
@@ -63,11 +57,11 @@ or server restart.
 
 ```
 EldfallCompanionApp/
-├── server.ts                # Express server (dev + prod), health check, static serving
-├── vite.config.ts           # Vite + Tailwind v4 + PWA + Vitest config
-├── tsconfig.json            # strict mode is OFF; target ES2022, moduleResolution bundler
+├── vite.config.ts           # Vite + Tailwind v4 + PWA + Vitest config (dev server on :3000)
+├── wrangler.toml            # Cloudflare Pages config (optional; for CLI deploys)
+├── .nvmrc                   # Node version for Cloudflare Pages builds (22)
+├── tsconfig.json            # strict mode is ON; target ES2022, moduleResolution bundler
 ├── index.html               # HTML entry point, SEO meta tags, GA4 tag
-├── check.ts                 # Ad hoc scratch script at repo root (not part of app runtime)
 ├── src/
 │   ├── main.tsx              # React entry: StrictMode, HelmetProvider, BrowserRouter
 │   ├── App.tsx                # Routing, HomePage, global header
@@ -116,7 +110,8 @@ EldfallCompanionApp/
 │   ├── icon.svg                       # App icon (PWA)
 │   ├── manifest.json                  # PWA manifest
 │   ├── robots.txt / sitemap.xml       # SEO
-│   ├── _redirects                     # Netlify-style SPA redirect (`/* -> /index.html 200`)
+│   ├── _redirects                     # SPA fallback (`/* /index.html 200`) — Cloudflare Pages / Netlify
+│   ├── _headers                       # Security headers (CSP etc.) applied by Cloudflare Pages
 │   └── map_*.png                      # Tactical mission maps (one per mission with a map)
 ├── rules/                             # Human-readable source-of-truth markdown for game rules
 │   ├── README.md                       # Explains editing conventions and file map for this folder
@@ -127,7 +122,8 @@ EldfallCompanionApp/
 │   ├── Hostiles.md, Hostile_Cards.md
 │   └── competitive_quests_season1.md, Competitive_Quest_Season2.md, bonus_schemes.md, Quest_Archives.md
 ├── Docs/
-│   └── CODEBASE_EVALUATION.md          # Standing audit/backlog (architecture, quality, security, rules-fidelity)
+│   ├── CODEBASE_EVALUATION.md          # Standing audit/backlog (architecture, quality, security, rules-fidelity)
+│   └── DEPLOY_CLOUDFLARE.md            # Cloudflare Pages deployment + custom-domain guide
 ├── .claude/agents/                     # Subagent team (architect, programmer, tester, security, rules-reader, etc.)
 └── dev-dist/                           # PWA service worker output (auto-generated, dev)
 ```
@@ -159,26 +155,15 @@ Defined in `src/App.tsx` via `react-router-dom`. All non-home routes are lazy-lo
 
 ## API Endpoints
 
-Defined in `server.ts`.
-
-| Method | Path | Description |
-|---|---|---|
-| GET | `/api/health` | Health check — returns `{ status: "ok", timestamp }` |
+None. The app is a fully static SPA with no backend — all data is bundled at build time from
+`src/data/`. There is no server process in production.
 
 ---
 
 ## Environment Variables
 
-Copy `.env.example` to `.env` to override defaults. The app has a single, optional variable:
-
-```env
-PORT=3000   # Port the Express server listens on (optional; defaults to 3000)
-```
-
-`GEMINI_API_KEY` is read by `vite.config.ts` (`loadEnv` + `define`) but is **not present in
-`.env.example`** and is not consumed by any current app code — it exists only as unused plumbing.
-If it is ever wired up, note that `define` inlines it into the client bundle, exposing it
-publicly; it should not be treated as a server-side secret in its current wiring.
+None. The app is a static SPA with no server-side configuration and no runtime secrets. The
+dev-server port is set in `vite.config.ts`; there is no `.env` / `.env.example` in the repo.
 
 ---
 
@@ -207,10 +192,11 @@ Tests live alongside source (Vitest + jsdom + @testing-library/react), with a se
 configured at `src/setupTests.ts` in `vite.config.ts` (`test.setupFiles`). `src/setupTests.ts`
 imports `@testing-library/jest-dom`.
 
-Current suite: 33 tests across two files —
+Current suite: 35 tests across three files —
 
 - `src/utils/search.test.ts` (19 tests)
 - `src/utils/rulesGuards.test.ts` (14 tests)
+- `src/components/ErrorBoundary.test.tsx` (2 tests)
 
 `npm run test` runs the full suite via `vitest run` and currently passes.
 
@@ -235,8 +221,8 @@ npm run test      # vitest run
 
 ## Other Conventions
 
-- TypeScript `strict` mode is **off** (`tsconfig.json`) — be extra careful with `null`/`undefined`
-  and don't assume the compiler will catch unsafe index access or unchecked unions.
+- TypeScript `strict` mode is **on** (`tsconfig.json`) — the compiler catches unchecked
+  `null`/`undefined` and unsafe access; keep new code strict-clean.
 - ESLint's `no-explicit-any` and `no-unused-vars` are configured as **warnings**, not errors —
   `npm run lint` can pass with both present.
 - `.claude/agents/` contains a subagent team for this repo (architect, programmer, tester,
