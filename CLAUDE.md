@@ -9,10 +9,9 @@ Built as a **static** PWA (Progressive Web App): a client-side React SPA with no
 `Docs/DEPLOY_CLOUDFLARE.md`.
 
 - **package.json version**: `1.1.0` (source of truth)
-- **Note**: the UI itself is inconsistent about its own version — the header button in
-  `src/App.tsx` shows `v2.0.0` while the footer shows `Version 1.1.0`. This is a known,
-  unresolved discrepancy (see `Docs/CODEBASE_EVALUATION.md`) — don't treat either on-screen
-  string as authoritative; `package.json` is.
+- **Note**: the only on-screen version string is the footer's `Version 1.1.0` in `src/App.tsx`
+  (hardcoded, so it can drift) — `package.json` is authoritative. The in-app changelog
+  (`ChangelogModal`) and the header version button were removed.
 - **Owner**: Koen Deurloo (kdeurloo@clixz.nl / koendeurloo1987@gmail.com)
 
 ---
@@ -72,7 +71,6 @@ EldfallCompanionApp/
 │   │   ├── MissionOverview.tsx      # Quest browser (season selector + mission/scheme/creature routes)
 │   │   ├── RulesWiki.tsx            # Searchable rules database with detail modals
 │   │   ├── SpellBook.tsx            # Spell reference (by school/element/level)
-│   │   ├── ChangelogModal.tsx       # App changelog display
 │   │   ├── MetaTags.tsx             # Per-page SEO meta tags (react-helmet-async)
 │   │   ├── ScrollToTop.tsx          # Floating scroll-to-top button
 │   │   ├── missions/

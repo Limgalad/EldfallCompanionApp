@@ -112,7 +112,7 @@ export default function MissionOverview({ onBack }: { onBack: () => void }) {
     <div className="min-h-screen bg-stone-950">
       <MetaTags 
         title={selectedMission ? `${selectedMission.title} - Quest Overview` : showSchemes ? "Quest Schemes - Quest Overview" : showCreatures ? "Creatures Database - Quest Overview" : "Quest Overview"}
-        description={selectedMission ? selectedMission.description : "Explore Eldfall Chronicles Season 1 missions, objective markers, and quest schemes."}
+        description={selectedMission ? selectedMission.description : "Explore Eldfall Chronicles Quests, objective markers, and quest schemes."}
         image={selectedMission?.mapImage ? `https://eldfallcompanion.tabletophub.nl${selectedMission.mapImage}` : undefined}
         type={selectedMission ? "howto" : "website"}
         structuredData={structuredData}

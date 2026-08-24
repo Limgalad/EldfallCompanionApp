@@ -4,8 +4,8 @@
  */
 
 import { motion } from "motion/react";
-import { Book, Map, Sword, ExternalLink, Heart, Wand2, History } from "lucide-react";
-import React, { useState, useEffect, Suspense, lazy } from "react";
+import { Book, Map, Sword, ExternalLink, Heart, Wand2 } from "lucide-react";
+import React, { useEffect, Suspense, lazy } from "react";
 import { Routes, Route, useNavigate, useLocation } from "react-router-dom";
 import ScrollToTop from "./components/ScrollToTop";
 
@@ -15,12 +15,10 @@ import MetaTags from "./components/MetaTags";
 const MissionOverview = lazy(() => import("./components/MissionOverview"));
 const RulesWiki = lazy(() => import("./components/RulesWiki"));
 const SpellBook = lazy(() => import("./components/SpellBook"));
-const ChangelogModal = lazy(() => import("./components/ChangelogModal"));
 
 export default function App() {
   const navigate = useNavigate();
   const location = useLocation();
-  const [isChangelogOpen, setIsChangelogOpen] = useState(false);
 
   useEffect(() => {
     // Only scroll to top on major route changes (e.g. going back home or switching main tools)
@@ -33,22 +31,10 @@ export default function App() {
 
   return (
     <>
-      {/* Global Header Actions */}
-      <div className="fixed top-4 right-4 z-50 flex items-center gap-2">
-        <button 
-          onClick={() => setIsChangelogOpen(true)}
-          className="btn-secondary h-10 px-4"
-          title="Changelog & Updates"
-        >
-          <History className="w-5 h-5 mr-2" />
-          <span className="text-xs font-bold hidden sm:inline">v1.1.0</span>
-        </button>
-      </div>
-
       <ScrollToTop />
-      
+
       <Routes>
-        <Route path="/" element={<HomePage onNavigate={navigate} setIsChangelogOpen={setIsChangelogOpen} />} />
+        <Route path="/" element={<HomePage onNavigate={navigate} />} />
         
         <Route path="/missions" element={
           <Suspense fallback={<LoadingFallback />}>
@@ -98,23 +84,14 @@ export default function App() {
           </Suspense>
         } />
       </Routes>
-
-      {/* Changelog Modal */}
-      {isChangelogOpen && (
-        <Suspense fallback={null}>
-          <ChangelogModal onClose={() => setIsChangelogOpen(false)} />
-        </Suspense>
-      )}
     </>
   );
 }
 
 function HomePage({
-  onNavigate,
-  setIsChangelogOpen
+  onNavigate
 }: {
-  onNavigate: (path: string) => void,
-  setIsChangelogOpen: (open: boolean) => void
+  onNavigate: (path: string) => void
 }) {
   return (
     <div className="min-h-screen flex flex-col">
@@ -209,12 +186,7 @@ function HomePage({
       <footer className="py-8 border-t border-stone-900 text-center text-stone-500 text-sm">
         <p>&copy; 2026 Eldfall Chronicles Companion. All rights reserved.</p>
         <p className="mt-2">Created for the Eldfall Community.</p>
-        <button 
-          onClick={() => setIsChangelogOpen(true)}
-          className="mt-4 text-[10px] opacity-50 hover:opacity-100 uppercase tracking-eyebrow transition-opacity flex items-center justify-center w-full gap-2"
-        >
-          <History className="w-3 h-3" /> Version 1.1.0 &bull; View Changelog
-        </button>
+        <p className="mt-4 text-[10px] opacity-50 uppercase tracking-eyebrow">Version 1.1.0</p>
       </footer>
     </div>
   );

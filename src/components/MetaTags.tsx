@@ -27,7 +27,7 @@ export default function MetaTags({
     ? `${title} | Eldfall Chronicles Companion` 
     : "Eldfall Chronicles Companion | Quest Overview & Rules Wiki";
   
-  const fullDescription = description || "The ultimate companion app for Eldfall Chronicles tabletop game. Explore Season 1 missions, tactical maps, and a complete searchable rules wiki.";
+  const fullDescription = description || "The ultimate companion app for Eldfall Chronicles tabletop game. Explore Quests, tactical maps, and a complete searchable rules wiki.";
   
   const canonicalUrl = canonicalPath ? `${baseUrl}${canonicalPath}` : currentUrl;
 

@@ -2,12 +2,13 @@ import React, { useMemo, useState, useEffect, useRef } from "react";
 import { motion, AnimatePresence } from "motion/react";
 import { useParams, useNavigate, useSearchParams } from "react-router-dom";
 import { rules, traits, skills, classes, combatArtCategories, states } from "../data/rules";
-import { ArrowLeft, Search, BookOpen, Shield, Zap, Sparkles, Users, Sword, Activity, Info, X, Target, ExternalLink } from "lucide-react";
+import { ArrowLeft, Search, BookOpen, Shield, Zap, Sparkles, Users, Sword, Activity, Info, X, Target, ExternalLink, Link2 } from "lucide-react";
 import { prepareFuzzySearchEntries, rankPreparedFuzzyResults, slugify } from "../utils/search";
+import { buildBacklinkIndex } from "../utils/relatedRules";
 import MetaTags from "./MetaTags";
 import { SearchCategory, SelectedItem, KeywordItem } from "../types";
 import { isRuleSection, isClass, isCombatArtCategory, getSelectedItemTitle, getSelectedItemBody, buildRuleSectionSelectedItem } from "../utils/rulesGuards";
-import { HighlightedText } from "./wiki/RichText";
+import { HighlightedText, RichText } from "./wiki/RichText";
 import { RuleSectionDetail, ClassDetail, CombatArtDetail, GenericDetail, RuleTable } from "./wiki/DetailViewComponents";
 import { TabButton } from "./TabButton";
 
@@ -137,9 +138,8 @@ export default function RulesWiki({ onBack }: { onBack: () => void }) {
     navigate(`/rules/${tab}`);
   };
 
-  const searchEntries = useMemo(
-    () => prepareFuzzySearchEntries<SearchResultEntry>(
-      [
+  const referenceEntries = useMemo<SearchResultEntry[]>(
+    () => [
         ...rules.map((section) => {
           const isAction = section.category === "Normal Action" || section.category === "Special Action";
           const isHostile = section.category === "Hostiles";
@@ -204,11 +204,28 @@ export default function RulesWiki({ onBack }: { onBack: () => void }) {
           ].join(" "),
           selectedItem: { type: "combatArts", data: combatArtCategory } satisfies SelectedItem,
         })),
-      ],
-      (entry) => `${entry.title} ${entry.searchText}`,
-    ),
+    ],
     [],
   );
+
+  const searchEntries = useMemo(
+    () => prepareFuzzySearchEntries(referenceEntries, (entry) => `${entry.title} ${entry.searchText}`),
+    [referenceEntries],
+  );
+
+  const backlinkIndex = useMemo(() => buildBacklinkIndex(referenceEntries), [referenceEntries]);
+
+  // Reverse links for the open item: every other entry whose text mentions it
+  // by name ("referenced by"). Derived from the same corpus, so no curation.
+  const backlinks = useMemo(() => {
+    if (!selectedItem) return [] as SearchResultEntry[];
+    const title = getSelectedItemTitle(selectedItem).toLowerCase();
+    const found = backlinkIndex.get(title) ?? [];
+    return [...found].sort(
+      (left, right) =>
+        left.category.localeCompare(right.category) || left.title.localeCompare(right.title),
+    );
+  }, [selectedItem, backlinkIndex]);
 
   const rankedSearchEntries = useMemo(
     () => rankPreparedFuzzyResults(
@@ -789,11 +806,40 @@ export default function RulesWiki({ onBack }: { onBack: () => void }) {
                     />
                   )}
                   {(!isRuleSection(selectedItem) && !isClass(selectedItem) && !isCombatArtCategory(selectedItem)) && (
-                    <GenericDetail 
-                      item={selectedItem} 
-                      onKeywordClick={setNestedItem} 
-                      searchQuery={searchQuery} 
+                    <GenericDetail
+                      item={selectedItem}
+                      onKeywordClick={setNestedItem}
+                      searchQuery={searchQuery}
                     />
+                  )}
+
+                  {backlinks.length > 0 && (
+                    <div className="pt-2">
+                      <h3 className="flex items-center gap-2 text-white font-bold uppercase text-xs tracking-eyebrow border-b border-stone-800 pb-2 mb-3">
+                        <Link2 className="w-3.5 h-3.5 text-red-500" />
+                        Referenced By
+                        <span className="ml-auto text-[10px] font-normal normal-case tracking-normal text-stone-500">
+                          {backlinks.length}
+                        </span>
+                      </h3>
+                      <div className="flex flex-wrap gap-2">
+                        {backlinks.map((entry) => (
+                          <button
+                            key={`backlink-${entry.id}`}
+                            type="button"
+                            onClick={() => handleSelectItem(entry.selectedItem)}
+                            className="group inline-flex items-center gap-1.5 rounded-full border border-stone-700 bg-stone-900/60 px-3 py-1.5 text-left transition-colors hover:border-red-600/60 hover:bg-stone-800"
+                          >
+                            <span className="text-[9px] uppercase tracking-eyebrow text-red-500/70 group-hover:text-red-400">
+                              {SEARCH_CATEGORY_LABELS[entry.category]}
+                            </span>
+                            <span className="text-xs font-medium text-stone-300 group-hover:text-white">
+                              {entry.title}
+                            </span>
+                          </button>
+                        ))}
+                      </div>
+                    </div>
                   )}
                 </div>
               </motion.div>
@@ -838,9 +884,9 @@ export default function RulesWiki({ onBack }: { onBack: () => void }) {
                   </button>
                 </div>
                 <div className="card-p stack-compact">
-                  <p className="text-stone-300 text-xs leading-relaxed whitespace-pre-wrap font-sans">
-                    {getSelectedItemBody(nestedItem)}
-                  </p>
+                  <div className="text-stone-300 text-xs leading-relaxed whitespace-pre-wrap font-sans">
+                    <RichText text={getSelectedItemBody(nestedItem)} onKeywordClick={setNestedItem} />
+                  </div>
                   {isRuleSection(nestedItem) && nestedItem.data.table && (
                     <RuleTable table={nestedItem.data.table} />
                   )}
@@ -849,7 +895,9 @@ export default function RulesWiki({ onBack }: { onBack: () => void }) {
                       {nestedItem.data.subsections.slice(0, 3).map((sub, i) => (
                         <div key={i} className="border-l border-red-900/30 pl-3">
                           <h4 className="text-white font-bold text-[10px] uppercase tracking-eyebrow">{sub.title}</h4>
-                          <p className="text-stone-400 text-[10px]">{sub.content}</p>
+                          <p className="text-stone-400 text-[10px]">
+                            <RichText text={sub.content} onKeywordClick={setNestedItem} />
+                          </p>
                         </div>
                       ))}
                     </div>

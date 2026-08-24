@@ -59,7 +59,7 @@ export const RuleSectionDetail: React.FC<DetailProps> = ({ item, onKeywordClick,
                     {sub.title}
                   </td>
                   <td className="px-4 py-3 text-[10px] text-stone-300 leading-relaxed align-top">
-                    {sub.content}
+                    <RichText text={sub.content} onKeywordClick={onKeywordClick} highlightQuery={searchQuery} />
                   </td>
                 </tr>
               ))}
@@ -90,7 +90,9 @@ export const ClassDetail: React.FC<DetailProps> = ({ item, onKeywordClick, searc
             {item.data.abilities.map((ability, i) => (
               <div key={i} className="flex items-start text-xs">
                 <span className="text-red-500 mr-2 mt-0.5">-</span>
-                <span className="text-stone-300">{ability}</span>
+                <span className="text-stone-300">
+                  <RichText text={ability} onKeywordClick={onKeywordClick} highlightQuery={searchQuery} />
+                </span>
               </div>
             ))}
           </div>
@@ -100,14 +102,18 @@ export const ClassDetail: React.FC<DetailProps> = ({ item, onKeywordClick, searc
   );
 };
 
-export const CombatArtDetail: React.FC<DetailProps> = ({ item }) => {
+export const CombatArtDetail: React.FC<DetailProps> = ({ item, onKeywordClick, searchQuery }) => {
   if (!isCombatArtCategory(item)) return null;
-  
+
   return (
     <div className="space-y-4">
       <div className="space-y-2">
-        <p className="text-stone-200 text-sm leading-relaxed">{item.data.ruleText}</p>
-        <p className="text-stone-400 text-xs leading-relaxed italic">{item.data.flavorText}</p>
+        <p className="text-stone-200 text-sm leading-relaxed">
+          <RichText text={item.data.ruleText} onKeywordClick={onKeywordClick} highlightQuery={searchQuery} />
+        </p>
+        <p className="text-stone-400 text-xs leading-relaxed italic">
+          <RichText text={item.data.flavorText} onKeywordClick={onKeywordClick} highlightQuery={searchQuery} />
+        </p>
       </div>
       <div className="space-y-3">
         <h4 className="text-white font-bold uppercase text-xs tracking-eyebrow border-b border-stone-800 pb-2">Levels</h4>
@@ -118,7 +124,9 @@ export const CombatArtDetail: React.FC<DetailProps> = ({ item }) => {
                 <h5 className="text-red-500 text-sm font-bold">{level.name}</h5>
                 <span className="eldfall-chip">Level {level.level}</span>
               </div>
-              <p className="text-stone-400 text-xs leading-relaxed">{level.description}</p>
+              <p className="text-stone-400 text-xs leading-relaxed">
+                <RichText text={level.description} onKeywordClick={onKeywordClick} highlightQuery={searchQuery} />
+              </p>
             </div>
           ))}
         </div>
